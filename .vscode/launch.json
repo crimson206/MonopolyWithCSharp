@@ -2,6 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         
+        
         {
             "name": ".NET Core Launch (console)",
             "type": "coreclr",
@@ -11,7 +12,7 @@
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
-            "console": "internalConsole"
+            "console": "integratedTerminal"
         },
         {
             "name": ".NET Core Attach",

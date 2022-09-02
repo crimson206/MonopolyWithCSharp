@@ -1,48 +1,29 @@
 public interface IBoard
 {
-    public abstract void MoveToken(int playerNumber, int numberOfSteps);
+    public abstract int MovePlayerToken(int tokenPosition, int numberOfSteps);
 }
 
 public class Board : IBoard
 {
-    private int[,] tiles = new int[4,10];
-    private int[,] playerTokenPositions;
+    private int size;
 
-    public Board(int numberOfPlayers)
+    public Board(int Size)
     {
-        this.playerTokenPositions = new int[numberOfPlayers ,2];
+        this.size = Size;
     }
-
-    public int[,] PlayerTokenPositions { get => this.playerTokenPositions; set => this.playerTokenPositions = value; }
-
-    public void MoveToken(int playerNumber, int numberOfSteps)
+    public int MovePlayerToken(int tokenPosition, int numberOfSteps)
     {
-        int lineNumber = this.playerTokenPositions[playerNumber, 0];
-        int positionAtALine = this.playerTokenPositions[playerNumber, 1];
 
-        if ((positionAtALine + numberOfSteps) >= 20)
+        if ((tokenPosition + numberOfSteps) >= this.size)
         {
-            positionAtALine += numberOfSteps;
-            positionAtALine -= 20;
-            lineNumber += 2;
-        }
-        else if ((positionAtALine + numberOfSteps) >= 10)
-        {
-            positionAtALine += numberOfSteps;
-            positionAtALine -= 10;
-            lineNumber += 1;
+            tokenPosition += numberOfSteps;
+            tokenPosition -= this.size;
         }
         else
         {
-            positionAtALine += numberOfSteps;
+            tokenPosition += numberOfSteps;
         }
 
-        if (lineNumber >= 4)
-        {
-            lineNumber -= 4;
-        }
-
-        this.playerTokenPositions[playerNumber, 0] = lineNumber;
-        this.playerTokenPositions[playerNumber, 1] = positionAtALine;
+        return tokenPosition;
     }
 }
