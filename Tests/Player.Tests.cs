@@ -7,10 +7,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Tests
 {
     [TestClass]
-    public class Player.Tests
+    public class PlayerTests
     {
         [TestMethod]
-        public void TestMethod1()
+        public void NotImplemented()
         {
             Assert.IsTrue(true);
         }
