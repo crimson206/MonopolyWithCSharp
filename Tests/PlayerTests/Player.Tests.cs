@@ -12,12 +12,5 @@ namespace Tests
             //Assert//
             Assert.IsInstanceOfType(player, typeof(Player));
         }
-        [TestMethod]
-        public void GithubTest()
-        {
-            //Assert//
-            Assert.IsTrue(false);
-        }
-        
     }
 }
