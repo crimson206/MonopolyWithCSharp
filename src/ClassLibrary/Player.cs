@@ -10,15 +10,14 @@ public class Player
 {
     private string name;
 
-
     /// <summary>This constructor initializes the new Point to
-    /// (<paramref name="paramName"/>).
+    /// (<paramref name="playerName"/>).
     /// </summary>
-    /// <param name="paramName">the new Player's Name.</param>
-    public Player(string paramName)
+    /// <param name="playerName">the new Player's Name.</param>
+    public Player(string playerName)
     {
-        this.name = paramName;
+        this.name = playerName;
     }
 
-    public string Name { get => this.name; set => this.name = value; }
+    public string Name { get => this.name; }
 }
