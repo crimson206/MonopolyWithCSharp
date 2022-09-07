@@ -4,13 +4,14 @@ namespace Tests
     public class PlayerTests
     {
         [TestMethod]
-        public void InitializePlayerWithName()
+        public void Initialize_Player_With_Correct_Name()
         {
             //Arrange & Act//
             Player player = new Player(name:"Peter");
 
             //Assert//
-            Assert.IsInstanceOfType(player, typeof(Player));
+            string expectedName = "Peter";
+            Assert.AreEqual(player.Name, expectedName);
         }
     }
 }
