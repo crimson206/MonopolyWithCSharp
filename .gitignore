@@ -1,2 +1,7 @@
 **/bin/
 **/obj/
+**/*.csproj/
+**/*.sln
+**/tasks.json/
+**/settings.json/
+**/launch.json/
