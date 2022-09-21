@@ -6,7 +6,7 @@
 /// <summary>
 /// This class represents players of the game
 /// </summary>
-public class Player
+public class Player : IDice
 {
     private string name;
 
@@ -20,4 +20,11 @@ public class Player
     }
 
     public string Name { get => this.name; }
+
+    private RollDiceResult RollDice()
+    {
+        Random random = new Random();
+        RollDiceResult rollDiceResult = IDice.Roll(random);
+        return rollDiceResult;
+    }
 }
