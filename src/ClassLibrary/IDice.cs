@@ -4,16 +4,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 /// <summary>
-/// This class represents dice
+/// This interface can roll Dice
 /// </summary>
 
 public interface IDice
 {
-    protected static RollDiceResult Roll(Random random)
-    {
-        int die1 = random.Next(1, 7);
-        int die2 = random.Next(1, 7);
-
-        return new RollDiceResult(die1, die2);
-    }
+    protected abstract RollDiceResult Roll(Random random);
 }

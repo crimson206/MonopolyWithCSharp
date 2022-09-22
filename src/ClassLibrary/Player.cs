@@ -6,9 +6,11 @@
 /// <summary>
 /// This class represents players of the game
 /// </summary>
-public class Player : IDice
+public class Player
 {
     private string name;
+
+    private Dice dice = new Dice();
 
     /// <summary>This constructor initializes the new Point to
     /// (<paramref name="name"/>).
@@ -20,11 +22,4 @@ public class Player : IDice
     }
 
     public string Name { get => this.name; }
-
-    private RollDiceResult RollDice()
-    {
-        Random random = new Random();
-        RollDiceResult rollDiceResult = IDice.Roll(random);
-        return rollDiceResult;
-    }
 }
