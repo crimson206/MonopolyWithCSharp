@@ -11,9 +11,9 @@ public class Dice : IDice
 {
     public RollDiceResult Roll(Random random)
     {
-        int die1 = random.Next(1, 7);
-        int die2 = random.Next(1, 7);
 
-        return new RollDiceResult(die1, die2);
+        int[] diceValues = {random.Next(1, 7), random.Next(1, 7)};
+
+        return new RollDiceResult(diceValues);
     }
 }

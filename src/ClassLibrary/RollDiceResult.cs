@@ -8,14 +8,14 @@
 /// </summary>
 public class RollDiceResult
 {
-    public RollDiceResult(int die1, int die2)
+    public RollDiceResult(int[] diceValues)
     {
-        this.Resutls = new int[] { die1, die2 };
-        this.Total = die1 + die2;
-        this.IsDouble = die1 == die2;
+        this.DiceValues = diceValues;
+        this.Total = DiceValues.Sum();
+        this.IsDouble = DiceValues[0] == DiceValues[1];
     }
 
-    public int[] Resutls { get; set; }
+    public int[] DiceValues { get; set; }
 
     public int Total { get; set; }
 
