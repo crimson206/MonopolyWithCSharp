@@ -11,8 +11,8 @@ public class RollDiceResult
     public RollDiceResult(int[] diceValues)
     {
         this.DiceValues = diceValues;
-        this.Total = DiceValues.Sum();
-        this.IsDouble = DiceValues[0] == DiceValues[1];
+        this.Total = this.DiceValues.Sum();
+        this.IsDouble = this.DiceValues[0] == this.DiceValues[1];
     }
 
     public int[] DiceValues { get; set; }
