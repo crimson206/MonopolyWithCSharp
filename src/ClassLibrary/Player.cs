@@ -10,6 +10,8 @@ public class Player
 {
     private string name;
 
+    private Dice dice = new Dice();
+
     /// <summary>This constructor initializes the new Point to
     /// (<paramref name="name"/>).
     /// </summary>
