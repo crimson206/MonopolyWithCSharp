@@ -6,7 +6,7 @@
 /// <summary>
 /// This class helps players with the movement and provide basic infos of board tiles
 /// </summary>
-public class Board
+public class Board : IMovementCalculator
 {
     private List<CommonTileInfo> commonTileInfos;
 
