@@ -6,7 +6,6 @@
 /// <summary>
 /// This class represents dice.
 /// </summary>
-
 public class Dice : IDice
 {
     public RollDiceResult Roll(Random random)
