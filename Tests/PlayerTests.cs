@@ -7,11 +7,11 @@ namespace Tests
         public void Initialize_Player_With_Correct_Name()
         {
             //Arrange & Act//
-            Player player = new Player(name:"Peter");
+            Player player = new Player(name:"Peter", iD:0, new Bank());
 
             //Assert//
             string expectedName = "Peter";
-            Assert.AreEqual(player.Name, expectedName);
+            Assert.AreEqual(player.name, expectedName);
         }
     }
 }
