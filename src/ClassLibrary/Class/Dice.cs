@@ -6,10 +6,16 @@
 /// <summary>
 /// This class represents dice.
 /// </summary>
+public class Dice
+{   
 
-public class Dice : IDice
-{
-    public RollDiceResult Roll(Random random)
+    /// <summary>
+    /// This method provides the result of rolling dice
+    /// </summary>
+    /// <param name="random">The random number generator</param>
+    /// <returns>Results of two dice, the sum,
+    /// and the bool value whether it was double</returns>
+    public static RollDiceResult Roll(Random random)
     {
 
         int[] diceValues = {random.Next(1, 7), random.Next(1, 7)};
