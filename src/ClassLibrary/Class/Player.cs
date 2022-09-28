@@ -12,6 +12,7 @@ public class Player
     private int iD { get; }
     private Bank bank;
     private int money => bank.GetBalance(this.iD);
+    public int Money{get => money;}
 
     /// <summary>This constructor initializes the new Point to
     /// (<paramref name="name"/>).
