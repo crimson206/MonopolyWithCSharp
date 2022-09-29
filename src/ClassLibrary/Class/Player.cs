@@ -9,7 +9,6 @@
 public class Player
 {
     private string name;
-    private Board board;
     private int position = 0;
     private int lastPosition = 0;
     private Dice dice = new Dice();
@@ -18,10 +17,9 @@ public class Player
     /// (<paramref name="name"/>).
     /// </summary>
     /// <param name="name">the new Player's Name.</param>
-    public Player(string name, Board board)
+    public Player(string name)
     {
         this.name = name;
-        this.board = board;
     }
 
     public string Name { get => this.name; }
@@ -38,7 +36,7 @@ public class Player
               this.position = value; }
     }
 
-    private void Move(int amount)
+    private void Move(int amount, Board board)
     {
         this.Position = board.CalculateMoveInBoard(this.Position, amount);
     }
