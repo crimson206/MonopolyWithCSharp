@@ -45,8 +45,9 @@ public class EventHandler
     public void JailTurn(Player player)
     {
         ///Visual.PlayerHasJailTurn(iD)
-        ///RollDiceResult
-        ///Visual.PlayerRolled(iD,RollDiceResult)
+        PlayerRolled(player);
+
+        ///rolledDouble
         if(true)
         {
 
