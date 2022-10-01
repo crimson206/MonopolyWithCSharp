@@ -101,7 +101,24 @@ namespace Tests
 
             int expectedPosition = 7;
             Assert.AreEqual(movementCircle.PositionsWithIDs[1], expectedPosition);
+        }
 
+        [TestMethod]
+        public void Can_Not_Move_Backward_In_Circle()
+        {
+            MovementCircle movementCircle = new MovementCircle(circleSize:10);
+            movementCircle.RegisterID(1);
+
+            Assert.ThrowsException<Exception>(() => movementCircle.MoveInCircle(1,-7));
+        }
+
+        [TestMethod]
+        public void Can_Not_Stay_At_Same_Position_By_Moving_In_Circle()
+        {
+            MovementCircle movementCircle = new MovementCircle(circleSize:10);
+            movementCircle.RegisterID(1);
+
+            Assert.ThrowsException<Exception>(() => movementCircle.MoveInCircle(1,0));
         }
 
 

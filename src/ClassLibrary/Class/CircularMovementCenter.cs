@@ -49,9 +49,16 @@ public class MovementCircle
     /// <returns></returns>
     public int MoveInCircle(int ID, int amount)
     {
-        int noLimitPosition = (this.positionsWithIDs[ID] + amount);
-        this.positionsWithIDs[ID] = (this.positionsWithIDs[ID] + amount) % size;
-        return noLimitPosition / size;
+        if(amount>0)
+        {
+            int noLimitPosition = (this.positionsWithIDs[ID] + amount);
+            this.positionsWithIDs[ID] = (this.positionsWithIDs[ID] + amount) % size;
+            return noLimitPosition / size;
+        }
+        else
+        {
+            throw new Exception("The amount to move must be a positive integer");
+        }
     }
 
     /// <summary>
