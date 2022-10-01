@@ -15,7 +15,7 @@ namespace Tests
             MovementCircle movementCircle = new MovementCircle(circleSize:10);
             
             int expectedCircleSize = 10;
-            Assert.AreEqual(movementCircle.size, expectedCircleSize);
+            Assert.AreEqual(movementCircle.Size, expectedCircleSize);
         }
 
 
@@ -25,7 +25,7 @@ namespace Tests
             MovementCircle movementCircle = new MovementCircle(circleSize:10);
             
             int expectedCircleSize = 10;
-            Assert.AreEqual(movementCircle.size, expectedCircleSize);
+            Assert.AreEqual(movementCircle.Size, expectedCircleSize);
         }
 
         [TestMethod]
