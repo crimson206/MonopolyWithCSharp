@@ -7,9 +7,9 @@
 /// This class represents dice.
 /// </summary>
 
-public class Dice : IDice
+public class Dice
 {
-    public RollDiceResult Roll(Random random)
+    public static RollDiceResult Roll(Random random)
     {
 
         int[] diceValues = {random.Next(1, 7), random.Next(1, 7)};
