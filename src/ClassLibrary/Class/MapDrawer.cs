@@ -97,13 +97,13 @@ public class MapDrawer
         /// from right to left of the bottom line
         for (int i = 0; i < conceptionalMapWidth; i++)
         {
-            tileEdgeCollection.Add(new int[] { (tile0EdgeX + (distanceBetweenTilesX * (conceptionalMapWidth - 1))),  tile0EdgeY + (distanceBetweenTilesY * conceptionalMapHeight) });
+            tileEdgeCollection.Add(new int[] { (tile0EdgeX + (distanceBetweenTilesX * (conceptionalMapWidth - i))),  tile0EdgeY + (distanceBetweenTilesY * conceptionalMapHeight) });
         }
 
         /// from down to up of the left line
         for (int i = 0; i < conceptionalMapHeight; i++)
         {
-            tileEdgeCollection.Add(new int[] { tile0EdgeX, tile0EdgeY + (distanceBetweenTilesY * (conceptionalMapHeight - 1)) });
+            tileEdgeCollection.Add(new int[] { tile0EdgeX, tile0EdgeY + (distanceBetweenTilesY * (conceptionalMapHeight - i)) });
         }
 
         return tileEdgeCollection;
