@@ -1,9 +1,8 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
         {
-            "name": ".NET Core Launch (console)",
+            "name": ".NET Core Launch (console), internalConsole",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -12,6 +11,18 @@
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
+        },
+       
+        {
+            "name": ".NET Core Launch (console), integratedTerminal",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/UI/bin/Debug/net6.0/UI.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
         },
         {
             "name": ".NET Core Attach",
