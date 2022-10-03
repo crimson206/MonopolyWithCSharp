@@ -17,12 +17,12 @@ namespace Tests.TestResults
 
             ///JObject json = JObject.Parse(jstr);
 
-            TileHandler tileHandler = new TileHandler();
+            JsonTileConverter jsonTileConverter = new JsonTileConverter();
 
 
-
-            List<Tile> tiles = tileHandler.CreateTiles(read);
-
+            List<Tile> tiles = jsonTileConverter.CreateTiles2(read);
+            StreamReader read2 = new StreamReader(
+                @"C:\Users\sgkm\VSCodeFolders\MonopolyWithCSharp\tiles.json");
 
             ///JToken jRealEstate = json.Values().ToList()[0];
             ///int test = jRealEstate["position"]!.Value<int>();
