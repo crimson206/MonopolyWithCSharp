@@ -5,10 +5,7 @@
 //-----------------------------------------------------------------------
 /// <summary>
 /// This class can draw a rectangular map.
-/// Set origCol and origCol values to determine the position of a map.
-/// Choose parameters to decide the shape of a map.
-/// A common error is because of the small Console.WindowHeight.
-/// Check if the value is not bigger than your map if the error occurs  and set it larger.
+/// Check Test() method for details.
 /// </summary>
 public class MapDrawer
 {
@@ -49,6 +46,7 @@ public class MapDrawer
     /// <summary>
     /// This methods draw a map in the intergrated terminal.
     /// For the common Monopoly map, mapWidth = mapHeight = 11.
+    /// Check Test() method for details.
     /// </summary>
     /// <param name="mapWidth">The number of tiles counted horizontally</param>
     /// <param name="mapHeight">The number of tiles counted vertically</param>
@@ -64,7 +62,7 @@ public class MapDrawer
 
     /// <summary>
     /// This method provides the calculated points of the left-top edges of tiles of a map when the parameters are used.
-    /// Try the "Test()" method.
+    /// Check Test() method for details.
     /// </summary>
     /// <param name="mapWidth">The number of tiles counted horizontally</param>
     /// <param name="mapHeight">The number of tiles counted vertically</param>
@@ -111,7 +109,7 @@ public class MapDrawer
 
     /// <summary>
     /// This method provides the information of the big inner empty space of the map.
-    /// Try the "Test()" method.
+    /// Check Test() method for details.
     /// </summary>
     /// <param name="mapWidth">The number of tiles counted horizontally</param>
     /// <param name="mapHeight">The number of tiles counted vertically</param>
@@ -141,11 +139,37 @@ public class MapDrawer
     /// 1. draws a map with the parameters.
     /// 2. write tile numbes at the positions calculated by the "CreateTileEdgeCollection()".
     /// 3. measure the size of the inner space of the map using the calculated values by "CreateInnerSpaceIndicator()"
+    /// 
+    /// See the example below.
+    /// 
+    /// **The discription for n and m is not the result of the method.
+    /// N = tileWidth
+    /// M = tileHeight
+    /// 
     /// </summary>
-    /// <param name="mapWidth"></param>
-    /// <param name="mapHeight"></param>
-    /// <param name="tileWidth"></param>
-    /// <param name="tileHeight"></param>
+    /// <example>
+    /// <code = c#>
+    /// 
+    /// mapDrawer.Test(mapWidth:4, mapHeight:3, tileWidth:10, tileHeight:3);
+    /// 
+    /// >>>
+    /// _____________________________________________
+    /// |0         |123456789N|2         |3         |
+    /// |          |2         |          |          |
+    /// |          |M         |          |          |
+    /// |__________|__________|__________|__________|
+    /// |9         |012345678901234567890|4         |
+    /// |          |1                    |          |
+    /// |          |2                    |          |
+    /// |__________|_____________________|__________|
+    /// |8         |7         |6         |5         |
+    /// |          |          |          |          |
+    /// |          |          |          |          |
+    /// |__________|__________|__________|__________|
+    /// 
+    /// </code>
+    /// </example>
+
     public void Test(int mapWidth, int mapHeight, int tileWidth, int tileHeight)
     {
         this.DrawMap(mapWidth, mapHeight, tileWidth, tileHeight);
