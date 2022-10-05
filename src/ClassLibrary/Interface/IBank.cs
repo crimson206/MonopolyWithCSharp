@@ -17,11 +17,11 @@ public interface IBank
     /// <summary>
     /// Let this method make player to lose certain money.
     /// </summary>
-    public abstract bool DecreaseBalance(int iD, int amount);
+    public abstract void DecreaseBalance(int iD, int amount);
 
     /// <summary>
     /// Let this method allow players transfer certain money to each other.
     /// </summary>
-    public abstract bool TransferMoneyFromTo(int fromID, int toID, int amount);
+    public abstract void TransferMoneyFromTo(int fromID, int toID, int amount);
 
 }

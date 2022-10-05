@@ -29,6 +29,15 @@ public class Bank : IBank
     }
 
     /// <summary>
+    /// This method remove the account of an playerNumber from accounts
+    /// </summary>
+    /// <param name="playerNumber"></param>
+    public void RemoveAccount(int playerNumber)
+    {
+        accounts.Remove(playerNumber);
+    }
+
+    /// <summary>
     /// This method increases the account balance of a player of the player number
     /// </summary>
     /// <param name="playerNumber">The balance of the player number will be increased</param>
@@ -40,17 +49,13 @@ public class Bank : IBank
 
     /// <summary>
     /// This method decreases the account balance of an player number.
-    /// It returns true if the balance becomes negative.
     /// </summary>
     /// <param name="playerNumber">The balance of the player number will be decreased</param>
     /// <param name="amount">It is the amount of money to be decreased</param>
-    /// <returns>
-    /// playerNumber < 0 : bool
-    /// </returns>
-    public bool DecreaseBalance(int playerNumber, int amount)
+
+    public void DecreaseBalance(int playerNumber, int amount)
     {
         accounts[playerNumber] -= amount;
-        return accounts[playerNumber] < 0;
     }
 
     /// <summary>
@@ -60,13 +65,19 @@ public class Bank : IBank
     /// <param name="fromPlayerNumber"></param>
     /// <param name="toPlayerNumber"></param>
     /// <param name="amount"></param>
-    /// <returns>
-    /// accounts[fromPlayerNumber] < 0 : bool
-    /// </returns>
-    public bool TransferMoneyFromTo(int fromPlayerNumber, int toPlayerNumber, int amount)
+    public void TransferMoneyFromTo(int fromPlayerNumber, int toPlayerNumber, int amount)
     {
         DecreaseBalance(fromPlayerNumber, amount);
         IncreaseBalance(toPlayerNumber, amount);
-        return accounts[fromPlayerNumber] < 0;
+    }
+
+    /// <summary>
+    /// It checkes if a balance is negative
+    /// </summary>
+    /// <param name="playerNumber"></param>
+    /// <returns> It returns true if the balance of a playerNumber is negative, otherwise it returns false.</returns>
+    public bool IsBalanceNegative(int playerNumber)
+    {
+        return accounts[playerNumber] < 0;
     }
 }
