@@ -36,7 +36,7 @@ namespace Tests
             movementCircle.RegisterID(1);
             
             int expectedPosition = 0;
-            Assert.AreEqual(movementCircle.PositionsWithIDs[1], expectedPosition);
+            Assert.AreEqual(movementCircle.Positions[1], expectedPosition);
         }
 
         [TestMethod]
@@ -45,10 +45,10 @@ namespace Tests
             MovementCircle movementCircle = new MovementCircle(10);
             movementCircle.RegisterID(1);
 
-            movementCircle.PositionsWithIDs[1] = 20;
+            movementCircle.Positions[1] = 20;
             
             int expectedPosition = 0;
-            Assert.AreEqual(movementCircle.PositionsWithIDs[1], expectedPosition);
+            Assert.AreEqual(movementCircle.Positions[1], expectedPosition);
         }
 
         [TestMethod]
@@ -56,8 +56,8 @@ namespace Tests
         {
             MovementCircle movementCircle = new MovementCircle(circleSize:10);
             movementCircle.RegisterID(1);
-            int[] movementAmounts = new int[] {4, 10, 7};
-            int[] expectedPositions = new int[] {4, 4, 1};
+            int[] movementAmounts = new int[] {4, 9, 7};
+            int[] expectedPositions = new int[] {4, 3, 0};
 
             int index = 0;
             foreach (var amount in movementAmounts)
@@ -66,62 +66,27 @@ namespace Tests
                 movementCircle.MoveInCircle(1,amount);
 
                 /// assert ///
-                Assert.AreEqual(movementCircle.PositionsWithIDs[1], expectedPositions[index]);
+                Assert.AreEqual(movementCircle.Positions[1], expectedPositions[index]);
                 index++;
             }    
         }
-
-        [TestMethod]
-        public void Count_Passing_End_Point_While_Moving_In_Circle()
+        [DataTestMethod]
+        [DataRow(15, true)]
+        [DataRow(-15, true)]
+        [DataRow(5, false)]
+        [DataRow(-5, false)]
+        public void Count_Passing_End_Point_While_Moving_In_Circle(int movementAmount, bool expectedBool)
         {
-            MovementCircle movementCircle = new MovementCircle(circleSize:10);
-            movementCircle.RegisterID(1);
-            int[] movementAmounts = new int[] {4, 10, 20};
-            int[] expectedLapCount = new int[] {0, 1, 2};
+            MovementCircle movementCircle = new MovementCircle(circleSize:20);
+            int playerID = 1;
+            int moveToCenter = 10;
+            movementCircle.RegisterID(playerID);
+            movementCircle.MoveInCircle(playerID, moveToCenter);
 
-            int index = 0;
-            foreach (var amount in movementAmounts)
-            {   
-                /// act ///
-                int countLaps = movementCircle.MoveInCircle(1,amount);
+            movementCircle.MoveInCircle(playerID, movementAmount);
 
-                /// assert ///
-                Assert.AreEqual(countLaps, expectedLapCount[index]);
-                index++;
-            }    
+            Assert.AreEqual(movementCircle.PassedEnd(playerID), expectedBool);
         }
-
-        [TestMethod]
-        public void Move_In_Circle_While_Counting_Passing_End()
-        {
-            MovementCircle movementCircle = new MovementCircle(circleSize:10);
-            movementCircle.RegisterID(1);
-
-            int countLaps = movementCircle.MoveInCircle(1,7);
-
-            int expectedPosition = 7;
-            Assert.AreEqual(movementCircle.PositionsWithIDs[1], expectedPosition);
-        }
-
-        [TestMethod]
-        public void Can_Not_Move_Backward_In_Circle()
-        {
-            MovementCircle movementCircle = new MovementCircle(circleSize:10);
-            movementCircle.RegisterID(1);
-
-            Assert.ThrowsException<Exception>(() => movementCircle.MoveInCircle(1,-7));
-        }
-
-        [TestMethod]
-        public void Can_Not_Stay_At_Same_Position_By_Moving_In_Circle()
-        {
-            MovementCircle movementCircle = new MovementCircle(circleSize:10);
-            movementCircle.RegisterID(1);
-
-            Assert.ThrowsException<Exception>(() => movementCircle.MoveInCircle(1,0));
-        }
-
-
         [TestMethod]
         public void Teleport_To_Point()
         {
@@ -131,7 +96,7 @@ namespace Tests
             movementCircle.Teleport(1, 4);
 
             int expectedPosition = 4;
-            Assert.AreEqual(movementCircle.PositionsWithIDs[1],expectedPosition);
+            Assert.AreEqual(movementCircle.Positions[1],expectedPosition);
         }
         [TestMethod]
         public void Can_Not_Teleport_Out_of_Circle()

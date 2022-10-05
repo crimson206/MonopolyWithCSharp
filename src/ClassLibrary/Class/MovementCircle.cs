@@ -8,9 +8,11 @@
 /// </summary>
 public class MovementCircle
 {
-    private Dictionary<int, int> positionsWithIDs = new Dictionary<int, int>
+    private Dictionary<int, int> positions = new Dictionary<int, int>
     {
     };
+
+    private Dictionary<int, bool> passedEnd = new Dictionary<int, bool>{};
 
     /// <summary>
     /// This constructor initialize a movementCircle obj with the size of the circle
@@ -30,7 +32,7 @@ public class MovementCircle
     /// This is a lambda function to return a "copy" of the inner data.
     /// Changes for the inner data are only allowed using "MoveInCircle" and "Teleport" mothods in the object
     /// </summary>
-    public Dictionary<int, int> PositionsWithIDs { get => new Dictionary<int, int>(this.positionsWithIDs); }
+    public Dictionary<int, int> Positions { get => new Dictionary<int, int>(this.positions); }
 
     /// <summary>
     /// This method adds an ID to the position dictionary. The initial position is 0.
@@ -38,29 +40,50 @@ public class MovementCircle
     /// <param name="iD"></param>
     public void RegisterID(int iD)
     {
-        this.positionsWithIDs.Add(iD, 0);
+        this.positions.Add(iD, 0);
+        this.passedEnd.Add(iD,false);
+    }
+
+    /// <summary>
+    /// This method remove an ID from the position dictionary.
+    /// </summary>
+    /// <param name="iD"></param>
+    public void RemoveID(int iD)
+    {
+        this.positions.Remove(iD);
+        this.passedEnd.Remove(iD);
     }
 
     /// <summary>
     /// This mothod moves a position of an ID by the amount in the circle.
     /// new position = (old position + amount) % circle size.
-    /// Finally it returns the count of passing the end point.
+    /// One can move smaller than the size of the circle at once.
     /// </summary>
-    /// <param name="iD"></param>
-    /// <param name="amount"></param>
-    /// <returns></returns>
-    public int MoveInCircle(int iD, int amount)
+    /// <param name="iD">playerID</param>
+    /// <param name="amount">amount to move</param>
+    public void MoveInCircle(int iD, int amount)
     {
-        if (amount > 0)
+
+        int oldPosition = this.positions[iD];
+        this.positions[iD] = (oldPosition + amount) % this.Size;
+
+        if ( oldPosition + amount < this.Size && oldPosition + amount >= 0 )
         {
-            int noLimitPosition = this.positionsWithIDs[iD] + amount;
-            this.positionsWithIDs[iD] = (this.positionsWithIDs[iD] + amount) % this.Size;
-            return noLimitPosition / this.Size;
+            passedEnd[iD] = false;
         }
         else
         {
-            throw new Exception("The amount to move must be a positive integer");
+            passedEnd[iD] = true;
         }
+
+    }
+    /// <summary>
+    /// This method checks if a player passed the end point by the last MoveInCircle method
+    /// </summary>
+    /// <param name="playerID"></param>
+    public bool PassedEnd(int playerID)
+    {
+        return passedEnd[playerID];
     }
 
     /// <summary>
@@ -72,7 +95,7 @@ public class MovementCircle
     {
         if (point >= 0 & point <= this.Size)
         {
-            this.positionsWithIDs[iD] = point;
+            this.positions[iD] = point;
         }
         else
         {
