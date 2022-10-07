@@ -1,25 +1,49 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="Player.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
-/// <summary>
-/// This class represents players of the game
-/// </summary>
+﻿
 public class Player
 {
-    private string name;
+    private static int indexer = 0;
+    private Data data;
+    private int playerNumber;
+    private int[] lastRollDiceResult = new int[2];
+    private bool lastBoolDecision;
 
-    private Dice dice = new Dice();
-
-    /// <summary>This constructor initializes the new Point to
-    /// (<paramref name="name"/>).
-    /// </summary>
-    /// <param name="name">the new Player's Name.</param>
-    public Player(string name)
+    public Player(Data data)
     {
-        this.name = name;
+        this.data = data;
+        this.playerNumber = indexer;
+        indexer++;
     }
 
-    public string Name { get => this.name; }
+    public int PlayerNumber { get => this.playerNumber; }
+    public int[] LastRollDiceResult { get => this.lastRollDiceResult; }
+    public void RollDice(Random random)
+    {
+        this.lastRollDiceResult = Dice.Roll(random);
+        data.UpdatePlayer(this);
+    }
+
+    public bool LastBoolDecision
+    {
+        get 
+        {
+            return this.lastBoolDecision;
+        }
+        set
+        {
+            this.lastBoolDecision = value;
+            data.UpdatePlayer(this);
+        }
+    }
+
+    public void WantToUseJailFreeCard()
+    {
+        if (data.FreeJailCards[this.playerNumber] != 0)
+        {
+            this.LastBoolDecision = true;
+        }
+        else
+        {
+            this.LastBoolDecision = false;
+        }
+    }
 }

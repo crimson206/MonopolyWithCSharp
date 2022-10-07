@@ -6,7 +6,7 @@
 /// <summary>
 /// This class store the results of RollDice()
 /// </summary>
-public class RollDiceResult
+public class RollDiceResult : ICloneable
 {
     public RollDiceResult(int[] diceValues)
     {
@@ -15,6 +15,10 @@ public class RollDiceResult
         this.IsDouble = DiceValues[0] == DiceValues[1];
     }
 
+    public object Clone()
+    {
+        return this.MemberwiseClone();
+    }
     public int[] DiceValues { get; set; }
 
     public int Total { get; set; }
