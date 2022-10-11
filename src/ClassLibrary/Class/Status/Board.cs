@@ -10,10 +10,15 @@ public class Board
     {
         this.size = size;
         this.goPosition = goPosition;
+
+        if (goPosition > size)
+        {
+            throw new Exception();
+        }
     }
 
     public List<int> PlayerPositions { get => this.playerPositions; }
-    public List<bool> PlayerPassedGo { get => this.PlayerPassedGo; }
+    public List<bool> PlayerPassedGo { get => this.playerPassedGo; }
 
     public void MovePlayerAroundBoard(int playerNumber, int amount)
     {
@@ -21,19 +26,39 @@ public class Board
         int newPosition = (oldPosition + amount) % this.size;
         this.playerPositions[playerNumber] = newPosition;
 
-        playerPassedGo[playerNumber] = PassedGo(oldPosition, newPosition);
+        this.playerPassedGo[playerNumber] = PassedGo(oldPosition, newPosition);
+
+        if(amount >= this.size)
+        {
+            throw new Exception();
+        }
     }
 
     private bool PassedGo(int oldPosition, int newPosition)
     {
-        if (oldPosition < goPosition && newPosition >= goPosition)
+        if (oldPosition < goPosition)
         {
-            return true;
+            if (newPosition >= goPosition || newPosition < oldPosition)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
-            return false;
+            if ( newPosition >= goPosition && newPosition < oldPosition )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+
     }
 
 }

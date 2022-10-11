@@ -1,20 +1,22 @@
 
 public class RollToMove : Event
 {
-    public RollToMove(Delegator delegator) : base(delegator)
+    private DoubleSideEffectManager doubleSideEffectManager;
+    public RollToMove(EventStorage eventStorage, Delegator delegator, DoubleSideEffectManager doubleSideEffectManager) : base(eventStorage, delegator)
     {
+        this.doubleSideEffectManager = doubleSideEffectManager;
         this.delegator= delegator;
-        this.delegator.rollToMove = this.Start;
+        this.delegator.nextEvent = this.Start;
     }
     int playerNumber => this.delegator!.CurrentPlayerNumber;
-    private void Start(DoubleSideEffectManager doubleSideEffectManager)
+    public override void Start()
     {
         doubleSideEffectManager.ExtraTurns[playerNumber] = false;
         this.delegator!.playerRollDice = true;
-        delegator.rollToMove = this.RolledPlayerDouble;
+        delegator.nextEvent = this.RolledPlayerDouble;
     }
 
-    private void RolledPlayerDouble(DoubleSideEffectManager doubleSideEffectManager)
+    private void RolledPlayerDouble()
     {
         int[] rollDiceResult = this.delegator!.PlayerRollDiceResult;
         bool rolledPlayerDouble = rollDiceResult[0] == rollDiceResult[1];
@@ -22,29 +24,29 @@ public class RollToMove : Event
         if (rolledPlayerDouble == true)
         {
             doubleSideEffectManager.DoubleCounts[playerNumber]++;
-            delegator.rollToMove = this.RolledPlayerDoubleThreeTimes;
+            delegator.nextEvent = this.RolledPlayerDoubleThreeTimes;
         }
         else
         {
-            this.SetNextEvent(EventType.Move);
+            ///this.SetNextEvent(EventType.Move);
         }
     }
 
-    private void RolledPlayerDoubleThreeTimes(DoubleSideEffectManager doubleSideEffectManager)
+    private void RolledPlayerDoubleThreeTimes()
     {
         if ( doubleSideEffectManager.DoubleCounts[playerNumber] == 3)
         {
-            this.SetNextEvent(EventType.GoToJail);
+            ///this.SetNextEvent(EventType.GoToJail);
         }
         else
         {
             doubleSideEffectManager.ExtraTurns[playerNumber] = true;
-            this.SetNextEvent(EventType.Move);
+            ///this.SetNextEvent(EventType.Move);
         }
     }
-    protected override void SetNextEvent(EventType nextEvent)
+    protected void SetNextEvent(Event gameEvent)
     {
-        this.delegator!.nextEvent = nextEvent;
-        this.delegator.rollToMove = this.Start;
+
+        this.delegator.nextEvent = gameEvent.Start;
     }
 }

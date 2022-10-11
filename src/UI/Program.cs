@@ -7,7 +7,6 @@ internal class Program
         TileManager tilesManager = new TileManager();
         MapTilesFactory mapTilesFactory = new MapTilesFactory();
         Random random = new Random();
-        tilesManager.SetTiles();
 
         Board board = new Board(tilesManager.Tiles.Count(), 0);
 
@@ -19,13 +18,15 @@ internal class Program
     
         List<Player> players = new List<Player> {new Player(), new Player(),new Player(),new Player()};
 
-        TryToEscapeJail tryToEscapeJail = new TryToEscapeJail(delegator);
+        DoubleSideEffectManager doubleSideEffectManager = new DoubleSideEffectManager();
 
         JailManager jailManager = new JailManager();
         Bank bank = new Bank();
 
-        delegator.nextEvent = EventType.TryToEscapeJail;
-        delegator.tryToEscapeJail = tryToEscapeJail.Start;
+        EventStorage eventStorage = new EventStorage(delegator, bank, board, tilesManager, jailManager, doubleSideEffectManager);
+        
+
+        delegator.nextEvent = eventStorage.tryToEscapeJail.Start;
         delegator.CurrentPlayerNumber = 0;
         int i = 0;
         visualizer.Visualize();
@@ -44,14 +45,12 @@ internal class Program
                 delegator.PlayerRollDiceResult = Dice.Roll(random);
             }
 
-            if (delegator.nextEvent == EventType.TryToEscapeJail)
-            {
-                delegator.tryToEscapeJail(jailManager, bank);
-            }
-            if (delegator.nextEvent == EventType.TryToEscapeJail)
-            {
-                delegator.tryToEscapeJail(jailManager, bank);
-            }
+
+            delegator.nextEvent();
+
+
+            
+
 
 
 

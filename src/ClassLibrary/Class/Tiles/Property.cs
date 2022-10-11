@@ -3,7 +3,6 @@ public abstract class Property : Tile
     protected int? ownerPlayerNumber = null;
     protected int price;
     protected List<int> rents = new List<int>();
-    private List<Property> group = new List<Property>();
     protected int currentRent => CalCurrentRent();
     protected int mortgage;
     protected int password;
@@ -21,7 +20,7 @@ public abstract class Property : Tile
     public List<int> Rents { get => rents; }
     public int CurrentRent { get => currentRent; }
     public int Mortgage { get => mortgage; }
-    public bool IsMortagaged { get => this.isMortgaged; }
+    public bool IsMortgaged { get => this.isMortgaged; }
     public void SetOnwerPlayerNumber(int password, int? playerNumber)
     {
         if ( password == this.password)

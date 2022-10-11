@@ -3,52 +3,57 @@ public class LandOnTile : Event
 {
     private int playerPosition;
     private Tile? currentTile;
-    public LandOnTile(Delegator delegator) : base(delegator)
+    private Board board;
+    private TileManager tileManager;
+    public LandOnTile(EventStorage eventStorage, Delegator delegator, Board board, TileManager tileManager) : base(eventStorage, delegator)
     {
+        this.eventStorage = eventStorage;
+        this.board = board;
+        this.tileManager = tileManager;
         this.delegator= delegator;
-        delegator.landOnTile = this.Start;
+        delegator.nextEvent = this.Start;
     }
     int playerNumber => this.delegator!.CurrentPlayerNumber;
 
-    private void Start(Board board, TileManager tileManager)
+    public override void Start()
     {
-        this.delegator!.landOnTile = this.CheckTile;
+        this.delegator!.nextEvent = this.CheckTile;
         this.playerPosition = board.PlayerPositions[playerNumber];
         this.currentTile = tileManager.Tiles[playerPosition];
     }
-    private void CheckTile(Board board, TileManager tileManager)
+    private void CheckTile()
     {
         
         if (this.currentTile is Property)
         {
 
-            SetNextEvent(EventType.LandOnProperty);
+            ///SetNextEvent(EventType.LandOnProperty);
         }
         else if (this.currentTile is Chance)
         {
 
-            SetNextEvent(EventType.LandOnCardTile);
+            ///SetNextEvent(EventType.LandOnCardTile);
         }
         else if (this.currentTile is GoToJail)
         {
 
-            SetNextEvent(EventType.GoToJail);        
+            ///SetNextEvent(EventType.GoToJail);        
         }
         else if (this.currentTile is TaxTile)
         {
 
-            SetNextEvent(EventType.PayTax);
+            ///SetNextEvent(EventType.PayTax);
         }
         else
         {
-            SetNextEvent(EventType.CheckExtraTurn);
+            ///SetNextEvent(EventType.CheckExtraTurn);
         }
     }
 
-    protected override void SetNextEvent(EventType nextEvent)
+    protected void SetNextEvent(Event gameEvent)
     {
-        this.delegator!.nextEvent = nextEvent;
-        this.delegator.landOnTile = this.Start;
+
+        this.delegator.nextEvent = gameEvent.Start;
     }
 
 }

@@ -6,20 +6,24 @@ public class RailRoad : Property
 
     }
 
-    private List<Property> group = new List<Property>();
+    private List<RailRoad> group = new List<RailRoad>();
 
-    public void SetGroup(List<Property> railroads)
+    public void SetGroup(int password, List<RailRoad> railroads)
     {
         this.group = railroads;
     }
 
-    private int CalCurrentRent()
+    protected override int CalCurrentRent()
     {
-        if ( this.ownerPlayerNumber is not null )
+        if ( this.ownerPlayerNumber is not null)
         {
             int numRailRoadsWithSameOwner = group.Where(group => group.OwnerPlayerNumber == this.ownerPlayerNumber).ToList().Count();
+            return this.rents[numRailRoadsWithSameOwner-1];
         }
-        
+        else
+        {
+            return this.rents[0];
+        }
     }
 
 }

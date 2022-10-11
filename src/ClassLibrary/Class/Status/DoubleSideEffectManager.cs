@@ -6,8 +6,23 @@ public class DoubleSideEffectManager
 
     public List<bool> ExtraTurn { get => this.extraTurns; }
 
-    public List<int> DoubleCounts{ get => new List<int> (this.doubleCounts); set => this.doubleCounts = value; }
+    public List<int> DoubleCounts{ get => new List<int> (this.doubleCounts);}
 
-    public List<bool> ExtraTurns{ get => new List<bool> (this.extraTurns); set => this.extraTurns = value; }
+    public List<bool> ExtraTurns{ get => new List<bool> (this.extraTurns);}
+
+    public void CountDouble(int playerNumber)
+    {
+        this.doubleCounts[playerNumber]++;
+    }
+
+    public void ResetDoubleCount(int playerNumber)
+    {
+        this.doubleCounts[playerNumber] = 0;
+    }
+
+    public void SetExtraTurn(int playerNumber, bool extraTurn)
+    {
+        this.extraTurns[playerNumber] = extraTurn;
+    }
 
 }

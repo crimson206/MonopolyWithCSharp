@@ -1,16 +1,11 @@
-public enum EventType
+public abstract class Event
 {
-    TryToEscapeJail,
-    RollToMove,
-    EscapeJail,
-    EndTurn,
-    GoToJail,
-    Move,
-    ReceiveSalary,
-    LandOnTile,
-    LandOnProperty,
-    LandOnCardTile,
-    PayTax,
-    CheckExtraTurn,
-
+    public abstract void Start();
+    protected Delegator? delegator;
+    protected EventStorage eventStorage;
+    public Event(EventStorage eventStorage, Delegator delegator)
+    {
+        this.eventStorage = eventStorage;
+        this.delegator = delegator;
+    }
 }

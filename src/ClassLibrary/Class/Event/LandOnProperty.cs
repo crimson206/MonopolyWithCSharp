@@ -1,51 +1,58 @@
 public class LandOnProperty : Event
 {
 
+
     private int playerPosition;
     private Property? currentProperty;
-
-    public LandOnProperty(Delegator delegator) : base(delegator)
+    private Board board;
+    private TileManager tileManager;
+    private Bank bank;
+    public LandOnProperty(EventStorage eventStorage, Delegator delegator, Bank bank, Board board, TileManager tileManager) : base(eventStorage, delegator)
     {
+        this.eventStorage = eventStorage;
+        this.bank = bank;
+        this.board = board;
+        this.tileManager = tileManager;
         this.delegator= delegator;
-        delegator.landOnProperty = this.Start;
-        
+        delegator.nextEvent = this.Start;
     }
 
     int playerNumber => this.delegator!.CurrentPlayerNumber;
 
-    private void Start(Bank bank, Board board, TileManager tileManager)
+    public override void Start()
     {
-        this.delegator!.landOnProperty = this.CheckOwner;
+        this.delegator!.nextEvent = this.CheckOwner;
         this.playerPosition = board.PlayerPositions[playerNumber];
         this.currentProperty = (Property) tileManager.Tiles[playerPosition];
     }
-    private void CheckOwner(Bank bank, Board board, TileManager tileManager)
+    private void CheckOwner()
     {
         if (this.currentProperty!.OwnerPlayerNumber == playerNumber)
         {
-            this.SetNextEvent(EventType.CheckExtraTurn);
+            /// this.SetNextEvent(EventType.CheckExtraTurn);
         }
         else if (currentProperty == null)
         {
             this.delegator!.boolDecisionType = BoolDecisionType.WantToBuyProperty;
-            this.delegator.landOnProperty = this.WantPlayerBuyProperty;
+            this.delegator.nextEvent = this.WantPlayerBuyProperty;
         }
     }
-    private void WantPlayerBuyProperty(Bank bank, Board board, TileManager tileManager)
+    private void WantPlayerBuyProperty()
     {
         if (this.delegator!.PlayerBoolDecision)
         {
             int propertyPrice = this.currentProperty!.Price;
-            tileManager.ChangePropertyOwner(playerPosition, playerNumber);
-            bank.ChangeBalance(playerNumber, -propertyPrice);
+            tileManager.propertyManager.ChangeOwner(currentProperty, playerNumber);
+            bank.Balances[playerNumber] -= propertyPrice;
         }
 
-        this.SetNextEvent(EventType.CheckExtraTurn);
+        /// must be check double turn
+        /// ////this.SetNextEvent(eventStorage.rollToMove);
     }
 
-    protected override void SetNextEvent(EventType nextEvent)
+    protected void SetNextEvent(Event gameEvent)
     {
-        this.delegator!.nextEvent = nextEvent;
-        delegator.landOnProperty = this.Start;
+
+        delegator.nextEvent = gameEvent.Start;
     }
 }

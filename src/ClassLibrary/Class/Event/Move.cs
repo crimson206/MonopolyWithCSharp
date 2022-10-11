@@ -1,36 +1,40 @@
 public class Move : Event
 {
-    public Move(Delegator delegator) : base(delegator)
+    private Board board;
+
+    public Move(EventStorage eventStorage, Delegator delegator, Board board) : base(eventStorage, delegator)
     {
+        this.eventStorage = eventStorage;
+        this.board = board;
         this.delegator= delegator;
-        this.delegator.move = this.Start;
+        this.delegator.nextEvent = this.Start;
     }
     int playerNumber => this.delegator!.CurrentPlayerNumber;
-    private void Start(Board board)
+    public override void Start()
     {
-        this.delegator!.move = this.MovePlayer;
+        this.delegator!.nextEvent = this.MovePlayer;
 
     }
-    private void MovePlayer(Board board)
+    private void MovePlayer()
     {
         int amountToMove = this.delegator!.PlayerRollDiceResult.Sum();
         board.MovePlayerAroundBoard(playerNumber, amountToMove);
-        delegator.move = this.PassedPlayerGo;
+        delegator.nextEvent = this.PassedPlayerGo;
     }
-    private void PassedPlayerGo(Board board)
+    private void PassedPlayerGo()
     {
         if (board.PlayerPassedGo[playerNumber])
         {
-            SetNextEvent(EventType.ReceiveSalary);
+            ///SetNextEvent(EventType.ReceiveSalary);
         }
         else
         {
-            SetNextEvent(EventType.LandOnTile);
+            ///SetNextEvent(EventType.LandOnTile);
         }
     }
-    protected override void SetNextEvent(EventType nextEvent)
+    protected void SetNextEvent(Event gameEvent)
     {
-        this.delegator!.nextEvent = nextEvent;
-        this.delegator.move = this.Start;
+
+        this.delegator.nextEvent = gameEvent.Start;
     }
 }

@@ -6,7 +6,7 @@ public class MapTilesFactory
         ///RealEstate corner rail utily chance tax chest
         ///22 + 4 + 4 + 2 + 3+ 2 + 3
         List<Tile> mapTiles = new List<Tile>();
-        List<Tile> realEstates = CreateRealEstateGroups(numOfRealRestates, 80, 400, random, password);
+        List<RealEstate> realEstates = CreateRealEstateGroups(numOfRealRestates, 80, 400, random, password);
         List<RailRoad> railRoads = CreateRailRoads(numOfRailRoads, 200, 2, password);
         List<Utility> uitilities = CreateUtilities(numOfUtilities, 100, 4, 6, password);
         List<Tile> evenTiles = CreateEventTiles(numOfChances, numOfCommunityChests);
@@ -101,7 +101,7 @@ public class MapTilesFactory
 
         int mortgageValue = price/2;
 
-        return new RealEstate(name, price, rents, mortgageValue, color, password);
+        return new RealEstate(name, price, buildingCost, rents, mortgageValue, color, password);
     }
 
     /// <summary>
@@ -112,18 +112,23 @@ public class MapTilesFactory
     /// <param name="referencePrice"></param>
     /// <param name="lastRentRate"></param>
     /// <returns></returns>
-    private List<Tile> CreateRealEstateColorGroup(int groupSize, string color, int refPrice, int password)
+    private List<RealEstate> CreateRealEstateColorGroup(int groupSize, string color, int refPrice, int password)
     {
-        List<Tile> colorGroup = new List<Tile>();
+        List<RealEstate> colorGroup = new List<RealEstate>();
         
         for (int i = 0; i < groupSize; i++)
         {
             double priceRate = 0.8 + 0.2 * i / (groupSize - 1);
             string name = String.Format("RealEstate {0}{1}", color, i+1);
             int price = (int) (priceRate * refPrice);
-            Tile newRealEstate = CreateRealEstateWithAutoFinance(name, price, color, password);
+            RealEstate newRealEstate = CreateRealEstateWithAutoFinance(name, price, color, password);
             colorGroup.Add(newRealEstate);
         }
+        foreach (var member in colorGroup)
+        {
+            member.SetGroup(password, colorGroup);
+        }
+
         return colorGroup;
     }
 
@@ -143,9 +148,9 @@ public class MapTilesFactory
         };
     }
 
-    private List<Tile> CreateRealEstateGroups(int number, int startPrice, int endPrice, Random random, int password)
+    private List<RealEstate> CreateRealEstateGroups(int number, int startPrice, int endPrice, Random random, int password)
     {
-        List<Tile> realEstates = new List<Tile>();
+        List<RealEstate> realEstates = new List<RealEstate>();
         
         List<int> numOfThreeAndTwo = DistributeNumToThreeAndTwo(number);
         List<int> threeTwoList = ListThreeTwoRandomly(numOfThreeAndTwo, random);
@@ -159,7 +164,7 @@ public class MapTilesFactory
         {
             int groupSize = threeTwoList[i];
             int price = startPrice + (i * priceIncrease);
-            List<Tile> newRealEstateGroup = CreateRealEstateColorGroup(threeTwoList[i], colors[i], price, password);
+            List<RealEstate> newRealEstateGroup = CreateRealEstateColorGroup(threeTwoList[i], colors[i], price, password);
             
             for (int j = 0; j < groupSize; j++)
             {
@@ -210,7 +215,14 @@ public class MapTilesFactory
 
             RailRoad newRailRoad = new RailRoad(name, price, rents, mortgageValue, password);
             railRoads.Add(newRailRoad);
+            newRailRoad.SetGroup(password, railRoads);
         }
+        foreach (var railRoad in railRoads)
+        {
+            railRoad.SetGroup(password, railRoads);
+        }
+
+
         return railRoads;
     }
 
@@ -232,6 +244,11 @@ public class MapTilesFactory
 
             Utility newUtility = new Utility(name, price, rents, mortgageValue, password);
             utilities.Add(newUtility);
+            
+        }
+        foreach (var utility in utilities)
+        {
+            utility.SetGroup(password, utilities);
         }
         return utilities;
     }

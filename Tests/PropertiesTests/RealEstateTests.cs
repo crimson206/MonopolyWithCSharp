@@ -12,9 +12,9 @@ namespace Tests
         [TestMethod]
         public void Are_RealEstate_Groupable()
         {
-            RealEstate realEstate1 = new RealEstate("Real1", 100, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red", 0);
-            RealEstate realEstate2 = new RealEstate("Real2", 100, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red", 0);
-            RealEstate realEstate3 = new RealEstate("Real3", 100, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red", 0);
+            RealEstate realEstate1 = new RealEstate("Real1", 100, 60,  new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red", 0);
+            RealEstate realEstate2 = new RealEstate("Real2", 100, 60, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red", 0);
+            RealEstate realEstate3 = new RealEstate("Real3", 100, 60, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red", 0);
 
             List<RealEstate> colorGroup = new List<RealEstate> {realEstate1, realEstate2, realEstate3};
 
@@ -35,7 +35,7 @@ namespace Tests
             /// make is mortgaged
             realEstate1.SetIsMortgaged(0, true);
             Assert.AreEqual(realEstate1.IsMortgaged, true);
-            Assert.AreEqual(realEstate1.CurrentRent, 0);
+            Assert.AreEqual(realEstate1.CurrentRent, 10);
 
             /// recoverty from mortgaged
             realEstate1.SetIsMortgaged(0, false);
@@ -83,6 +83,11 @@ namespace Tests
 
             /// building one more throws exception
             Assert.ThrowsException<Exception>( () => realEstate1.BuildHouse(0));
+
+            /// distruct a house
+            realEstate1.DistructHouse(0);
+            Assert.AreEqual(realEstate1.NumOfHouses, 4);
+            Assert.ThrowsException<Exception>( () => realEstate1.DistructHouse(0));
         }
     }
 }
