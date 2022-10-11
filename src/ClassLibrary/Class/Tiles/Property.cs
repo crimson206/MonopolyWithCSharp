@@ -1,12 +1,13 @@
-public class Property : Tile
+public abstract class Property : Tile
 {
     protected int? ownerPlayerNumber = null;
     protected int price;
     protected List<int> rents = new List<int>();
-    protected int currentRent;
+    private List<Property> group = new List<Property>();
+    protected int currentRent => CalCurrentRent();
     protected int mortgage;
     protected int password;
-    
+    protected bool isMortgaged;
     public Property(string name, int price, List<int> rents, int mortgageValue, int password) : base(name)
     {
         this.price = price;
@@ -20,18 +21,29 @@ public class Property : Tile
     public List<int> Rents { get => rents; }
     public int CurrentRent { get => currentRent; }
     public int Mortgage { get => mortgage; }
-    public void SetCurrentRent(int password, int rent)
-    {
-        if ( password == this.password)
-        {
-            this.currentRent = rent;
-        }
-    }
-    public void SetOnwerPlayerNumber(int password, int playerNumber)
+    public bool IsMortagaged { get => this.isMortgaged; }
+    public void SetOnwerPlayerNumber(int password, int? playerNumber)
     {
         if ( password == this.password)
         {
             this.ownerPlayerNumber = playerNumber;
+        }
+        else
+        {
+            throw new Exception();
+        }
+    }
+
+    protected abstract int CalCurrentRent();
+    public virtual void SetIsMortgaged(int password, bool isMortgaged)
+    {
+        if ( password != this.password )
+        {
+            throw new Exception();
+        }
+        else
+        {
+            this.isMortgaged = isMortgaged;
         }
     }
 }

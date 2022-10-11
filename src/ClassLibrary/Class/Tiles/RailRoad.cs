@@ -6,4 +6,20 @@ public class RailRoad : Property
 
     }
 
+    private List<Property> group = new List<Property>();
+
+    public void SetGroup(List<Property> railroads)
+    {
+        this.group = railroads;
+    }
+
+    private int CalCurrentRent()
+    {
+        if ( this.ownerPlayerNumber is not null )
+        {
+            int numRailRoadsWithSameOwner = group.Where(group => group.OwnerPlayerNumber == this.ownerPlayerNumber).ToList().Count();
+        }
+        
+    }
+
 }
