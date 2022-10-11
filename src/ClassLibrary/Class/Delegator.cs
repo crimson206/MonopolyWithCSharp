@@ -1,19 +1,25 @@
 public class Delegator
 {
-    public delegate void DelTryToEscapeJail(Delegator delegator, int playerNumber, JailManager jailManager, Bank bank);
+    private int currentPlayerNumber;
+    private bool playerBoolDecision;
+    private int[] rollDiceResult = new int[2];
+    public int CurrentPlayerNumber { get => this.currentPlayerNumber; set => this.currentPlayerNumber = value;}
+    public bool PlayerBoolDecision { get => playerBoolDecision; set => playerBoolDecision = value; }
+    public int[] PlayerRollDiceResult { get => rollDiceResult; set => this.rollDiceResult = value; }
+    public delegate void DelTryToEscapeJail(JailManager jailManager, Bank bank);
     public DelTryToEscapeJail? tryToEscapeJail;
-    public delegate void RollToMove(Delegator delegator, int playerNumber, DoubleSideEffectManager doubleSideEffectManager);
+    public delegate void RollToMove(DoubleSideEffectManager doubleSideEffectManager);
     public RollToMove? rollToMove;
-    public delegate void Move(Delegator delegator, int playerNumber, Board board);
+    public delegate void Move(Board board);
     public Move? move;
-    public delegate void ReceiveSalary(Delegator delegator, int playerNumber, Bank bank);
+    public delegate void ReceiveSalary(Bank bank);
     public ReceiveSalary? receiveSalary;
-    public delegate void LandOnTile(Delegator delegator, int playerNumber);
+    public delegate void LandOnTile(Board board, TileManager tileManager);
     public LandOnTile? landOnTile;
-    public delegate void LandOnProperty(Delegator delegator, int playerNumber, Bank bank, TileManager tileManager);
+    public delegate void LandOnProperty( Bank bank, Board board,  TileManager tileManager);
     public LandOnProperty? landOnProperty;
 
     public bool playerRollDice;
     public EventType nextEvent;
-    public BoolDecisionType? playerBoolDecision;
+    public BoolDecisionType? boolDecisionType;
 }

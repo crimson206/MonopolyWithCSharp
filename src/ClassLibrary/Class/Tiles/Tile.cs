@@ -1,6 +1,6 @@
 public class Tile : ICloneable
 {
-    private string name = "Tile";
+    protected string name = "Tile";
 
     public Tile(string name)
     {

@@ -1,24 +1,37 @@
 public class Property : Tile
 {
-    private int? ownerPlayerNumber = null;
-    private int price;
-    private List<int> rents = new List<int>();
-    public int CurrentRent => CalCurrentRent();
-    private int mortgage;
+    protected int? ownerPlayerNumber = null;
+    protected int price;
+    protected List<int> rents = new List<int>();
+    protected int currentRent;
+    protected int mortgage;
+    protected int password;
     
-    public Property(string name, int price, List<int> rents, int mortgageValue) : base(name)
+    public Property(string name, int price, List<int> rents, int mortgageValue, int password) : base(name)
     {
         this.price = price;
         this.rents = rents;
         this.mortgage = mortgageValue;
+        this.password = password;
     }
 
-    public int? OwnerPlayerNumber { get=>ownerPlayerNumber; set=>ownerPlayerNumber = value; }
+    public int? OwnerPlayerNumber { get=>ownerPlayerNumber; }
     public int Price { get => price; }
     public List<int> Rents { get => rents; }
+    public int CurrentRent { get => currentRent; }
     public int Mortgage { get => mortgage; }
-    private int CalCurrentRent()
+    public void SetCurrentRent(int password, int rent)
     {
-        return 1;
+        if ( password == this.password)
+        {
+            this.currentRent = rent;
+        }
+    }
+    public void SetOnwerPlayerNumber(int password, int playerNumber)
+    {
+        if ( password == this.password)
+        {
+            this.ownerPlayerNumber = playerNumber;
+        }
     }
 }

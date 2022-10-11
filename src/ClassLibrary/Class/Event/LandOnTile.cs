@@ -1,46 +1,54 @@
 
 public class LandOnTile : Event
 {
-    private Data data;
-    private void Start(Delegator delegator, int playerNumber)
+    private int playerPosition;
+    private Tile? currentTile;
+    public LandOnTile(Delegator delegator) : base(delegator)
     {
-        delegator.landOnTile = this.CheckTile;
+        this.delegator= delegator;
+        delegator.landOnTile = this.Start;
     }
-    private void CheckTile(Delegator delegator, int playerNumber)
+    int playerNumber => this.delegator!.CurrentPlayerNumber;
+
+    private void Start(Board board, TileManager tileManager)
     {
-        int playerPosition = data.PlayerPositions[playerNumber];
-        Tile tilePlayerLanded = data.GetTiles()[playerPosition];
+        this.delegator!.landOnTile = this.CheckTile;
+        this.playerPosition = board.PlayerPositions[playerNumber];
+        this.currentTile = tileManager.Tiles[playerPosition];
+    }
+    private void CheckTile(Board board, TileManager tileManager)
+    {
         
-        if (tilePlayerLanded is Property)
+        if (this.currentTile is Property)
         {
 
-            SetNextEvent(delegator, EventType.LandOnProperty);
+            SetNextEvent(EventType.LandOnProperty);
         }
-        else if (tilePlayerLanded is Chance)
+        else if (this.currentTile is Chance)
         {
 
-            SetNextEvent(delegator, EventType.LandOnCardTile);
+            SetNextEvent(EventType.LandOnCardTile);
         }
-        else if (tilePlayerLanded is GoToJail)
+        else if (this.currentTile is GoToJail)
         {
 
-            SetNextEvent(delegator, EventType.GoToJail);        
+            SetNextEvent(EventType.GoToJail);        
         }
-        else if (tilePlayerLanded is TaxTile)
+        else if (this.currentTile is TaxTile)
         {
 
-            SetNextEvent(delegator, EventType.PayTax);
+            SetNextEvent(EventType.PayTax);
         }
         else
         {
-            SetNextEvent(delegator, EventType.CheckExtraTurn);
+            SetNextEvent(EventType.CheckExtraTurn);
         }
     }
 
-    protected override void SetNextEvent(Delegator delegator, EventType nextEvent)
+    protected override void SetNextEvent(EventType nextEvent)
     {
-        delegator.nextEvent = nextEvent;
-        delegator.landOnTile = this.Start;
+        this.delegator!.nextEvent = nextEvent;
+        this.delegator.landOnTile = this.Start;
     }
 
 }

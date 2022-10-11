@@ -1,19 +1,25 @@
 
-    public class ReceiveSalary : Event
+public class ReceiveSalary : Event
+{
+    public ReceiveSalary(Delegator delegator) : base(delegator)
     {
-        private Data data;
-        public void Start(Delegator delegator, int playerNumber, Bank bank)
-        {
-            delegator.receiveSalary = this.ReceivePlayerSalary;
-        }
-        public void ReceivePlayerSalary(Delegator delegator, int playerNumber, Bank bank)
-        {
-            bank.ChangeBalance(playerNumber, bank.Salary);
-            this.SetNextEvent(delegator, EventType.LandOnTile);
-        }
-        protected override void SetNextEvent(Delegator delegator, EventType nextEvent)
-        {
-            delegator.nextEvent = nextEvent;
-            delegator.receiveSalary = this.Start;
-        }
+        this.delegator= delegator;
+        this.delegator.receiveSalary = this.Start;
     }
+    int playerNumber => this.delegator!.CurrentPlayerNumber;
+
+    public void Start(Bank bank)
+    {
+        this.delegator!.receiveSalary = this.ReceivePlayerSalary;
+    }
+    public void ReceivePlayerSalary(Bank bank)
+    {
+        bank.ChangeBalance(playerNumber, bank.Salary);
+        this.SetNextEvent(EventType.LandOnTile);
+    }
+    protected override void SetNextEvent(EventType nextEvent)
+    {
+        this.delegator!.nextEvent = nextEvent;
+        delegator.receiveSalary = this.Start;
+    }
+}

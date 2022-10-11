@@ -5,16 +5,19 @@ public class TileManager
     private List<RealEstate> realEstates = new List<RealEstate> ();
     private List<RailRoad> railRoads = new List<RailRoad> ();
     private List<Utility> utilities = new List<Utility> ();
-
+    private Random random = new Random();
+    private MapTilesFactory mapTilesFactory = new MapTilesFactory();
+    private int password;
     public void ChangePropertyOwner(int tileNum, int playerNum)
     {
         Property property = (Property) tiles[tileNum];
-        property.OwnerPlayerNumber = playerNum;
+        property.SetOnwerPlayerNumber(this.password, playerNum);
     }
 
-    public void SetTiles(List<Tile> tiles)
+    public void SetTiles()
     {
-        this.tiles = tiles;
+        this.password = random.Next(0, (int) Math.Pow(10,6));
+        this.tiles = this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3, random, password);
         SetRealEstates();
         SetRailRoads();
     }
@@ -37,33 +40,10 @@ public class TileManager
         this.utilities = query.ToList();
     }
 
-    public List<Tile> GetTiles()
-    {
-        List<Tile> Tiles = new List<Tile>();
-        foreach (var tile in this.tiles)
-        {
-            Tiles.Add((Tile)tile.Clone());
-        }
-        return Tiles;
-    }
+    public List<Tile> Tiles { get => new List<Tile> (this.tiles); }
 
-    public List<RealEstate> GetRealEstates()
-    {
-        List<RealEstate> RealEstates = new List<RealEstate>();
-        foreach (var realEstate in this.realEstates)
-        {
-            RealEstates.Add((RealEstate)realEstate.Clone());
-        }
-        return RealEstates;
-    }
+    public List<RealEstate> RealEstates { get => new List<RealEstate> (this.realEstates); }
+    public List<RailRoad> RailRoads { get => new List<RailRoad> (this.railRoads); }
 
-    public List<RailRoad> GetRailRoads()
-    {
-        List<RailRoad> RailRoads = new List<RailRoad>();
-        foreach (var RailRoad in this.railRoads)
-        {
-            RailRoads.Add((RailRoad)RailRoad.Clone());
-        }
-        return RailRoads;
-    }
+
 }

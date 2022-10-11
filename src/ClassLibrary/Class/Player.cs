@@ -2,48 +2,26 @@
 public class Player
 {
     private static int indexer = 0;
-    private Data data;
     private int playerNumber;
-    private int[] lastRollDiceResult = new int[2];
-    private bool lastBoolDecision;
 
-    public Player(Data data)
+
+    public Player()
     {
-        this.data = data;
         this.playerNumber = indexer;
         indexer++;
     }
-
     public int PlayerNumber { get => this.playerNumber; }
-    public int[] LastRollDiceResult { get => this.lastRollDiceResult; }
-    public void RollDice(Random random)
+    public bool WantToUseJailFreeCard(JailManager jailManager, Bank bank, TileManager tilesManager)
     {
-        this.lastRollDiceResult = Dice.Roll(random);
-        data.UpdatePlayer(this);
-    }
-
-    public bool LastBoolDecision
-    {
-        get 
+        if (jailManager.FreeJailCards[this.playerNumber] != 0)
         {
-            return this.lastBoolDecision;
-        }
-        set
-        {
-            this.lastBoolDecision = value;
-            data.UpdatePlayer(this);
-        }
-    }
-
-    public void WantToUseJailFreeCard()
-    {
-        if (data.FreeJailCards[this.playerNumber] != 0)
-        {
-            this.LastBoolDecision = true;
+            return true;
         }
         else
         {
-            this.LastBoolDecision = false;
+            return false;
         }
     }
+
+
 }

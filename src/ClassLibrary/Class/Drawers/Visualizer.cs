@@ -1,21 +1,23 @@
 
 public class Visualizer
 {
-    private Data data;
     private MapDrawer mapDrawer = new MapDrawer();
-    private PlayerDrawer playerDrawer;
+    private PlayerDrawer? playerDrawer;
     public LoggingDrawer loggingDrawer = new LoggingDrawer(5);
     private DisplayTiles displayTiles = new DisplayTiles();
     private int mapWidth;
     private int mapHeight;
     private int tileWidth;
     private int tileHeight;
-    private List<int[]> tileEdgeInfo;
-    private List<int[]> innerMapEdge;
+    private List<int[]> tileEdgeInfo = new List<int[]>();
+    private List<int[]> innerMapEdge = new List<int[]>();
 
-    public Visualizer(Data data)
+    private Board board;
+    private TileManager tileManager;
+    public Visualizer(Board board, TileManager tileManager)
     {
-        this.data = data;
+        this.board = board;
+        this.tileManager = tileManager;
     }
 
     public void Setup(int mapWidth, int mapHeight, int tileWidth, int tileHeight)
@@ -45,11 +47,11 @@ public class Visualizer
         mapDrawer.DrawMap(mapWidth, mapHeight,  tileWidth,  tileHeight);
 
         /// need
-        List<int> playerPositions = this.data.PlayerPositions;
+        List<int> playerPositions = this.board.PlayerPositions;
         playerDrawer.DrawPlayers(playerPositions);
 
         /// need
-        List<Tile> tiles = this.data.GetTiles();
+        List<Tile> tiles = this.tileManager.Tiles;
         List<RealEstate> realEstates = FilterRealEstates(tiles);
         List<RailRoad> railRoads = FilterRailRoads(tiles);
 

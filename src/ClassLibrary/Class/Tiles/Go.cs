@@ -1,6 +1,6 @@
 public class Go : Tile
 {
-    private int salary;
+    protected int salary;
 
     public Go(string name, int salary) : base(name)
     {

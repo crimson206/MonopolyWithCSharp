@@ -7,45 +7,53 @@ internal class Program
         TileManager tilesManager = new TileManager();
         MapTilesFactory mapTilesFactory = new MapTilesFactory();
         Random random = new Random();
-        tilesManager.SetTiles(mapTilesFactory.CreateRandomMapTiles(22,4,2,3,3, random));
+        tilesManager.SetTiles();
 
-        Data data = new Data();
-        data.UpdateTiles(tilesManager);
+        Board board = new Board(tilesManager.Tiles.Count(), 0);
 
-        Visualizer visualizer = new Visualizer(data);
+        Visualizer visualizer = new Visualizer(board, tilesManager);
 
         visualizer.Setup(11, 11, 13, 4);
 
         Delegator delegator = new Delegator();
     
-        List<Player> players = new List<Player> {new Player(data), new Player(data),new Player(data),new Player(data)};
+        List<Player> players = new List<Player> {new Player(), new Player(),new Player(),new Player()};
 
-        TryToEscapeJail tryToEscapeJail = new TryToEscapeJail(data);
+        TryToEscapeJail tryToEscapeJail = new TryToEscapeJail(delegator);
 
         JailManager jailManager = new JailManager();
         Bank bank = new Bank();
 
         delegator.nextEvent = EventType.TryToEscapeJail;
         delegator.tryToEscapeJail = tryToEscapeJail.Start;
-
+        delegator.CurrentPlayerNumber = 0;
         int i = 0;
         visualizer.Visualize();
-        while (delegator.nextEvent == EventType.TryToEscapeJail)
+        while (true)
         {
-            int playerNumber = 0;
+            int playerNumber = delegator.CurrentPlayerNumber;
             
 
-            if (delegator.playerBoolDecision != null)
+            if (delegator.boolDecisionType != null)
             {
-                players[playerNumber].WantToUseJailFreeCard();
+                delegator.PlayerBoolDecision = false;
             }
 
             if (delegator.playerRollDice is true)
             {
-                players[playerNumber].RollDice(random);
+                delegator.PlayerRollDiceResult = Dice.Roll(random);
             }
 
-            delegator.tryToEscapeJail(delegator, playerNumber, jailManager, bank);
+            if (delegator.nextEvent == EventType.TryToEscapeJail)
+            {
+                delegator.tryToEscapeJail(jailManager, bank);
+            }
+            if (delegator.nextEvent == EventType.TryToEscapeJail)
+            {
+                delegator.tryToEscapeJail(jailManager, bank);
+            }
+
+
 
             visualizer.loggingDrawer.UpdateLogging(i.ToString());
             i++;

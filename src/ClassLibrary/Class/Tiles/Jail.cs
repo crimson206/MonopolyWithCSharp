@@ -1,6 +1,6 @@
 public class Jail : Tile
 {    
-    private int jailFine;
+    protected int jailFine;
 
     public Jail(string name, int jailFine) : base(name)
     {

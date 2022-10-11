@@ -1,38 +1,38 @@
 public class TryToEscapeJail : Event
 {
-    private Data data;
-    public TryToEscapeJail(Data data)
+    public TryToEscapeJail(Delegator delegator) : base(delegator)
     {
-        this.data = data;
+        this.delegator= delegator;
+        this.delegator.tryToEscapeJail = this.Start;
     }
-    public void Start(Delegator delegator, int playerNumber, JailManager jailManager, Bank bank)
+    int playerNumber => this.delegator!.CurrentPlayerNumber;
+    public void Start(JailManager jailManager, Bank bank)
     {
-        delegator.playerBoolDecision = BoolDecisionType.WantToUseJailFreeCard;
+        this.delegator!.boolDecisionType = BoolDecisionType.WantToUseJailFreeCard;
         delegator.tryToEscapeJail = this.WantPlayerUseJailFreeCard;
     }
 
-    public void WantPlayerUseJailFreeCard(Delegator delegator, int playerNumber, JailManager jailManager, Bank bank)
+    public void WantPlayerUseJailFreeCard(JailManager jailManager, Bank bank)
     {
-        if (data.LastBoolDecisions[playerNumber])
+        if (this.delegator!.PlayerBoolDecision)
         {
             jailManager.TurnsInJail[playerNumber] = 0;
-            data.UpdateJailManager(jailManager);
-            this.SetNextEvent(delegator, EventType.RollToMove);
+            this.SetNextEvent(EventType.RollToMove);
         }
         else
         {
-            delegator.playerBoolDecision = BoolDecisionType.WantToPayJailFine;
+            delegator.boolDecisionType = BoolDecisionType.WantToPayJailFine;
             delegator.tryToEscapeJail = this.WantPlayerPayJailFine;
         }
     }
 
-    public void WantPlayerPayJailFine(Delegator delegator, int playerNumber, JailManager jailManager, Bank bank)
+    public void WantPlayerPayJailFine(JailManager jailManager, Bank bank)
     {
-        if (data.LastBoolDecisions[playerNumber])
+        if (this.delegator!.PlayerBoolDecision)
         {
             jailManager.TurnsInJail[playerNumber] = 0;
             bank.Balances[playerNumber] -= jailManager.JailFine;
-            this.SetNextEvent(delegator, EventType.RollToMove);
+            this.SetNextEvent(EventType.RollToMove);
         }
         else
         {
@@ -41,14 +41,14 @@ public class TryToEscapeJail : Event
         }
     }
 
-    public void RolledPlayerDouble(Delegator delegator, int playerNumber, JailManager jailManager, Bank bank)
+    public void RolledPlayerDouble(JailManager jailManager, Bank bank)
     {
-        int[] rollDiceResult = data.LastRollDiceResults[playerNumber];
+        int[] rollDiceResult = this.delegator!.PlayerRollDiceResult;
 
         if (rollDiceResult[0] == rollDiceResult[1])
         {
             jailManager.TurnsInJail[playerNumber] = 0;
-            this.SetNextEvent(delegator, EventType.EscapeJail);
+            this.SetNextEvent(EventType.EscapeJail);
         }
         else
         {
@@ -56,23 +56,23 @@ public class TryToEscapeJail : Event
         }
     }
 
-    public void StayedPlayerThreeTurns(Delegator delegator, int playerNumber, JailManager jailManager, Bank bank)
+    public void StayedPlayerThreeTurns(JailManager jailManager, Bank bank)
     {
         if (jailManager.TurnsInJail[playerNumber] == 3)
         {
             jailManager.TurnsInJail[playerNumber] = 0;
-            this.SetNextEvent(delegator, EventType.EscapeJail);
+            this.SetNextEvent(EventType.EscapeJail);
         }
         else
         {
             jailManager.TurnsInJail[playerNumber] += 1;
-            this.SetNextEvent(delegator, EventType.EndTurn);
+            this.SetNextEvent(EventType.EndTurn);
         }
     }
 
-    protected override void SetNextEvent(Delegator delegator, EventType nextEvent)
+    protected override void SetNextEvent(EventType nextEvent)
     {
-        delegator.nextEvent = nextEvent;
-        delegator.tryToEscapeJail = this.Start;
+        this.delegator!.nextEvent = nextEvent;
+        this.delegator.tryToEscapeJail = this.Start;
     }
 }
