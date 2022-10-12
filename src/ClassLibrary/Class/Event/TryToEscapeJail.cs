@@ -2,31 +2,40 @@ public class TryToEscapeJail : Event
 {
     private JailManager jailManager;
     private Bank bank;
-    private EventStorage events => this.eventStorage;
     private DecisionMakerStorage decisionMakers;
     private Random random = new Random();
-    public TryToEscapeJail(EventStorage eventStorage, Delegator delegator, JailManager jailManager, Bank bank) : base(eventStorage, delegator)
+    private int playerNumber => this.delegator.CurrentPlayerNumber;
+    public TryToEscapeJail(EventStorage eventStorage, Delegator delegator, JailManager jailManager, Bank bank, DecisionMakerStorage decisionMakerStorage) : base(eventStorage, delegator)
     {
+        this.decisionMakers = decisionMakerStorage;
         this.jailManager = jailManager;
         this.bank = bank;
     }
-    int playerNumber => this.delegator!.CurrentPlayerNumber;
+
     public override void Start()
     {
-        this.delegator!.makeDecision = decisionMakers.wantToUseJailFreeCard.MakeDecision;
-        delegator.nextEvent = this.WantPlayerUseJailFreeCard;
+        if (jailManager.FreeJailCards[playerNumber] != 0)
+        {
+            this.delegator.makeDecision = decisionMakers.wantToUseJailFreeCard.MakeDecision;
+            this.delegator.nextEvent = this.WantPlayerUseJailFreeCard;
+        }
+        else
+        {
+            this.delegator.nextEvent = this.WantPlayerPayJailFine;
+        }
+
     }
 
-    public void WantPlayerUseJailFreeCard()
+    private void WantPlayerUseJailFreeCard()
     {
-        if (this.delegator!.BoolDecision == true)
+        if (this.delegator.BoolDecision == true)
         {
             jailManager.TurnsInJail[playerNumber] = 0;
             this.SetNextEvent(events.rollToMove);
         }
-        else if (this.delegator!.BoolDecision == false)
+        else if (this.delegator.BoolDecision == false)
         {
-            ///this.delegator!.makeDecision = decisionMakers.wantToPayJailFine;
+            this.delegator.makeDecision = decisionMakers.wantToPayJailFine.MakeDecision;
             delegator.nextEvent = this.WantPlayerPayJailFine;
         }
         else
@@ -35,17 +44,16 @@ public class TryToEscapeJail : Event
         }
     }
 
-    public void WantPlayerPayJailFine()
+    private void WantPlayerPayJailFine()
     {
-        if (this.delegator!.BoolDecision == true)
+        if (this.delegator.BoolDecision == true)
         {
             jailManager.TurnsInJail[playerNumber] = 0;
-            bank.Balances[playerNumber] -= jailManager.JailFine;
-            ///this.SetNextEvent(EventType.RollToMove);
+            bank.DecreaseBalance(playerNumber, jailManager.JailFine);
+            this.SetNextEvent(events.rollToMove);
         }
-        else if (this.delegator!.BoolDecision == true)
+        else if (this.delegator.BoolDecision == true)
         {
-            ///delegator.playerRollDice = true;
             delegator.nextEvent = this.RolledPlayerDouble;
         }
         else
@@ -54,10 +62,10 @@ public class TryToEscapeJail : Event
         }
     }
 
-    public void RolledPlayerDouble()
+    private void RolledPlayerDouble()
     {
         int[] rollDiceResult = Dice.Roll(random);
-        this.delegator!.RollDiceResult = rollDiceResult;
+        this.delegator.RollDiceResult = rollDiceResult;
 
         if (rollDiceResult[0] == rollDiceResult[1])
         {
@@ -70,22 +78,22 @@ public class TryToEscapeJail : Event
         }
     }
 
-    public void StayedPlayerThreeTurns()
+    private void StayedPlayerThreeTurns()
     {
         if (jailManager.TurnsInJail[playerNumber] == 3)
         {
             jailManager.TurnsInJail[playerNumber] = 0;
-            ///this.SetNextEvent(EventType.EscapeJail);
+            this.SetNextEvent(events.escapeJail);
         }
         else
         {
             jailManager.TurnsInJail[playerNumber] += 1;
-            ///this.SetNextEvent(EventType.EndTurn);
+            this.SetNextEvent(events.endTurn);
         }
     }
 
     protected override void SetNextEvent(Event gameEvent)
     {
-        this.delegator!.nextEvent = gameEvent.Start;
+        this.delegator.nextEvent = gameEvent.Start;
     }
 }

@@ -9,7 +9,7 @@ public class LandOnProperty : Event
     private Bank bank;
     public LandOnProperty(EventStorage eventStorage, Delegator delegator, Bank bank, Board board, TileManager tileManager) : base(eventStorage, delegator)
     {
-        this.eventStorage = eventStorage;
+        this.events = eventStorage;
         this.bank = bank;
         this.board = board;
         this.tileManager = tileManager;

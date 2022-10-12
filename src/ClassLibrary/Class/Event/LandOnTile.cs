@@ -7,7 +7,7 @@ public class LandOnTile : Event
     private TileManager tileManager;
     public LandOnTile(EventStorage eventStorage, Delegator delegator, Board board, TileManager tileManager) : base(eventStorage, delegator)
     {
-        this.eventStorage = eventStorage;
+        this.events = eventStorage;
         this.board = board;
         this.tileManager = tileManager;
         this.delegator= delegator;

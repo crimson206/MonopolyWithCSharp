@@ -16,7 +16,7 @@ namespace Tests
             Utility utility2 = new Utility("utility2", 100, new List<int> {20, 40}, 50, 0);
 
             /// Make a group
-            List<Utility> utilities = new List<Utility> {utility1, utility2};
+            List<Property> utilities = new List<Property> {utility1, utility2};
             utility1.SetGroup(0, utilities);
             utility2.SetGroup(0, utilities);
 

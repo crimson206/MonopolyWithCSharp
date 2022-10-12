@@ -4,7 +4,7 @@ public class Move : Event
 
     public Move(EventStorage eventStorage, Delegator delegator, Board board) : base(eventStorage, delegator)
     {
-        this.eventStorage = eventStorage;
+        this.events = eventStorage;
         this.board = board;
         this.delegator= delegator;
         this.delegator.nextEvent = this.Start;

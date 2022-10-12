@@ -9,6 +9,9 @@ public class Analyser
         this.realEstates = realEstates;
     }
 
+    public List<int> TotalPricesOfProerties => this.GetTotalPriceList();
+    public List<int> TotalRentsOfProerties => this.GetTotalRentList();
+
     public bool IsAbleToMonopoly(int playerNumber, RealEstate realEstate)
     {
         List<RealEstate> colorGroup = GetColorGroup(realEstate);
@@ -47,12 +50,6 @@ public class Analyser
             return costEfficiency;
         }
     }
-
-    public List<int> TotalPricesOfProerties => this.GetTotalPriceList();
-
-
-    public List<int> TotalRentsOfProerties => this.GetTotalRentList();
-
 
     private List<int> GetTotalPriceList()
     {

@@ -6,11 +6,16 @@ public class RailRoad : Property
 
     }
 
-    private List<RailRoad> group = new List<RailRoad>();
-
-    public void SetGroup(int password, List<RailRoad> railroads)
+    public override void SetGroup(int password, List<Property> group)
     {
-        this.group = railroads;
+        if( password != this.password)
+        {
+            throw new Exception();
+        }
+        else
+        {
+            this.group = group;
+        }
     }
 
     protected override int CalCurrentRent()

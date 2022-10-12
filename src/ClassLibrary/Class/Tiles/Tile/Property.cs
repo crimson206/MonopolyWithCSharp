@@ -3,6 +3,7 @@ public abstract class Property : Tile
     protected int? ownerPlayerNumber = null;
     protected int price;
     protected List<int> rents = new List<int>();
+    protected List<Property> group = new List<Property>();
     protected int currentRent => CalCurrentRent();
     protected int mortgage;
     protected int password;
@@ -45,4 +46,6 @@ public abstract class Property : Tile
             this.isMortgaged = isMortgaged;
         }
     }
+
+    public abstract void SetGroup(int password, List<Property> group);
 }

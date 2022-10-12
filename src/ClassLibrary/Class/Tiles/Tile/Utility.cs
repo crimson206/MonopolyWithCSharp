@@ -5,11 +5,19 @@ public class Utility : Property
 
     }
 
-    private List<Utility> group = new List<Utility>();
 
-    public void SetGroup(int password, List<Utility> utilities)
+    public override void SetGroup(int password, List<Property> group)
     {
-        this.group = utilities;
+
+        if( password != this.password)
+        {
+            throw new Exception();
+        }
+        else
+        {
+            this.group = group;
+        }
+        
     }
 
     protected override int CalCurrentRent()

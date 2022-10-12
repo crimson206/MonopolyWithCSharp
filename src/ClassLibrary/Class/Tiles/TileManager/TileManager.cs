@@ -28,8 +28,6 @@ public class TileManager
         this.properties = properties;
         this.Analyser = new Analyser(properties, realEstates);
         this.propertyManager = new PropertyManager(newPassword);
-        
-
     }
     public List<Tile> Tiles { get => new List<Tile> (this.tiles); }
 
@@ -38,7 +36,7 @@ public class TileManager
 
     private List<Tile> CreateTiles(int password)
     {
-        return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3, random, password);
+        return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3 , password);
     }
 
     private List<Property> FilterProperties(List<Tile> tiles)

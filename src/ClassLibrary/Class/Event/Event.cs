@@ -1,12 +1,10 @@
 public abstract class Event
 {
-
-
-    protected Delegator? delegator;
-    protected EventStorage eventStorage;
+    protected Delegator delegator;
+    protected EventStorage events;
     public Event(EventStorage eventStorage, Delegator delegator)
     {
-        this.eventStorage = eventStorage;
+        this.events = eventStorage;
         this.delegator = delegator;
     }
     public abstract void Start();

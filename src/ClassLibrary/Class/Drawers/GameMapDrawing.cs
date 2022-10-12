@@ -8,9 +8,8 @@ public class GameMapDrawing
             MapDrawer mapDrawer = new MapDrawer();
             mapDrawer.DrawMap(10, 10, 13, 4);
             MapTilesFactory mapTilesGenerator = new MapTilesFactory();
-            Random random = new Random();
             DisplayTiles displayTiles = new DisplayTiles();
-            var a = mapTilesGenerator.CreateRandomMapTiles(22,4,2,3,3, random, 1);
+            var a = mapTilesGenerator.CreateRandomMapTiles(22,4,2,3,3, 1);
             var query = from tile in a where tile is RealEstate select tile as RealEstate;
             List<RealEstate> realEstates = query.ToList();
             var query2 = from tile in a where tile is RailRoad select tile as RailRoad;

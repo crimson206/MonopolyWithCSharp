@@ -13,7 +13,7 @@ namespace Tests
             RailRoad railRoad4 = new RailRoad("RailRoad4", 100, new List<int> {20, 40, 80, 160}, 50, 0);
 
             /// Make a group
-            List<RailRoad> railRoads = new List<RailRoad> {railRoad1, railRoad2, railRoad3, railRoad4};
+            List<Property> railRoads = new List<Property> {railRoad1, railRoad2, railRoad3, railRoad4};
             railRoad1.SetGroup(0, railRoads);
             railRoad2.SetGroup(0, railRoads);
             railRoad3.SetGroup(0, railRoads);

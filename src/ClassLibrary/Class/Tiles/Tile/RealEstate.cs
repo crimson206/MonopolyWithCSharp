@@ -6,7 +6,7 @@ public class RealEstate : Property
     private bool buildable => this.IsBuildable();
     private bool distructable => this.IsDistructable();
     private int buildingCost;
-    private List<RealEstate> group = new List<RealEstate>();
+    private List<RealEstate> colorGroup => this.group.Cast<RealEstate>().ToList();
 
     public RealEstate(string name, int price, int buildingCost, List<int> rents, int mortgageValue, string color, int password) : base(name, price, rents, mortgageValue, password)
     {
@@ -68,9 +68,9 @@ public class RealEstate : Property
     {
         if (this.ownerPlayerNumber is not null && this.isMortgaged is false)
         {    
-            if (group.All(realEstate => realEstate.OwnerPlayerNumber == this.ownerPlayerNumber))
+            if (colorGroup.All(realEstate => realEstate.OwnerPlayerNumber == this.ownerPlayerNumber))
             {
-                if (group.Any(realEstate => realEstate.NumOfHouses < this.numOfHouses) || numOfHouses > 5)
+                if (colorGroup.Any(realEstate => realEstate.NumOfHouses < this.numOfHouses) || numOfHouses > 5)
                 {
                     return false;
                 }
@@ -92,20 +92,15 @@ public class RealEstate : Property
 
 
 
-    public void SetGroup(int password, List<RealEstate> colorGroup)
+    public override void SetGroup(int password, List<Property> group)
     {
-        
         if( password != this.password)
-        {
-            throw new Exception();
-        }
-        else if( group.Any(realEstate => realEstate.Color != this.Color))
         {
             throw new Exception();
         }
         else
         {
-            this.group = colorGroup;
+            this.group = group;
         }
     }
 
@@ -114,7 +109,7 @@ public class RealEstate : Property
 
         if (this.ownerPlayerNumber is not null)
         {
-            if (group.All(realEstate => realEstate.OwnerPlayerNumber == this.ownerPlayerNumber))
+            if (colorGroup.All(realEstate => realEstate.OwnerPlayerNumber == this.ownerPlayerNumber))
             {
                 return Rents[numOfHouses+1];
             }
@@ -128,7 +123,7 @@ public class RealEstate : Property
 
     private bool IsDistructable()
     {
-        if (group.Any(realEstate => realEstate.NumOfHouses > this.numOfHouses))
+        if (colorGroup.Any(realEstate => realEstate.NumOfHouses > this.numOfHouses))
         {
             return false;
         }

@@ -1,11 +1,12 @@
-public class WantToUseJailFreeCard : DecisionMaker
+public class WantToPayJailFine : DecisionMaker
 {
-    protected new enum Setting
+
+    private new enum Setting
     {
         Manual,
     }
 
-    public WantToUseJailFreeCard(PromptDrawer prompter, Delegator delegator) : base(prompter, delegator)
+    public WantToPayJailFine(PromptDrawer prompter, Delegator delegator) : base(prompter, delegator)
     {
 
     }

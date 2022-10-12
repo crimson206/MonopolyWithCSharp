@@ -1,8 +1,8 @@
 
-public class EscapeJail : Event
+public class EndTurn : Event
 {
 
-    public EscapeJail(EventStorage eventStorage, Delegator delegator) : base(eventStorage, delegator)
+    public EndTurn(EventStorage eventStorage, Delegator delegator) : base(eventStorage, delegator)
     {
         this.delegator= delegator;
         this.delegator.nextEvent = this.Start;

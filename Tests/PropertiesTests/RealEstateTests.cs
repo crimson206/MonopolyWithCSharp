@@ -16,7 +16,7 @@ namespace Tests
             RealEstate realEstate2 = new RealEstate("Real2", 100, 60, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red", 0);
             RealEstate realEstate3 = new RealEstate("Real3", 100, 60, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red", 0);
 
-            List<RealEstate> colorGroup = new List<RealEstate> {realEstate1, realEstate2, realEstate3};
+            List<Property> colorGroup = new List<Property> {realEstate1, realEstate2, realEstate3};
 
             /// set group
             realEstate1.SetGroup(0, colorGroup);
