@@ -20,12 +20,6 @@ public class LoggingDrawer
             Console.CursorTop = cursorTop + i;
             Console.Write(loggingMsgs[i]);
         }
-
-        foreach (var msg in this.loggingMsgs)
-        {
-
-
-        }
     }
 
     private List<string> loggingMsgs = new List<string>();

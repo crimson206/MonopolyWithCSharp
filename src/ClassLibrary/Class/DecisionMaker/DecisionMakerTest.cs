@@ -1,5 +1,9 @@
+/// How to design this class?
+/// Receive supports from the PropertyAnalyser and InfoToFactorConvertor
+/// It stores player's setting, and makes decision using the result of InfoToFactorConvertor according to the setting
 
-public class DecisionMaker
+
+public class DecisionMakerTest
 {
 
     private int playerBalance;
@@ -17,7 +21,7 @@ public class DecisionMaker
     private double dangerFactor;
     private int numActivePlayers;
 
-    public DecisionMaker(Bank bank, JailManager jailManager, TileManager tileManager)
+    public DecisionMakerTest(Bank bank, JailManager jailManager, TileManager tileManager)
     {
         this.bank = bank;
         this.jailManager = jailManager;

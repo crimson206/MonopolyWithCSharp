@@ -17,7 +17,7 @@ public class Move : Event
     }
     private void MovePlayer()
     {
-        int amountToMove = this.delegator!.PlayerRollDiceResult.Sum();
+        int amountToMove = this.delegator!.RollDiceResult.Sum();
         board.MovePlayerAroundBoard(playerNumber, amountToMove);
         delegator.nextEvent = this.PassedPlayerGo;
     }
@@ -32,7 +32,7 @@ public class Move : Event
             ///SetNextEvent(EventType.LandOnTile);
         }
     }
-    protected void SetNextEvent(Event gameEvent)
+    protected override void SetNextEvent(Event gameEvent)
     {
 
         this.delegator.nextEvent = gameEvent.Start;

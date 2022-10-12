@@ -12,13 +12,13 @@ public class RollToMove : Event
     public override void Start()
     {
         doubleSideEffectManager.ExtraTurns[playerNumber] = false;
-        this.delegator!.playerRollDice = true;
+        ///this.delegator!.playerRollDice = true;
         delegator.nextEvent = this.RolledPlayerDouble;
     }
 
     private void RolledPlayerDouble()
     {
-        int[] rollDiceResult = this.delegator!.PlayerRollDiceResult;
+        int[] rollDiceResult = this.delegator!.RollDiceResult;
         bool rolledPlayerDouble = rollDiceResult[0] == rollDiceResult[1];
 
         if (rolledPlayerDouble == true)
@@ -44,9 +44,8 @@ public class RollToMove : Event
             ///this.SetNextEvent(EventType.Move);
         }
     }
-    protected void SetNextEvent(Event gameEvent)
+    protected override void SetNextEvent(Event gameEvent)
     {
-
-        this.delegator.nextEvent = gameEvent.Start;
+        this.delegator!.nextEvent = gameEvent.Start;
     }
 }

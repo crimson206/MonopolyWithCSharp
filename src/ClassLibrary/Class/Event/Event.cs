@@ -1,6 +1,7 @@
 public abstract class Event
 {
-    public abstract void Start();
+
+
     protected Delegator? delegator;
     protected EventStorage eventStorage;
     public Event(EventStorage eventStorage, Delegator delegator)
@@ -8,4 +9,6 @@ public abstract class Event
         this.eventStorage = eventStorage;
         this.delegator = delegator;
     }
+    public abstract void Start();
+    protected abstract void SetNextEvent(Event gameEvent);
 }

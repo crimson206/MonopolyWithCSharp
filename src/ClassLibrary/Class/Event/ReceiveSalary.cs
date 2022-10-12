@@ -19,7 +19,7 @@ public class ReceiveSalary : Event
         bank.Balances[playerNumber] += bank.Salary;
         ///this.SetNextEvent(EventType.LandOnTile);
     }
-    protected void SetNextEvent(Event gameEvent)
+    protected override void SetNextEvent(Event gameEvent)
     {
         delegator.nextEvent = gameEvent.Start;
     }

@@ -33,13 +33,13 @@ public class LandOnProperty : Event
         }
         else if (currentProperty == null)
         {
-            this.delegator!.boolDecisionType = BoolDecisionType.WantToBuyProperty;
+            ///this.delegator!.boolDecisionType = BoolDecisionType.WantToBuyProperty;
             this.delegator.nextEvent = this.WantPlayerBuyProperty;
         }
     }
     private void WantPlayerBuyProperty()
     {
-        if (this.delegator!.PlayerBoolDecision)
+        if (this.delegator!.BoolDecision == true)
         {
             int propertyPrice = this.currentProperty!.Price;
             tileManager.propertyManager.ChangeOwner(currentProperty, playerNumber);
@@ -50,7 +50,7 @@ public class LandOnProperty : Event
         /// ////this.SetNextEvent(eventStorage.rollToMove);
     }
 
-    protected void SetNextEvent(Event gameEvent)
+    protected override void SetNextEvent(Event gameEvent)
     {
 
         delegator.nextEvent = gameEvent.Start;

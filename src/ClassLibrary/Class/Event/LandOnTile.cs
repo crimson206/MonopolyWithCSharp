@@ -50,7 +50,7 @@ public class LandOnTile : Event
         }
     }
 
-    protected void SetNextEvent(Event gameEvent)
+    protected override void SetNextEvent(Event gameEvent)
     {
 
         this.delegator.nextEvent = gameEvent.Start;

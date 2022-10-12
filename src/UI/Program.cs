@@ -37,12 +37,12 @@ internal class Program
 
             if (delegator.boolDecisionType != null)
             {
-                delegator.PlayerBoolDecision = false;
+                delegator.boolDecision = false;
             }
 
             if (delegator.playerRollDice is true)
             {
-                delegator.PlayerRollDiceResult = Dice.Roll(random);
+                delegator.RollDiceResult = Dice.Roll(random);
             }
 
 

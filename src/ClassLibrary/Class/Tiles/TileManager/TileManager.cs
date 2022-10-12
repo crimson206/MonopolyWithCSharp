@@ -1,3 +1,11 @@
+/// Now it is getting bigger to be given to the events
+/// The events only need the features of the property manager and the information of tiles
+/// Maybe the board can store the information of tiles
+/// Only the property manager needs to share the password with properties.
+/// Make tiles with the tile factory and give the tiles to the board.
+/// Board can deal with simple events "PayRent" "Pass" without the property manager.
+/// Property manager will be called when they need to by the property.
+
 
 public class TileManager
 {

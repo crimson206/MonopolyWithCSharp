@@ -42,8 +42,6 @@ public class Visualizer
         Console.Clear();
         Console.WindowHeight = 150;
 
-
-
         mapDrawer.DrawMap(mapWidth, mapHeight,  tileWidth,  tileHeight);
 
         /// need
