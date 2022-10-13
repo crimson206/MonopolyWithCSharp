@@ -56,8 +56,8 @@ public class Analyser
         List<int> totalPrices = new List<int>();
         for (int i = 0; i < 4; i++)
         {
-            List<Property> propertiesUnderSameOwner = this.properties.Where(property => property.OwnerPlayerNumber == i).ToList();
-            int priceSum = this.CalTotalPriceOfProperties(propertiesUnderSameOwner);
+            List<int> pricesOfPropertiesUnderPlayeri = (from aaaa in this.properties where aaaa.OwnerPlayerNumber == i select aaaa.Price).ToList();
+            int priceSum = pricesOfPropertiesUnderPlayeri.Sum();
             totalPrices.Add(priceSum);
         }
         return totalPrices;
@@ -93,6 +93,14 @@ public class Analyser
     {
         List<RealEstate> colorGroup = this.realEstates.Where(member => member.Color == realEstate.Color).ToList();
         return colorGroup;
+    }
+
+    public void Test()
+    {
+        List<int> a = (from aaaa in this.properties where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
+        List<int> c = (from aaaa in this.realEstates where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
+        List<int> b = (from aaaa in this.properties where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
+
     }
 
 }

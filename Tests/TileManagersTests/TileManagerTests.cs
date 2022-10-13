@@ -10,6 +10,12 @@ namespace Tests.TileManagersTests
             TileManager tileManager = new TileManager();
             List<RealEstate> realEstates = tileManager.RealEstates;
             
+            foreach (var item in tileManager.Properties)
+            {
+                tileManager.propertyManager.ChangeOwner(item, 0);
+            }
+            tileManager.Analyser.Test();
+            List<int> a = (from aaaa in tileManager.Properties where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
 
             /// tileManager has 40 tiles
             Assert.AreEqual(tileManager.Tiles.Count(), 40);
@@ -36,7 +42,7 @@ namespace Tests.TileManagersTests
             foreach (var property in tileManager.Properties)
             {
                 propertyManager.ChangeOwner(property, playerNum);
-                playerNum++;
+                playerNum = (playerNum + 1) % 4;
             }
 
             /// get analyser
@@ -44,6 +50,8 @@ namespace Tests.TileManagersTests
             List<int> totalPrices = analyser.TotalPricesOfProerties;
             List<int> totalRents = analyser.TotalRentsOfProerties;
             List<double> costEfficienceis = analyser.ConvertRealEstateToBuildingHouseCoseEfficiency(tileManager.RealEstates);
+
+
 
             bool isAbleToMonopoly = analyser.IsAbleToMonopoly(0, realEstate);
             Assert.AreEqual(isAbleToMonopoly, false);
@@ -60,6 +68,14 @@ namespace Tests.TileManagersTests
             propertyManager.ChangeOwner(realEstates[0], 0);
             bool isAbleToMonopoly3 = analyser.IsAbleToMonopoly(0, realEstate);
             Assert.AreEqual(isAbleToMonopoly3, true);
+
+            foreach (var property in tileManager.Properties)
+            {
+                propertyManager.ChangeOwner(property, 0);
+            }
+
+            List<double> costEfficienceis2 = analyser.ConvertRealEstateToBuildingHouseCoseEfficiency(tileManager.RealEstates);
+
         }
     }
 }

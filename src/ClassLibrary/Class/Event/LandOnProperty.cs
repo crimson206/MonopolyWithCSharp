@@ -15,6 +15,7 @@ public class LandOnProperty : Event
         this.tileManager = tileManager;
         this.delegator= delegator;
         delegator.nextEvent = this.Start;
+
     }
 
     int playerNumber => this.delegator!.CurrentPlayerNumber;
@@ -41,6 +42,8 @@ public class LandOnProperty : Event
     {
         if (this.delegator!.BoolDecision == true)
         {
+            
+
             int propertyPrice = this.currentProperty!.Price;
             tileManager.propertyManager.ChangeOwner(currentProperty, playerNumber);
             bank.Balances[playerNumber] -= propertyPrice;

@@ -1,21 +1,31 @@
 public abstract class DecisionMaker
 {
-    protected PromptDrawer prompter;
-    protected Delegator delegator;
 
+    protected Delegator delegator;
+    protected int playerNumber => delegator.CurrentPlayerNumber;
     protected enum Setting
     {
         Manual,
     }
     protected List<Enum> playerSettings = new List<Enum> {Setting.Manual, Setting.Manual, Setting.Manual, Setting.Manual };
 
-    public DecisionMaker(PromptDrawer prompter, Delegator delegator)
+    public DecisionMaker(Delegator delegator)
     {
-        this.prompter = prompter;
         this.delegator = delegator;
     }
 
-    public abstract void MakeDecision();
+    public void MakeDecision()
+    {
+
+        switch (playerSettings[playerNumber])
+        {
+            case Setting.Manual:
+                this.MakeDecisionManually();
+                break;
+            default:
+                break;
+        }
+    }
 
     protected abstract void MakeDecisionManually();
 

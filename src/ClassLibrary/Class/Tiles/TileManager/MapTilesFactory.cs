@@ -38,7 +38,7 @@ public class MapTilesFactory
 
     private List<int> ExtractRandomIndeces(int randomIndecesSize, int totalSize, Random random)
     {
-        List<int> range = Enumerable.Range(1, totalSize).ToList();
+        List<int> range = Enumerable.Range(0, totalSize).ToList();
         List<int> randomIndeces = new List<int>();
 
         for (int i = 0; i < randomIndecesSize; i++)

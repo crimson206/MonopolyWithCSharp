@@ -6,7 +6,12 @@ namespace Tests
         [TestMethod]
         public void TestMethod1()
         {
-            Assert.IsTrue(true);
+
+            Game game = new Game();
+
+            game.delegator.nextEvent = game.events.tryToEscapeJail.Start;
+
+
         }
     }
 }

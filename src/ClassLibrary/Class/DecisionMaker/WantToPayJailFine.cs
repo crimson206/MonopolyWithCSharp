@@ -6,38 +6,24 @@ public class WantToPayJailFine : DecisionMaker
         Manual,
     }
 
-    public WantToPayJailFine(PromptDrawer prompter, Delegator delegator) : base(prompter, delegator)
+    public WantToPayJailFine(Delegator delegator) : base(delegator)
     {
-
-    }
-
-    public override void MakeDecision()
-    {
-        int playerNumber = delegator.CurrentPlayerNumber;
-        switch (playerSettings[playerNumber])
-        {
-            case Setting.Manual:
-                this.MakeDecisionManually();
-                break;
-            default:
-                delegator.BoolDecision = true;
-                break;
-        }
 
     }
 
     protected override void MakeDecisionManually()
     {
-        prompter.PromptBool();
-        if (prompter.ReceivedBool == null)
+        bool result = this.delegator.manualDecision!();
+        if (result is true)
         {
-            return;
+            delegator.RecommendedString =
+            String.Format("Player{0} paid the jail fine", this.playerNumber);
         }
         else
         {
-            delegator.BoolDecision = prompter.ReceivedBool;
-            prompter.ResetPrompt();
-            delegator.makeDecision = null;
+            delegator.RecommendedString =
+            String.Format("Player{0} refused to pay the jail fine", this.playerNumber);
         }
     }
+
 }

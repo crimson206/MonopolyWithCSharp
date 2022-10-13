@@ -90,20 +90,6 @@ public class RealEstate : Property
         }
     }
 
-
-
-    public override void SetGroup(int password, List<Property> group)
-    {
-        if( password != this.password)
-        {
-            throw new Exception();
-        }
-        else
-        {
-            this.group = group;
-        }
-    }
-
     protected override int CalCurrentRent()
     {
 

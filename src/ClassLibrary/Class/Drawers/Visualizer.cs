@@ -14,10 +14,12 @@ public class Visualizer
 
     private Board board;
     private TileManager tileManager;
-    public Visualizer(Board board, TileManager tileManager)
+    private Delegator delegator;
+    public Visualizer(Board board, TileManager tileManager, Delegator delegator)
     {
         this.board = board;
         this.tileManager = tileManager;
+        this.delegator = delegator;
     }
 
     public void Setup(int mapWidth, int mapHeight, int tileWidth, int tileHeight)
@@ -29,6 +31,11 @@ public class Visualizer
         this.tileEdgeInfo = mapDrawer.CreateTileEdgeCollection(mapWidth, mapHeight,  tileWidth,  tileHeight);
         this.innerMapEdge = mapDrawer.CreateInnerSpaceIndicator(mapWidth, mapHeight,  tileWidth,  tileHeight);
         this.playerDrawer = new PlayerDrawer(tileEdgeInfo);
+    }
+
+    public void UpdatePromptMessage(string promptMessage)
+    {
+        this.loggingDrawer.UpdatePromptMessage(promptMessage);
     }
 
     int backUpCursorLeft = Console.CursorLeft;
@@ -46,7 +53,7 @@ public class Visualizer
 
         /// need
         List<int> playerPositions = this.board.PlayerPositions;
-        playerDrawer.DrawPlayers(playerPositions);
+        playerDrawer!.DrawPlayers(playerPositions);
 
         /// need
         List<Tile> tiles = this.tileManager.Tiles;
@@ -58,6 +65,7 @@ public class Visualizer
         displayTiles.DisplayRailRoad( innerMapEdge[0][0] + 65, innerMapEdge[0][1] + 1, railRoads, 2);
 
         /// need
+        loggingDrawer.UpdateLogging(delegator.RecommendedString);
         loggingDrawer.DrawLogging(innerMapEdge[0][0] + 5, innerMapEdge[0][1] + 27);
 
         Console.CursorLeft = backUpCursorLeft;
@@ -65,7 +73,6 @@ public class Visualizer
         Console.WindowHeight = backupWindowHeight;
         Console.BufferHeight = backUpBufferHeight;
         Console.BufferWidth = backUpBufferWidth;
-
     }
 
     private List<RealEstate> FilterRealEstates(List<Tile> tiles)

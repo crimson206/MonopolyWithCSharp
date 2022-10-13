@@ -1,4 +1,4 @@
-public abstract class Property : Tile
+public class Property : Tile , IPurchasable
 {
     protected int? ownerPlayerNumber = null;
     protected int price;
@@ -34,7 +34,19 @@ public abstract class Property : Tile
         }
     }
 
-    protected abstract int CalCurrentRent();
+    protected virtual int CalCurrentRent()
+    {
+        if ( this.ownerPlayerNumber is not null)
+        {
+            int numRailRoadsWithSameOwner = group.Where(group => group.OwnerPlayerNumber == this.ownerPlayerNumber).ToList().Count();
+            return this.rents[numRailRoadsWithSameOwner-1];
+        }
+        else
+        {
+            return this.rents[0];
+        }
+    }
+
     public virtual void SetIsMortgaged(int password, bool isMortgaged)
     {
         if ( password != this.password )
@@ -47,5 +59,15 @@ public abstract class Property : Tile
         }
     }
 
-    public abstract void SetGroup(int password, List<Property> group);
+    public void SetGroup(int password, List<Property> group)
+    {
+        if( password != this.password)
+        {
+            throw new Exception();
+        }
+        else
+        {
+            this.group = group;
+        }
+    }
 }

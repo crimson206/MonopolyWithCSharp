@@ -15,21 +15,36 @@ public class Delegator
     public int CurrentPlayerNumber { get => this.currentPlayerNumber; set => this.currentPlayerNumber = value;}
     public bool? BoolDecision { get => boolDecision; set => boolDecision = value; }
     public int[] RollDiceResult { get => rollDiceResult; set => this.rollDiceResult = value; }
+    public string RecommendedString = String.Empty;
 
     public delegate void DelDecisionMaker();
-    public DelDecisionMaker? makeDecision;
+    public DelDecisionMaker? decisionMaking;
     public delegate void DelEvent();
     public DelEvent? nextEvent;
+    public bool IsThereDecisionMaking => this.decisionMaking != null;
+    public delegate bool DelManualDecision();
+    public DelManualDecision? manualDecision; 
 
+    /// it runs a function of events
     public void RunEvent()
     {
-        if (this.makeDecision != null)
-        {
-            this.makeDecision();
-        }
-        else
-        {
-            this.nextEvent!();
-        }
+        this.nextEvent!();
+    }
+
+    /// it runs a function of decision makers
+    public void MakeDecision()
+    {
+        this.decisionMaking!();
+        this.DeactivateDecisionMaking();
+    }
+
+    private void DeactivateDecisionMaking()
+    {
+        this.decisionMaking = null;
+    }
+
+    public void ResetRecommendedString()
+    {
+        this.RecommendedString = String.Empty;
     }
 }

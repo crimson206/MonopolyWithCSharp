@@ -4,6 +4,7 @@ public class Bank
     private int salary = 200;
     private int initialBalance = 1500;
     private List<int> balances;
+    private int jailFine = 60;
     public Bank()
     {
         this.balances = new List<int> { this.initialBalance, this.initialBalance, this.initialBalance, this.initialBalance };
@@ -11,6 +12,7 @@ public class Bank
     public int Salary { get => salary; }
     public int InitialBalance { get => initialBalance; }
     public List<int> Balances { get => new List<int> (this.balances);}
+    public int JailFine { get => this.jailFine;}
     public void IncreaseBalance(int playerNumber, int amount)
     {
         if ( amount < 0 )

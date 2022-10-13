@@ -12,7 +12,6 @@ public class RollToMove : Event
     public override void Start()
     {
         doubleSideEffectManager.ExtraTurns[playerNumber] = false;
-        ///this.delegator!.playerRollDice = true;
         delegator.nextEvent = this.RolledPlayerDouble;
     }
 

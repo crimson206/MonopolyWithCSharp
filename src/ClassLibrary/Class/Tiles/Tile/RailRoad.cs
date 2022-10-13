@@ -6,29 +6,4 @@ public class RailRoad : Property
 
     }
 
-    public override void SetGroup(int password, List<Property> group)
-    {
-        if( password != this.password)
-        {
-            throw new Exception();
-        }
-        else
-        {
-            this.group = group;
-        }
-    }
-
-    protected override int CalCurrentRent()
-    {
-        if ( this.ownerPlayerNumber is not null)
-        {
-            int numRailRoadsWithSameOwner = group.Where(group => group.OwnerPlayerNumber == this.ownerPlayerNumber).ToList().Count();
-            return this.rents[numRailRoadsWithSameOwner-1];
-        }
-        else
-        {
-            return this.rents[0];
-        }
-    }
-
 }
