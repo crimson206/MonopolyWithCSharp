@@ -7,7 +7,7 @@ namespace Tests
         [TestMethod]
         public void BankTestsAll()
         {
-            Bank bank = new Bank();
+            BankHandler bank = new BankHandler();
 
             /// Check initial value
             Assert.AreEqual(bank.Balances[0], 1500);

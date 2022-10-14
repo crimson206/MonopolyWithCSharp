@@ -12,7 +12,7 @@ namespace Tests.StatusTests
         [TestMethod]
         public void JailManagerTestsAll()
         {
-            JailManager jailManager = new JailManager();
+            JailHandler jailManager = new JailHandler();
             Assert.AreEqual(jailManager.TurnsInJail[0], 0);
             
             jailManager.CountTurnInJail(0);

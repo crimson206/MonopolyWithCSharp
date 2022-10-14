@@ -7,8 +7,8 @@ public class DecisionMakerTest
 {
 
     private int playerBalance;
-    private Bank bank;
-    private JailManager jailManager;
+    private BankHandler bank;
+    private JailHandler jailManager;
     private TileManager tileManager;
     private int playerPropertyPriceSum;
     private int playerRentsSum;
@@ -21,7 +21,7 @@ public class DecisionMakerTest
     private double dangerFactor;
     private int numActivePlayers;
 
-    public DecisionMakerTest(Bank bank, JailManager jailManager, TileManager tileManager)
+    public DecisionMakerTest(BankHandler bank, JailHandler jailManager, TileManager tileManager)
     {
         this.bank = bank;
         this.jailManager = jailManager;

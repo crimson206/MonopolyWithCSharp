@@ -18,12 +18,12 @@ public class Prompter : IPrompter
 
             if ( this.readKey.Key == ConsoleKey.Y )
             {
-                visualizer.UpdatePromptMessage("Waiting a signal");
+                visualizer.UpdatePromptMessage("");
                 return true;
             }
             else if ( this.readKey.Key == ConsoleKey.N )
             {
-                visualizer.UpdatePromptMessage("Waiting a signal");
+                visualizer.UpdatePromptMessage("");
                 return false;
             }
         } while (true);

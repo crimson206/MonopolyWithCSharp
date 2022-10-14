@@ -1,12 +1,12 @@
 
-public class Board
+public class BoardHandler
 {
     private int size;
     private int goPosition;
     private List<int> playerPositions = new List<int>() { 0, 0, 0, 0};
     private List<bool> playerPassedGo = new List<bool>() { false, false, false, false };
 
-    public Board(int size, int goPosition)
+    public BoardHandler(int size, int goPosition)
     {
         this.size = size;
         this.goPosition = goPosition;

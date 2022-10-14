@@ -1,8 +1,8 @@
 public class Move : Event
 {
-    private Board board;
+    private BoardHandler board;
 
-    public Move(EventStorage eventStorage, Delegator delegator, Board board) : base(eventStorage, delegator)
+    public Move(EventStorage eventStorage, Delegator delegator, BoardHandler board) : base(eventStorage, delegator)
     {
         this.events = eventStorage;
         this.board = board;

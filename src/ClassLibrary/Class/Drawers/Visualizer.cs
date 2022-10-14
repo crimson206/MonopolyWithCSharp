@@ -12,10 +12,10 @@ public class Visualizer
     private List<int[]> tileEdgeInfo = new List<int[]>();
     private List<int[]> innerMapEdge = new List<int[]>();
 
-    private Board board;
+    private BoardHandler board;
     private TileManager tileManager;
     private Delegator delegator;
-    public Visualizer(Board board, TileManager tileManager, Delegator delegator)
+    public Visualizer(BoardHandler board, TileManager tileManager, Delegator delegator)
     {
         this.board = board;
         this.tileManager = tileManager;

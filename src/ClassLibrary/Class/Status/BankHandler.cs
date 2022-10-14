@@ -1,11 +1,11 @@
 
-public class Bank
+public class BankHandler
 {
     private int salary = 200;
     private int initialBalance = 1500;
     private List<int> balances;
     private int jailFine = 60;
-    public Bank()
+    public BankHandler()
     {
         this.balances = new List<int> { this.initialBalance, this.initialBalance, this.initialBalance, this.initialBalance };
     }

@@ -1,5 +1,5 @@
 
-public class JailManager
+public class JailHandler
 {
     private int jailFine = 60;
     private List<int> freeJailCards = new List<int> () {0, 0, 0, 0};

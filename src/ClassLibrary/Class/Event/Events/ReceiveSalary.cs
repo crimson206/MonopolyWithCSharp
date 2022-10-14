@@ -1,8 +1,8 @@
 
 public class ReceiveSalary : Event
 {
-    private Bank bank;
-    public ReceiveSalary(EventStorage eventStorage, Delegator delegator, Bank bank) : base(eventStorage, delegator)
+    private BankHandler bank;
+    public ReceiveSalary(EventStorage eventStorage, Delegator delegator, BankHandler bank) : base(eventStorage, delegator)
     {
         this.bank = bank;
         this.delegator= delegator;

@@ -11,8 +11,8 @@ public class EventStorage
     public EndTurn endTurn;
     public EventStorage
     (
-        Delegator delegator, Bank bank, Board board, TileManager tileManager,
-        JailManager jailManager, DoubleSideEffectManager doubleSideEffectManager, DecisionMakerStorage decisionMakerStorage
+        Delegator delegator, BankHandler bank, BoardHandler board, TileManager tileManager,
+        JailHandler jailManager, DoubleSideEffectHandler doubleSideEffectManager, DecisionMakerStorage decisionMakerStorage
     )
     {
         this.landOnProperty = new LandOnProperty(this, delegator, bank, board, tileManager);

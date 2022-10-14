@@ -3,9 +3,9 @@ public class LandOnTile : Event
 {
     private int playerPosition;
     private Tile? currentTile;
-    private Board board;
+    private BoardHandler board;
     private TileManager tileManager;
-    public LandOnTile(EventStorage eventStorage, Delegator delegator, Board board, TileManager tileManager) : base(eventStorage, delegator)
+    public LandOnTile(EventStorage eventStorage, Delegator delegator, BoardHandler board, TileManager tileManager) : base(eventStorage, delegator)
     {
         this.events = eventStorage;
         this.board = board;

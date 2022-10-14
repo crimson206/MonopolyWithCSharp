@@ -4,10 +4,10 @@ public class LandOnProperty : Event
 
     private int playerPosition;
     private Property? currentProperty;
-    private Board board;
+    private BoardHandler board;
     private TileManager tileManager;
-    private Bank bank;
-    public LandOnProperty(EventStorage eventStorage, Delegator delegator, Bank bank, Board board, TileManager tileManager) : base(eventStorage, delegator)
+    private BankHandler bank;
+    public LandOnProperty(EventStorage eventStorage, Delegator delegator, BankHandler bank, BoardHandler board, TileManager tileManager) : base(eventStorage, delegator)
     {
         this.events = eventStorage;
         this.bank = bank;

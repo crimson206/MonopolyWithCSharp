@@ -1,8 +1,8 @@
 
 public class RollToMove : Event
 {
-    private DoubleSideEffectManager doubleSideEffectManager;
-    public RollToMove(EventStorage eventStorage, Delegator delegator, DoubleSideEffectManager doubleSideEffectManager) : base(eventStorage, delegator)
+    private DoubleSideEffectHandler doubleSideEffectManager;
+    public RollToMove(EventStorage eventStorage, Delegator delegator, DoubleSideEffectHandler doubleSideEffectManager) : base(eventStorage, delegator)
     {
         this.doubleSideEffectManager = doubleSideEffectManager;
         this.delegator= delegator;

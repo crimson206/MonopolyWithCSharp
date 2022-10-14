@@ -1,5 +1,5 @@
 
-public class DoubleSideEffectManager
+public class DoubleSideEffectHandler
 {
     private List<int> doubleCounts = new List<int> { 0, 0, 0, 0 };
     private List<bool> extraTurns = new List<bool> { false, false, false, false };
