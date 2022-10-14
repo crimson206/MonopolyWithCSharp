@@ -8,7 +8,8 @@ I defined classes as "added" if they can at least work properly
 I defined classes as "developing" if they work partially many changes are sill expected
 Refactoring is still needed for all the classes
 
-- To understand the code, please check the files below first. 
+- To understand the code, please check the files below first.
+
   src/ClassLibrary/Delegator.cs
   src/ClassLibrary/Event/Events/TryToEscapeJail.cs
 
