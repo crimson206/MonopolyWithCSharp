@@ -12,9 +12,10 @@
     ///     - recommends delegator some string to be displayed
     ///     - tells delegator that we need a decision making
     ///     - set the next event of "WantPlayerUseJailFreeCard"
-    /// 9. Go to "Game.cs"
-    /// 12. As the Run() of Game keeps being called, the function to be called moves down.
-    /// 13. In the end, it assign a "Start()" function of another event class to the "nextEvent".
+    /// 9. The delegator will run the next event instead of this event obejct.
+    /// 10. If delegator keeps running events, the function to be called moves down.
+    /// 11. In the end, it assigns a "Start()" function of another event class to the "nextEvent".
+    /// 12. The next event do the same till it passes the turn to another event.
 
 public class TryToEscapeJail : Event
 {

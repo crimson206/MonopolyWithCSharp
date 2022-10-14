@@ -7,11 +7,6 @@
     /// 4. To understand what is going on in "Run()", please go to the "Delegator"
 
 
-    /// Understanding "nextEvent"! (this note starts from "Delegator.cs")
-    /// 10. In the loop of "Run()", delegator will make a decision, and run the next event again.
-    /// 11. Go to "TryToEscapeJail.cs"
-
-
 public class Game
 {
 

@@ -7,7 +7,7 @@
 
     /// Understanding "nextEvent"!
     /// 1. Go to "TryToEscapeJail.cs"
-    /// 6. If you run "RunEvent", the "nextEvent" runs "CanPlayerUseJailCard()" of "TryToEscapeJail" instead.
+    /// 6. If you run "RunEvent", this delegator runs "CanPlayerUseJailCard()" of "TryToEscapeJail" as delegator.
     /// 7. Go back to "TryToEscapeJail.cs" to see what is going on.
 
     /// To Be Improved
