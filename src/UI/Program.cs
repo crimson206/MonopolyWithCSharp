@@ -1,8 +1,25 @@
-﻿internal class Program
+﻿using System.Threading;
+
+internal class Program
 {
     private static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        Game game = new Game();
+        Visualizer visualizer = new Visualizer(game.board, game.tileManager, game.delegator);
+        visualizer.Setup(11, 11, 13, 4);
+        Prompter prompter = new Prompter(visualizer);
+        game.ConnectConsolePrompt(prompter);
+
+        game.delegator.NextEvent = game.events.tryToEscapeJail.Start;
+        
+        while (true)
+        {
+            visualizer.UpdateLogging();
+            visualizer.Visualize();
+            Console.ReadKey();
+            
+            game.Run();
+        }
     }
 
 }

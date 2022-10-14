@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\sgkm\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj": {}
+    "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj": {}
   },
   "projects": {
-    "c:\\Users\\sgkm\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj": {
+    "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\sgkm\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj",
+        "projectUniqueName": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj",
         "projectName": "ClassLibrary",
-        "projectPath": "c:\\Users\\sgkm\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj",
+        "projectPath": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj",
         "packagesPath": "C:\\Users\\sgkm\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\sgkm\\MonopolyWithCSharp\\src\\ClassLibrary\\obj\\",
+        "outputPath": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sgkm\\AppData\\Roaming\\NuGet\\NuGet.Config"
