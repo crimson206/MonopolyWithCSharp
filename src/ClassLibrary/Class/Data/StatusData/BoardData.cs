@@ -13,7 +13,7 @@ public class BoardData : ICloneable
     public object Clone()
     {
         /// without cast, the type of clone is ICloneable
-        DoubleSideEffectData clone = (DoubleSideEffectData) this.MemberwiseClone();
+        BoardData clone = (BoardData) this.MemberwiseClone();
         return clone;
     }
 }

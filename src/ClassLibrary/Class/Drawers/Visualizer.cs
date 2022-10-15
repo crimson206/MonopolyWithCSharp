@@ -5,22 +5,21 @@ public class Visualizer
     private PlayerDrawer? playerDrawer;
     public LoggingDrawer loggingDrawer = new LoggingDrawer(5);
     private DisplayTiles displayTiles = new DisplayTiles();
+    private DataCenter data;
     private int mapWidth;
     private int mapHeight;
     private int tileWidth;
     private int tileHeight;
     private List<int[]> tileEdgeInfo = new List<int[]>();
     private List<int[]> innerMapEdge = new List<int[]>();
+    private List<int> playerPositions => this.data.Board.PlayerPositions;
 
-    private BoardHandler board;
-    private TileManager tileManager;
-    private Delegator delegator;
-    public Visualizer(BoardHandler board, TileManager tileManager, Delegator delegator)
+    public Visualizer(DataCenter data)
     {
-        this.board = board;
-        this.tileManager = tileManager;
-        this.delegator = delegator;
+        this.data = data;
     }
+
+    private string recommendedString => this.data.Delegator.RecommendedString;
 
     public void Setup(int mapWidth, int mapHeight, int tileWidth, int tileHeight)
     {
@@ -39,7 +38,7 @@ public class Visualizer
     }
     public void UpdateLogging()
     {
-        loggingDrawer.UpdateLogging(delegator.RecommendedString);
+        loggingDrawer.UpdateLogging(this.recommendedString);
     }
 
     int backUpCursorLeft = Console.CursorLeft;
@@ -56,13 +55,15 @@ public class Visualizer
         mapDrawer.DrawMap(mapWidth, mapHeight,  tileWidth,  tileHeight);
 
         /// need
-        List<int> playerPositions = this.board.PlayerPositions;
-        playerDrawer!.DrawPlayers(playerPositions);
+
+        playerDrawer!.DrawPlayers(this.playerPositions);
+
+
 
         /// need
-        List<Tile> tiles = this.tileManager.Tiles;
-        List<RealEstate> realEstates = FilterRealEstates(tiles);
-        List<RailRoad> railRoads = FilterRailRoads(tiles);
+        List<TileData> tileDatas = this.data.TileDataSet;
+        List<RealEstateData> realEstates = (from tileData in tileDatas where tileData is RealEstateData select tileData as RealEstateData).ToList();
+        List<RailRoadData> railRoads = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
 
         /// need
         displayTiles.DisplayRealEstates2( innerMapEdge[0][0] + 5, innerMapEdge[0][1] + 1, realEstates, 2);

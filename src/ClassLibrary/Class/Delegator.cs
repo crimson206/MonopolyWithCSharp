@@ -19,12 +19,12 @@ public class Delegator
 {
     private List<string> trackEvents = new List<string>();
     private int currentPlayerNumber;
-    private bool boolDecision;
+    private bool playerBoolDecision;
     private string recommendedString = String.Empty;
-    private int[] rollDiceResult = new int[2];
+    private int[] playerRollDiceResult = new int[2];
     public int CurrentPlayerNumber { get => this.currentPlayerNumber; set => this.currentPlayerNumber = value;}
-    public bool PlayerBoolDecision { get => boolDecision; set => boolDecision = value; }
-    public int[] PlayerRollDiceResult { get => rollDiceResult; set => this.rollDiceResult = value; }
+    public bool PlayerBoolDecision { get => playerBoolDecision; set => playerBoolDecision = value; }
+    public int[] PlayerRollDiceResult { get => playerRollDiceResult; set => this.playerRollDiceResult = value; }
     private bool isNextEventPlayerEvent;
     public string RecommendedString 
     { 
@@ -38,7 +38,6 @@ public class Delegator
             this.recommendedString = value;
         }
     }
-
 
     private bool IsRecommendedStringChanged;
     public delegate void DelPlayerEvent();
@@ -62,9 +61,8 @@ public class Delegator
         }
     }
     public delegate bool DelManualDecision();
-    public DelManualDecision? ManualDecision; 
-
-
+    public DelManualDecision? ManualDecision;
+    
 
     /// it runs a function of events
     public void RunEvent()

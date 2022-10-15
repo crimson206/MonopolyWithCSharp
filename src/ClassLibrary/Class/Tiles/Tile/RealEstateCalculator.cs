@@ -65,4 +65,5 @@ public class RealEstateCalculator
             return false;
         }
     }
+
 }

@@ -24,6 +24,53 @@ public class MapTilesFactory
         return randomlyAssembledTiles;
     }
 
+    public List<TileData> ExtractTileDataSet(List<Tile> tiles)
+    {
+        List<TileData> tileDataSet = new List<TileData>();
+
+        foreach (var tile in tiles)
+        {
+            if ( tile is Go)
+            {
+                tileDataSet.Add(new GoData(tile));
+            }
+            else if ( tile is Jail)
+            {
+                tileDataSet.Add(new JailData(tile));
+            }
+            else if ( tile is RealEstate)
+            {
+                var realEstate = (RealEstate) tile;
+                tileDataSet.Add(new RealEstateData(realEstate));
+            }
+            else if ( tile is Utility)
+            {
+                var utility = (Utility) tile;
+                tileDataSet.Add(new UtilityData(utility));
+            }
+            else if ( tile is RailRoad)
+            {
+                var railRoad = (RailRoad) tile;
+                tileDataSet.Add(new RailRoadData(railRoad));
+            }
+            else if ( tile is IncomeTax)
+            {
+                tileDataSet.Add(new IncomeTaxData(tile));
+            }
+            else if ( tile is LuxuryTax)
+            {
+                tileDataSet.Add(new LuxuryTaxData(tile));
+            }
+            else
+            {
+                tileDataSet.Add(new TileData(tile));
+            }
+            
+        }
+
+        return tileDataSet;
+    }
+
     private List<List<Tile>> CreateDifferentTileGroups(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests)
     {
         List<List<Tile>> differentTileGroups = new List<List<Tile>>();

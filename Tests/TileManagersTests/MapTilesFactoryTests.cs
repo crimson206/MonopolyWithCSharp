@@ -10,10 +10,10 @@ namespace Tests.TileManagersTests
             
             /// initiate
             MapTilesFactory mapTilesFactory = new MapTilesFactory();
-            List<Tile> tiles = mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3, 0 );
+            List<Tile> tiles = mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3);
 
             GroupSetter groupSetter = new GroupSetter();
-            groupSetter.SetGroups(0, tiles);
+            groupSetter.SetGroups(tiles);
 
             /// Get separate properties
             var query = from tile in tiles where tile is Property select tile as Property;

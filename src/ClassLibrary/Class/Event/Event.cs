@@ -16,7 +16,7 @@ public abstract class Event
     protected BankData bankData => this.dataCenter.Bank;
     protected BoardData boardData => this.dataCenter.Board;
     protected DoubleSideEffectData doubleSideEffectData => this.dataCenter.DoubleSideEffect;
-    protected JailData jailData => this.dataCenter.Jail;
+    protected JailHandlerData jailData => this.dataCenter.Jail;
 
     public Event(Event proviousEvent)
     {

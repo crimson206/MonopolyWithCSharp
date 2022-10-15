@@ -16,6 +16,7 @@ public class TileManager
     private MapTilesFactory mapTilesFactory = new MapTilesFactory();
     public Analyser Analyser;
     public PropertyManager propertyManager;
+    public List<TileData> tileDataSet;
 
 
     public TileManager()
@@ -27,7 +28,11 @@ public class TileManager
         this.properties = properties;
         this.Analyser = new Analyser(properties, realEstates);
         this.propertyManager = new PropertyManager();
+        this.tileDataSet = this.mapTilesFactory.ExtractTileDataSet(tiles);
     }
+
+
+
     public List<Tile> Tiles { get => new List<Tile> (this.tiles); }
 
     public List<Property> Properties { get => new List<Property> (this.properties); }

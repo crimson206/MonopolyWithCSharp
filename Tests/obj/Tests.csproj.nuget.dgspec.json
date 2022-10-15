@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\Tests.csproj": {}
+    "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\Tests.csproj": {}
   },
   "projects": {
-    "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj": {
+    "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj",
+        "projectUniqueName": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj",
         "projectName": "ClassLibrary",
-        "projectPath": "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj",
+        "projectPath": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj",
         "packagesPath": "C:\\Users\\sgkm\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\obj\\",
+        "outputPath": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sgkm\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -65,14 +65,14 @@
         }
       }
     },
-    "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\Tests.csproj": {
+    "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\Tests.csproj",
+        "projectUniqueName": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\Tests.csproj",
         "projectName": "Tests",
-        "projectPath": "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\Tests.csproj",
+        "projectPath": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\Tests.csproj",
         "packagesPath": "C:\\Users\\sgkm\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\obj\\",
+        "outputPath": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sgkm\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -87,8 +87,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj": {
-                "projectPath": "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj"
+              "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj": {
+                "projectPath": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj"
               }
             }
           }

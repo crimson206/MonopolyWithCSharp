@@ -11,14 +11,14 @@ public class WantPlayerUseJailFreeCard : DecisionEvent
         switch (playerSettings[playerNumber])
         {
             case Setting.Manual:
-                decision = this.MakeDecisionManually();
+                this.decision = this.MakeDecisionManually();
                 break;
             default:
-                decision = true;
+                this.decision = true;
                 break;
         }
 
-        if ( this.CopyDecisionBool(decision))
+        if ( this.CopyDecisionBool(this.decision) )
         {
             throw new Exception();
         }

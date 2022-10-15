@@ -4,9 +4,7 @@ public class Property : Tile , IPurchasable
     protected int price;
     protected List<int> rents = new List<int>();
     protected List<Property> group = new List<Property>();
-    protected int currentRent => CalCurrentRent();
     protected int mortgage;
-    
     protected bool isMortgaged;
     public Property(string name, int price, List<int> rents, int mortgageValue) : base(name)
     {
@@ -19,9 +17,10 @@ public class Property : Tile , IPurchasable
     public int? OwnerPlayerNumber { get=>ownerPlayerNumber; }
     public int Price { get => price; }
     public List<int> Rents { get => rents; }
-    public int CurrentRent { get => currentRent; }
+    public int CurrentRent => CalCurrentRent();
     public int Mortgage { get => mortgage; }
     public bool IsMortgaged { get => this.isMortgaged; }
+    public bool IsMortgagible => this.CheckMortgagible();
     public void SetOnwerPlayerNumber(int? playerNumber)
     {
 
@@ -42,17 +41,25 @@ public class Property : Tile , IPurchasable
         }
     }
 
+    protected virtual bool CheckMortgagible()
+    {
+        if (this.ownerPlayerNumber != null && this.isMortgaged is false)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public virtual void SetIsMortgaged(bool isMortgaged)
     {
-
         this.isMortgaged = isMortgaged;
-
     }
 
     public void SetGroup(List<Property> group)
     {
-
         this.group = group;
-
     }
 }

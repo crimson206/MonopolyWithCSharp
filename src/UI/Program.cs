@@ -5,10 +5,10 @@ internal class Program
     private static void Main(string[] args)
     {
         Game game = new Game();
-        Visualizer visualizer = new Visualizer(game.Data.Board, new TileManager(), game.delega)
+        Visualizer visualizer = new Visualizer(game.Data);
         visualizer.Setup(11, 11, 13, 4);
-        Prompter prompter = new Prompter(visualizer);
-        game.ConnectConsolePrompt(prompter);
+        ConsoleInteractor prompter = new ConsoleInteractor(visualizer);
+        game.ConnectConsoleInteractor(prompter);
 
         
         while (true)

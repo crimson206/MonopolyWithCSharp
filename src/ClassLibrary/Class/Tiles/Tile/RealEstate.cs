@@ -18,7 +18,7 @@ public class RealEstate : Property
     public int BuildingCost { get => this.buildingCost; }
     public bool IsHouseBuildable => this.calculator.IsHouseBuildable();
     public bool IsHouseDistructable => this.calculator.IsHouseDistructable();
-    public bool IsMortgagible => this.calculator.IsMortgagible();
+    protected override bool CheckMortgagible() => this.calculator.IsMortgagible();
     public void BuildHouse()
     {
         if (this.IsHouseBuildable is true)

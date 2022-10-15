@@ -1,9 +1,9 @@
-public class Prompter : IPrompter
+public class ConsoleInteractor : IPrompter
 {
     private Visualizer visualizer;
     private ConsoleKeyInfo readKey;
 
-    public Prompter(Visualizer visualizer)
+    public ConsoleInteractor(Visualizer visualizer)
     {
         this.visualizer = visualizer;
     }

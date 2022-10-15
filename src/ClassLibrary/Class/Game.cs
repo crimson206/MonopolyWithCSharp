@@ -24,14 +24,16 @@ public class Game
         BankData bankdata = new BankData(this.bank);
         BoardData boardData = new BoardData(this.boardData);
         DoubleSideEffectData doubleSideEffectData = new DoubleSideEffectData(this.doubleSideEffectManager);
-        JailData jailData = new JailData(this.jailManager);
-        this.dataCenter = new DataCenter(bankdata, boardData, doubleSideEffectData, jailData);
+        JailHandlerData jailData = new JailHandlerData(this.jailManager);
+        DelegatorData delegatorData = new DelegatorData(this.delegator);
+        this.dataCenter = new DataCenter(bankdata, boardData, doubleSideEffectData, jailData, delegatorData, tileManager);
     }
 
     public DataCenter Data => (DataCenter) this.dataCenter.Clone();
-    public void ConnectConsolePrompt(Prompter prompter)
+    public void ConnectConsoleInteractor(ConsoleInteractor prompter)
     {
         this.delegator.ManualDecision = prompter.PromptBool;
+        
     }
 
     public void Run()

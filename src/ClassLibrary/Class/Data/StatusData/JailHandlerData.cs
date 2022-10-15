@@ -1,17 +1,17 @@
-public class JailData : ICloneable
+public class JailHandlerData : ICloneable
 {
     private JailHandler jailHandler;
     public List<int> TurnsInJailCounts => this.jailHandler.TurnsInJailCounts;
     public List<int> FreeJailCardCounts => this.jailHandler.FreeJailCardCounts;
 
-    public JailData(JailHandler jailHandler)
+    public JailHandlerData(JailHandler jailHandler)
     {
         this.jailHandler = jailHandler;
     }
     public object Clone()
     {
         /// without cast, the type of clone is ICloneable
-        JailData  clone = (JailData ) this.MemberwiseClone();
+        JailHandlerData  clone = (JailHandlerData ) this.MemberwiseClone();
         return clone;
     }
 }
