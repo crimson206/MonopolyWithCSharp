@@ -3,7 +3,7 @@ public class GroupSetter
 {
     private TileFilter tileFilter = new TileFilter();
 
-    public void SetGroups(int password, List<Tile> tiles)
+    public void SetGroups(List<Tile> tiles)
     {
         List<RealEstate> realEstates = tileFilter.FilterRealEstates(tiles);
         Dictionary<string, List<RealEstate>> colorGroups = tileFilter.DivideRealEstatesByColor(realEstates);
@@ -12,18 +12,18 @@ public class GroupSetter
 
         foreach (var colorGroup in colorGroups.Values)
         {
-            SetGroup(password, colorGroup.Cast<Property>().ToList());
+            SetGroup( colorGroup.Cast<Property>().ToList());
         }
 
-        SetGroup(password, railRoads);
-        SetGroup(password, utilities);
+        SetGroup( railRoads);
+        SetGroup( utilities);
     }
 
-    private void SetGroup(int password, List<Property> group)
+    private void SetGroup(List<Property> group)
     {
         foreach (var property in group)
         {
-            property.SetGroup(password, group);
+            property.SetGroup(group);
         }
     }
 

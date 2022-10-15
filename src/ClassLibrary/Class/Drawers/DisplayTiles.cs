@@ -148,7 +148,7 @@ public class DisplayTiles
         WriteStringWithColorAtCenter(realEstate.Name, realEstate.Color, nameL);
         WriteStringAtCenter(realEstate.Price.ToString(), priceL);
         WriteStringAtCenter(stringRents, rentL);
-        WriteStringAtCenter(realEstate.NumOfHouses.ToString(), numHouseL);
+        WriteStringAtCenter(realEstate.HouseCount.ToString(), numHouseL);
         if (realEstate.OwnerPlayerNumber is null)
         {
             WriteStringAtCenter("free", ownerL);  
@@ -166,7 +166,7 @@ public class DisplayTiles
 
         string realestateBanner = ArrangeCenter(realEstate.Name, nameL) + ArrangeCenter(realEstate.Color, colorL) + 
                                 ArrangeCenter(realEstate.Price.ToString(), priceL) + ArrangeCenter(stringRents, rentL) + 
-                                ArrangeCenter(realEstate.NumOfHouses.ToString(), numHouseL) + ArrangeCenter(ownerIDToStr, ownerL);                                
+                                ArrangeCenter(realEstate.HouseCount.ToString(), numHouseL) + ArrangeCenter(ownerIDToStr, ownerL);                                
         return realestateBanner;
     }
 

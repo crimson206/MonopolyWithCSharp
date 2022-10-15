@@ -6,14 +6,14 @@ public class Property : Tile , IPurchasable
     protected List<Property> group = new List<Property>();
     protected int currentRent => CalCurrentRent();
     protected int mortgage;
-    protected int password;
+    
     protected bool isMortgaged;
-    public Property(string name, int price, List<int> rents, int mortgageValue, int password) : base(name)
+    public Property(string name, int price, List<int> rents, int mortgageValue) : base(name)
     {
         this.price = price;
         this.rents = rents;
         this.mortgage = mortgageValue;
-        this.password = password;
+         ;
     }
 
     public int? OwnerPlayerNumber { get=>ownerPlayerNumber; }
@@ -22,16 +22,11 @@ public class Property : Tile , IPurchasable
     public int CurrentRent { get => currentRent; }
     public int Mortgage { get => mortgage; }
     public bool IsMortgaged { get => this.isMortgaged; }
-    public void SetOnwerPlayerNumber(int password, int? playerNumber)
+    public void SetOnwerPlayerNumber(int? playerNumber)
     {
-        if ( password == this.password)
-        {
-            this.ownerPlayerNumber = playerNumber;
-        }
-        else
-        {
-            throw new Exception();
-        }
+
+        this.ownerPlayerNumber = playerNumber;
+ 
     }
 
     protected virtual int CalCurrentRent()
@@ -47,27 +42,17 @@ public class Property : Tile , IPurchasable
         }
     }
 
-    public virtual void SetIsMortgaged(int password, bool isMortgaged)
+    public virtual void SetIsMortgaged(bool isMortgaged)
     {
-        if ( password != this.password )
-        {
-            throw new Exception();
-        }
-        else
-        {
-            this.isMortgaged = isMortgaged;
-        }
+
+        this.isMortgaged = isMortgaged;
+
     }
 
-    public void SetGroup(int password, List<Property> group)
+    public void SetGroup(List<Property> group)
     {
-        if( password != this.password)
-        {
-            throw new Exception();
-        }
-        else
-        {
-            this.group = group;
-        }
+
+        this.group = group;
+
     }
 }

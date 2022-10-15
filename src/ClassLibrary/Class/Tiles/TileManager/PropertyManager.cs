@@ -1,27 +1,21 @@
 
 public class PropertyManager
 {
-    private int password;
-
-    public PropertyManager(int password)
-    {
-        this.password = password;
-    }
 
     public void ChangeOwner(Property property, int? playerNumber)
     {
-        property.SetOnwerPlayerNumber(this.password, playerNumber);
+        property.SetOnwerPlayerNumber(playerNumber);
     }
     public void SetIsMortgaged(Property property, bool isMortgaged)
     {
-        property.SetIsMortgaged(password, isMortgaged);
+        property.SetIsMortgaged(isMortgaged);
     }
     public void BuildHouse(RealEstate realEstate)
     {
-        realEstate.BuildHouse(this.password);
+        realEstate.BuildHouse();
     }
     public void DistructHouse(RealEstate realEstate)
     {
-        realEstate.DistructHouse(this.password);
+        realEstate.DistructHouse();
     }
 }

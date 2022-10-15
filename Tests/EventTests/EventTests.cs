@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Tests
 {
     [TestClass]
-    public class ExperimentTests
+    public class EventTests
     {
         [TestMethod]
         public void TestMethod1()
@@ -16,8 +16,9 @@ namespace Tests
 
             Delegator delegator = new Delegator();
             BoolCopier boolCopier  = new BoolCopier();
-            PlayerStartTurn playerStartTurn = new PlayerStartTurn(delegator, new DataCenter(), boolCopier);
-            delegator.PlayerNextEvent = playerStartTurn.RunEvent;
+            
+            Game game = new Game();
+
             boolCopier.isConditionBoolMocked = true;
             boolCopier.isDecisionBoolMocked = true;
             List<List<bool>> aa = new List<List<bool>>();

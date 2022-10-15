@@ -37,7 +37,7 @@ public class Analyser
 
     private double CalBuildingHouseCostEfficiency(RealEstate realEstate)
     {
-        if (realEstate.Buildable is false)
+        if (realEstate.IsHouseBuildable is false)
         {
             return 0;
         }

@@ -6,17 +6,17 @@ public abstract class Event
     protected BoolCopier boolCopier;
 
     protected int playerNumber => this.delegator.CurrentPlayerNumber;
-    protected bool boolDecision => this.delegator.BoolDecision;
-    protected int[] rollDiceResult => this.delegator.RollDiceResult;
+    protected bool playerBoolDecision => this.delegator.PlayerBoolDecision;
+    protected int[] playerRollDiceResult => this.delegator.PlayerRollDiceResult;
     protected string recommendedString { set => this.delegator.RecommendedString = value; }
-    protected Delegator.DelPlayerEvent playerNextEvent { set => this.delegator.PlayerNextEvent = value; }
-    protected Delegator.DelPlayerDecision playerNextDecision { set => this.delegator.PlayerNextDecision = value; }
+    protected Delegator.DelPlayerEvent nextAutoEvent { set => this.delegator.PlayerNextEvent = value; }
+    protected Delegator.DelPlayerDecision nextDecision { set => this.delegator.PlayerNextDecision = value; }
 
 
-    protected BankHandler bankHandler => this.dataCenter.bankHandler;
-    protected BoardHandler boardHandler => this.dataCenter.boardHandler;
-    protected DoubleSideEffectHandler doubleSideEffectHandler => this.dataCenter.doubleSideEffectHandler;
-    protected JailHandler jailHandler => this.dataCenter.jailHandler;
+    protected BankData bankData => this.dataCenter.Bank;
+    protected BoardData boardData => this.dataCenter.Board;
+    protected DoubleSideEffectData doubleSideEffectData => this.dataCenter.DoubleSideEffect;
+    protected JailData jailData => this.dataCenter.Jail;
 
     public Event(Event proviousEvent)
     {
@@ -25,10 +25,7 @@ public abstract class Event
         this.boolCopier = proviousEvent.boolCopier;
     }
 
-    /// events
-    protected CanPlayerUseFreeJailCard canPlayerUseFreeJailCard => new CanPlayerUseFreeJailCard(this);
-    protected PlayerRollToMove playerRollToMove => new PlayerRollToMove(this);
-    protected CanPlayerPayJailFine canPlayerPayJailFine => new CanPlayerPayJailFine(this);
+    /// event
 
     /// decision
     protected WantPlayerUseJailFreeCard wantPlayerUseJailFreeCard => new WantPlayerUseJailFreeCard(this);

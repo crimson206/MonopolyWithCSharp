@@ -24,7 +24,7 @@ namespace Tests
             realEstate3.SetGroup(0, colorGroup);
 
             Assert.AreEqual(realEstate1.CurrentRent, 10);
-            Assert.AreEqual(realEstate1.Buildable, false);
+            Assert.AreEqual(realEstate1.IsHouseBuildable, false);
 
             /// sell realEstate
             realEstate1.SetOnwerPlayerNumber(0, 1);
@@ -46,29 +46,29 @@ namespace Tests
             realEstate2.SetOnwerPlayerNumber(0, 1);
             realEstate3.SetOnwerPlayerNumber(0, 1);
             Assert.AreEqual(realEstate1.CurrentRent, 20);
-            Assert.AreEqual(realEstate1.Buildable, true);
+            Assert.AreEqual(realEstate1.IsHouseBuildable, true);
 
             /// build a house
             realEstate1.BuildHouse(0);
             Assert.AreEqual(realEstate1.CurrentRent, 40);
-            Assert.AreEqual(realEstate1.NumOfHouses, 1);
+            Assert.AreEqual(realEstate1.HouseCount, 1);
             Assert.ThrowsException<Exception>(() => realEstate1.BuildHouse(0));
-            Assert.AreEqual(realEstate1.Distructable, true);
-            Assert.AreEqual(realEstate2.Distructable, false);
+            Assert.AreEqual(realEstate1.IsHouseDistructable, true);
+            Assert.AreEqual(realEstate2.IsHouseDistructable, false);
             Assert.ThrowsException<Exception>(() => realEstate1.SetIsMortgaged(0, true));
 
             /// make buidable again
             realEstate2.BuildHouse(0);
             realEstate3.BuildHouse(0);
-            Assert.AreEqual(realEstate1.Buildable, true);
+            Assert.AreEqual(realEstate1.IsHouseBuildable, true);
 
             /// build a house
             realEstate1.BuildHouse(0);
             Assert.AreEqual(realEstate1.CurrentRent, 80);
 
             /// check buildable, distructable again
-            Assert.AreEqual(realEstate1.Buildable, false);
-            Assert.AreEqual(realEstate1.Distructable, true);
+            Assert.AreEqual(realEstate1.IsHouseBuildable, false);
+            Assert.AreEqual(realEstate1.IsHouseDistructable, true);
 
             /// make numHouse 5
             realEstate2.BuildHouse(0);
@@ -86,7 +86,7 @@ namespace Tests
 
             /// distruct a house
             realEstate1.DistructHouse(0);
-            Assert.AreEqual(realEstate1.NumOfHouses, 4);
+            Assert.AreEqual(realEstate1.HouseCount, 4);
             Assert.ThrowsException<Exception>( () => realEstate1.DistructHouse(0));
         }
     }

@@ -1,7 +1,7 @@
 /// Now it is getting bigger to be given to the events
 /// The events only need the features of the property manager and the information of tiles
 /// Maybe the board can store the information of tiles
-/// Only the property manager needs to share the password with properties.
+/// Only the property manager needs to share the  with properties.
 /// Make tiles with the tile factory and give the tiles to the board.
 /// Board can deal with simple events "PayRent" "Pass" without the property manager.
 /// Property manager will be called when they need to by the property.
@@ -20,23 +20,22 @@ public class TileManager
 
     public TileManager()
     {
-        int newPassword = random.Next(0, (int) Math.Pow(10,6));
-        this.tiles = this.CreateTiles(newPassword);
+        this.tiles = this.CreateTiles();
         
         List<Property> properties = this.FilterProperties(this.tiles);
         this.realEstates = this.FilterRealEstates(this.tiles);
         this.properties = properties;
         this.Analyser = new Analyser(properties, realEstates);
-        this.propertyManager = new PropertyManager(newPassword);
+        this.propertyManager = new PropertyManager();
     }
     public List<Tile> Tiles { get => new List<Tile> (this.tiles); }
 
     public List<Property> Properties { get => new List<Property> (this.properties); }
     public List<RealEstate> RealEstates { get => new List<RealEstate> (this.realEstates); }
 
-    private List<Tile> CreateTiles(int password)
+    private List<Tile> CreateTiles()
     {
-        return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3 , password);
+        return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3);
     }
 
     private List<Property> FilterProperties(List<Tile> tiles)

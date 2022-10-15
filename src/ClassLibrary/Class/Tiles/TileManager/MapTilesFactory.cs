@@ -3,9 +3,9 @@ public class MapTilesFactory
     private Random random = new Random();
     private GroupSetter groupSetter = new GroupSetter();
 
-    public List<Tile> CreateRandomMapTiles(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests, int password)
+    public List<Tile> CreateRandomMapTiles(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests)
     {
-        List<List<Tile>> differentTileGroups = CreateDifferentTileGroups(numOfRealRestates, numOfRailRoads, numOfUtilities, numOfChances, numOfCommunityChests, password);
+        List<List<Tile>> differentTileGroups = CreateDifferentTileGroups(numOfRealRestates, numOfRailRoads, numOfUtilities, numOfChances, numOfCommunityChests);
 
         List<Tile> randomlyAssembledTiles = differentTileGroups[0];
 
@@ -19,17 +19,17 @@ public class MapTilesFactory
         randomlyAssembledTiles.Insert(20, new FreeParking("FreeParking"));
         randomlyAssembledTiles.Insert(30, new GoToJail("GoToJail"));
 
-        groupSetter.SetGroups(password, randomlyAssembledTiles);
+        groupSetter.SetGroups(randomlyAssembledTiles);
 
         return randomlyAssembledTiles;
     }
 
-    private List<List<Tile>> CreateDifferentTileGroups(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests, int password)
+    private List<List<Tile>> CreateDifferentTileGroups(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests)
     {
         List<List<Tile>> differentTileGroups = new List<List<Tile>>();
-        differentTileGroups.Add(CreateRealEstateGroups(numOfRealRestates, 80, 400, this.random, password));
-        differentTileGroups.Add(CreateRailRoads(numOfRailRoads, 200, 2, password));
-        differentTileGroups.Add(CreateUtilities(numOfUtilities, 100, 4, 6, password));
+        differentTileGroups.Add(CreateRealEstateGroups(numOfRealRestates, 80, 400, this.random));
+        differentTileGroups.Add(CreateRailRoads(numOfRailRoads, 200, 2));
+        differentTileGroups.Add(CreateUtilities(numOfUtilities, 100, 4, 6));
         differentTileGroups.Add(CreateEventTiles(numOfChances, numOfCommunityChests));
         differentTileGroups.Add(CreateTaxes());
 
@@ -68,7 +68,7 @@ public class MapTilesFactory
 
     /// lastRentRate usually from 4. set min as 3
     /// set price limit 40
-    private RealEstate CreateRealEstateWithAutoFinance(string name, int price, string color, int password)
+    private RealEstate CreateRealEstateWithAutoFinance(string name, int price, string color)
     {
 
         /// price=40 => 1, price >> 50 => 2
@@ -91,7 +91,7 @@ public class MapTilesFactory
 
         int mortgageValue = price/2;
 
-        return new RealEstate(name, price, buildingCost, rents, mortgageValue, color, password);
+        return new RealEstate(name, price, buildingCost, rents, mortgageValue, color);
     }
 
     private List<int> DistributeNumToThreeAndTwo(int number)
@@ -110,7 +110,7 @@ public class MapTilesFactory
         };
     }
 
-    private List<Tile> CreateRealEstateGroups(int number, int startPrice, int endPrice, Random random, int password)
+    private List<Tile> CreateRealEstateGroups(int number, int startPrice, int endPrice, Random random)
     {
         List<Tile> realEstates = new List<Tile>();
         
@@ -126,7 +126,7 @@ public class MapTilesFactory
         {
             int groupSize = threeTwoList[i];
             int price = startPrice + (i * priceIncrease);
-            List<Tile> newRealEstateGroup = CreateRealEstateColorGroup(threeTwoList[i], colors[i], price, password);
+            List<Tile> newRealEstateGroup = CreateRealEstateColorGroup(threeTwoList[i], colors[i], price);
             
             for (int j = 0; j < groupSize; j++)
             {
@@ -166,7 +166,7 @@ public class MapTilesFactory
     /// <param name="referencePrice"></param>
     /// <param name="lastRentRate"></param>
     /// <returns></returns>
-    private List<Tile> CreateRealEstateColorGroup(int groupSize, string color, int refPrice, int password)
+    private List<Tile> CreateRealEstateColorGroup(int groupSize, string color, int refPrice)
     {
         List<Tile> colorGroup = new List<Tile>();
         
@@ -175,14 +175,14 @@ public class MapTilesFactory
             double priceRate = 0.8 + 0.2 * i / (groupSize - 1);
             string name = String.Format("RealEstate {0}{1}", color, i+1);
             int price = (int) (priceRate * refPrice);
-            Tile newRealEstate = CreateRealEstateWithAutoFinance(name, price, color, password);
+            Tile newRealEstate = CreateRealEstateWithAutoFinance(name, price, color);
             colorGroup.Add(newRealEstate);
         }
 
         return colorGroup;
     }
 
-    private List<Tile> CreateRailRoads(int numOfRailRoads, int price, double rentIncreaseRate, int password)
+    private List<Tile> CreateRailRoads(int numOfRailRoads, int price, double rentIncreaseRate)
     {
         List<Tile> railRoadGroup = new List<Tile>();
         List<int> rents = new List<int>();
@@ -199,14 +199,14 @@ public class MapTilesFactory
         {
             string name = String.Format("RailRoad{0}", i+1);
 
-            Tile newRailRoad = new RailRoad(name, price, rents, mortgageValue, password);
+            Tile newRailRoad = new RailRoad(name, price, rents, mortgageValue);
             railRoadGroup.Add(newRailRoad);
         }
 
         return railRoadGroup;
     }
 
-    private List<Tile> CreateUtilities(int numOfUtilities, int price, int basicRent, int addRent, int password)
+    private List<Tile> CreateUtilities(int numOfUtilities, int price, int basicRent, int addRent)
     {
         List<Tile> utilityGroup = new List<Tile>();
         List<int> rents = new List<int>();
@@ -222,7 +222,7 @@ public class MapTilesFactory
         {
             string name = String.Format("Utility{0}", i+1);
 
-            Tile newUtility = new Utility(name, price, rents, mortgageValue, password);
+            Tile newUtility = new Utility(name, price, rents, mortgageValue);
             utilityGroup.Add(newUtility);
         }
 

@@ -23,8 +23,8 @@ public class Delegator
     private string recommendedString = String.Empty;
     private int[] rollDiceResult = new int[2];
     public int CurrentPlayerNumber { get => this.currentPlayerNumber; set => this.currentPlayerNumber = value;}
-    public bool BoolDecision { get => boolDecision; set => boolDecision = value; }
-    public int[] RollDiceResult { get => rollDiceResult; set => this.rollDiceResult = value; }
+    public bool PlayerBoolDecision { get => boolDecision; set => boolDecision = value; }
+    public int[] PlayerRollDiceResult { get => rollDiceResult; set => this.rollDiceResult = value; }
     private bool isNextEventPlayerEvent;
     public string RecommendedString 
     { 

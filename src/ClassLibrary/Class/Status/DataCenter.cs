@@ -1,11 +1,28 @@
 
-public class DataCenter
+public class DataCenter : ICloneable
 {
-    public BankHandler bankHandler = new BankHandler();
-    public BoardHandler boardHandler = new BoardHandler(40, 0);
-    public DoubleSideEffectHandler doubleSideEffectHandler = new DoubleSideEffectHandler();
-    public JailHandler jailHandler = new JailHandler();
+    private BankData bank;
+    private BoardData board;
+    private DoubleSideEffectData doubleSideEffect;
+    private JailData jail;
 
+    public DataCenter(BankData bankData, BoardData boardData, DoubleSideEffectData doubleSideEffectData, JailData jailData)
+    {
+        this.bank = bankData;
+        this.board = boardData;
+        this.doubleSideEffect = doubleSideEffectData;
+        this.jail = jailData;
+    }
 
+    public BankData Bank => (BankData) this.bank.Clone();
+    public BoardData Board => (BoardData) this.board.Clone();
+    public DoubleSideEffectData DoubleSideEffect => (DoubleSideEffectData) this.doubleSideEffect.Clone();
+    public JailData Jail => (JailData) this.jail.Clone();
 
+    public object Clone()
+    {
+        /// without cast, the type of clone is ICloneable
+        DataCenter clone = (DataCenter) this.MemberwiseClone();
+        return clone;
+    }
 }
