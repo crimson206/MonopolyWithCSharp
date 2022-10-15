@@ -2,35 +2,35 @@
 public class JailHandler
 {
     private int jailFine = 60;
-    private List<int> freeJailCards = new List<int> () {0, 0, 0, 0};
-    private List<int> turnsInJail = new List<int>() {0, 0, 0, 0};
+    private List<int> freeJailCardCounts = new List<int> () {0, 0, 0, 0};
+    private List<int> turnsInJailCounts = new List<int>() {0, 0, 0, 0};
     public int JailFine { get => jailFine; }
-    public List<int> TurnsInJail{ get => new List<int> (this.turnsInJail); set => this.turnsInJail = value; }
-    public List<int> FreeJailCards{ get => new List<int> (this.freeJailCards); set => this.freeJailCards = value; }
+    public List<int> TurnsInJailCounts{ get => new List<int> (this.turnsInJailCounts); set => this.turnsInJailCounts = value; }
+    public List<int> FreeJailCardCounts{ get => new List<int> (this.freeJailCardCounts); set => this.freeJailCardCounts = value; }
 
     public void CountTurnInJail(int playerNumber)
     {
-        this.turnsInJail[playerNumber]++;
+        this.turnsInJailCounts[playerNumber]++;
     }
 
     public void ResetTurnInJail(int playerNumber)
     {
-        this.turnsInJail[playerNumber] = 0;
+        this.turnsInJailCounts[playerNumber] = 0;
     }
 
     public void AddFreeJailCard(int playerNumber)
     {
-        this.freeJailCards[playerNumber]++;
+        this.freeJailCardCounts[playerNumber]++;
     }
     public void RemoveAFreeJailCard(int playerNumber)
     {
-        if (freeJailCards[playerNumber] <= 0)
+        if (freeJailCardCounts[playerNumber] <= 0)
         {
             throw new Exception();
         }
         else
         {
-            this.freeJailCards[playerNumber]--;
+            this.freeJailCardCounts[playerNumber]--;
         }
     }
 }

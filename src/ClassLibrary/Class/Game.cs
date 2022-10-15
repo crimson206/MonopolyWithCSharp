@@ -19,14 +19,8 @@ public class Game
     
     /// make basic set extractor for where is go, the size of tile, jail fine and so on.
     public BoardHandler board = new BoardHandler(40, 0);
-    public DecisionMakerStorage decisionMakerStorage;
-    public EventStorage events;
 
-    public Game()
-    {
-        this.decisionMakerStorage = new DecisionMakerStorage(delegator);
-        this.events = new EventStorage(delegator, bank, board, tileManager, jailManager, doubleSideEffectManager, this.decisionMakerStorage);
-    }
+
 
     public void ConnectConsolePrompt(Prompter prompter)
     {

@@ -9,8 +9,6 @@ namespace Tests
 
             Game game = new Game();
 
-            game.delegator.NextEvent = game.events.tryToEscapeJail.Start;
-
 
         }
     }

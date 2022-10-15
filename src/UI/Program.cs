@@ -10,7 +10,6 @@ internal class Program
         Prompter prompter = new Prompter(visualizer);
         game.ConnectConsolePrompt(prompter);
 
-        game.delegator.NextEvent = game.events.tryToEscapeJail.Start;
         
         while (true)
         {

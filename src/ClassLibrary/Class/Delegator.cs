@@ -17,13 +17,15 @@
 
 public class Delegator
 {
+    private List<string> trackEvents = new List<string>();
     private int currentPlayerNumber;
-    private bool? boolDecision;
+    private bool boolDecision;
     private string recommendedString = String.Empty;
     private int[] rollDiceResult = new int[2];
     public int CurrentPlayerNumber { get => this.currentPlayerNumber; set => this.currentPlayerNumber = value;}
-    public bool? BoolDecision { get => boolDecision; set => boolDecision = value; }
+    public bool BoolDecision { get => boolDecision; set => boolDecision = value; }
     public int[] RollDiceResult { get => rollDiceResult; set => this.rollDiceResult = value; }
+    private bool isNextEventPlayerEvent;
     public string RecommendedString 
     { 
         get
@@ -39,15 +41,30 @@ public class Delegator
 
 
     private bool IsRecommendedStringChanged;
-
-    public delegate void DelEvent();
-    public DelEvent? NextEvent;
-    public delegate void DelDecisionMaker();
-    public DelDecisionMaker? DecisionMaking;
+    public delegate void DelPlayerEvent();
+    private DelPlayerEvent? playerNextEvent;
+    public DelPlayerEvent? PlayerNextEvent
+    {
+        set
+        {
+            this.isNextEventPlayerEvent = true;
+            this.playerNextEvent = value;
+        }
+    }
+    public delegate void DelPlayerDecision();
+    private DelPlayerDecision? playerNextDecision;
+    public DelPlayerDecision? PlayerNextDecision
+    {
+        set
+        {
+            this.isNextEventPlayerEvent = false;
+            this.playerNextDecision = value;
+        }
+    }
     public delegate bool DelManualDecision();
     public DelManualDecision? ManualDecision; 
 
-    public bool IsThereDecisionMaking => this.DecisionMaking != null;
+
 
     /// it runs a function of events
     public void RunEvent()
@@ -55,13 +72,15 @@ public class Delegator
         do
         {
 
-
-            this.NextEvent!();
-
-            if (this.DecisionMaking != null)
+            if( this.isNextEventPlayerEvent)
+            {
+                this.trackEvents.Add(this.playerNextEvent!.GetInvocationList()[0].Target!.ToString()!);
+                this.playerNextEvent!();
+            }
+            else
             {            
-                this.DecisionMaking!();
-                this.DecisionMaking = null;
+                this.trackEvents.Add(this.playerNextDecision!.GetInvocationList()[0].Target!.ToString()!);
+                this.playerNextDecision!();
             }
 
 
