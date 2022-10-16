@@ -23,7 +23,7 @@ public class DataCenter : ICloneable
     public DoubleSideEffectData DoubleSideEffect => (DoubleSideEffectData) this.doubleSideEffect.Clone();
     public JailHandlerData Jail => (JailHandlerData) this.jail.Clone();
     public DelegatorData Delegator => (DelegatorData) this.delegator.Clone();
-    public List<TileData> TileDataSet => new List<TileData>(this.tileDataSet);
+    public List<TileData> TileDatas => new List<TileData>(this.tileDataSet);
 
     public object Clone()
     {

@@ -30,7 +30,6 @@ namespace Tests
             realEstate1.SetOnwerPlayerNumber(1);
             Assert.AreEqual(realEstate1.OwnerPlayerNumber, 1);
             Assert.ThrowsException<Exception>(() => realEstate1.BuildHouse());
-            Assert.ThrowsException<Exception>(() => realEstate1.SetOnwerPlayerNumber(1));
 
             /// make is mortgaged
             realEstate1.SetIsMortgaged(true);

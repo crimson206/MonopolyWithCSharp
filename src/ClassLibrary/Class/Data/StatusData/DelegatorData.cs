@@ -7,10 +7,10 @@ public class DelegatorData : ICloneable
         this.delegator = delegator;
     }
 
-    public int CurrentPlayerNumber => delegator.CurrentPlayerNumber;
-    public string RecommendedString => delegator.RecommendedString;
-    public int[] PlayerRollDiceResult => delegator.PlayerRollDiceResult;
-    public bool PlayerBoolDecision => delegator.PlayerBoolDecision;
+    ///public int CurrentPlayerNumber => delegator.CurrentPlayerNumber;
+    ///public string RecommendedString => delegator.RecommendedString;
+    ///public int[] PlayerRollDiceResult => delegator.PlayerRollDiceResult;
+    ///public bool PlayerBoolDecision => delegator.PlayerBoolDecision;
 
     public object Clone()
     {

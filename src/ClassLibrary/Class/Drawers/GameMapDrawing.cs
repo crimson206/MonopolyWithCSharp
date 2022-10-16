@@ -8,7 +8,7 @@ public class GameMapDrawing
             MapDrawer mapDrawer = new MapDrawer();
             mapDrawer.DrawMap(10, 10, 13, 4);
             MapTilesFactory mapTilesGenerator = new MapTilesFactory();
-            DisplayTiles displayTiles = new DisplayTiles();
+            DisplayTileInfo displayTiles = new DisplayTileInfo();
 
 
             TileManager tileManager = new TileManager();
@@ -18,11 +18,11 @@ public class GameMapDrawing
             var railRoadDatas = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
 
             var innerMapPoints = mapDrawer.CreateInnerSpaceIndicator(10, 10, 14, 4);
-            displayTiles.DisplayRealEstates2( innerMapPoints[0][0] + 5, innerMapPoints[0][1] + 1, realEstates, 2);
+            displayTiles.DisplayRealEstates( innerMapPoints[0][0] + 5, innerMapPoints[0][1] + 1, realEstates, 2);
             displayTiles.DisplayRailRoad( innerMapPoints[0][0] + 65, innerMapPoints[0][1] + 1, railRoadDatas, 2);
 
             var tileInfo = mapDrawer.CreateTileEdgeCollection(10, 10, 13, 4);
-            var playerDrawer = new PlayerDrawer(innerMapPoints);
+            var playerDrawer = new TileDrawer(innerMapPoints);
 
 
             Console.ReadLine();
@@ -31,9 +31,6 @@ public class GameMapDrawing
     public void AddPlayerAnimation()
     {
         List<int> playerPositions = new List<int> { 0 , 0, 0, 0};
-
-
-
     }
 
 }

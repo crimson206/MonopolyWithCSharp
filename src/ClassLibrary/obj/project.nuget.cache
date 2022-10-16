@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BPsxdNA7VKhWCxiLxeY6WFL9vYXNiI4oBpususXNkHqMXv5f68DdsS5fqJzGJBtLN9IgQ6nG5jJ6lZeXEQHsfQ==",
+  "dgSpecHash": "KXlmAf5A3T5QoTFgtlCStxRTNP2zUhrUD9gzQoSAAtWgMR55+U37S5M4Ifo3WCpAFxu6m9UaQ65eFjDujBiQKQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj",
+  "projectFilePath": "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\src\\ClassLibrary\\ClassLibrary.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\sgkm\\.nuget\\packages\\stylecop.analyzers\\1.1.118\\stylecop.analyzers.1.1.118.nupkg.sha512"
   ],

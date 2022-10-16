@@ -4,11 +4,12 @@ public class RealEstateCalculator
     private int? ownerPlayerNumber => this.realEstate.OwnerPlayerNumber;
     private bool isMortgaged => this.realEstate.IsMortgaged;
     private int houseCount => this.realEstate.HouseCount;
-    private List<RealEstate> colorGroup;
-    public RealEstateCalculator(RealEstate realEstate, List<RealEstate> colorGroup)
+    private List<RealEstate> colorGroup => this.GetColorGroup();
+    public List<RealEstate>? ColorGroup;
+
+    public RealEstateCalculator(RealEstate realEstate)
     {
         this.realEstate = realEstate;
-        this.colorGroup = colorGroup;
     }
 
     public bool IsHouseBuildable()
@@ -64,6 +65,21 @@ public class RealEstateCalculator
         {
             return false;
         }
+    }
+
+    private void VisitRealEstate()
+    {
+        this.realEstate.AcceptCalculator(this);
+    }
+
+    private List<RealEstate> GetColorGroup()
+    {
+        if (this.ColorGroup == null)
+        {
+            this.VisitRealEstate();
+        }
+
+        return this.ColorGroup!;
     }
 
 }

@@ -10,7 +10,7 @@ public class RealEstate : Property
     {
         this.buildingCost = buildingCost;
         this.color = color;
-        this.calculator = new RealEstateCalculator(this, this.colorGroup);
+        this.calculator = new RealEstateCalculator(this);
     }
 
     public string Color { get=>color; }
@@ -59,6 +59,11 @@ public class RealEstate : Property
         {
             this.isMortgaged = isMortgaged;
         }
+    }
+
+    public void AcceptCalculator(RealEstateCalculator realEstateCalculator)
+    {
+        realEstateCalculator.ColorGroup = this.colorGroup;
     }
 
     protected override int CalCurrentRent()

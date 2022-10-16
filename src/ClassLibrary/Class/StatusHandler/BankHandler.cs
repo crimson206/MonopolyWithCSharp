@@ -9,10 +9,10 @@ public class BankHandler
     {
         this.balances = new List<int> { this.initialBalance, this.initialBalance, this.initialBalance, this.initialBalance };
     }
-    public int Salary { get => salary; }
-    public int InitialBalance { get => initialBalance; }
-    public List<int> Balances { get => new List<int> (this.balances);}
-    public int JailFine { get => this.jailFine;}
+    public int Salary { get => this.salary; }
+    public int InitialBalance { get => this.initialBalance; }
+    public List<int> Balances { get => new List<int>(this.balances); private set => balances = value; }
+    public int JailFine { get => this.jailFine; }
     public void IncreaseBalance(int playerNumber, int amount)
     {
         if ( amount < 0 )
@@ -39,5 +39,9 @@ public class BankHandler
     {
         this.DecreaseBalance(fromPlayerNumber, amount);
         this.IncreaseBalance(toPlayerNumber, amount);
+    }
+    public void GiveSalary(int playerNumber)
+    {
+        this.IncreaseBalance(playerNumber, this.salary);
     }
 }

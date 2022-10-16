@@ -1,46 +1,52 @@
 
-public abstract class Event
+public class Event
 {
     protected DataCenter dataCenter;
     protected Delegator delegator;
     protected BoolCopier boolCopier;
+    protected EventFlow eventFlow;
+    protected HandlerDistrubutor handlerDistrubutor;
+    protected Random random = new Random();
+    protected EventStoragy events => new EventStoragy(this);
 
-    protected int playerNumber => this.delegator.CurrentPlayerNumber;
-    protected bool playerBoolDecision => this.delegator.PlayerBoolDecision;
-    protected int[] playerRollDiceResult => this.delegator.PlayerRollDiceResult;
-    protected string recommendedString { set => this.delegator.RecommendedString = value; }
-    protected Delegator.DelPlayerEvent nextAutoEvent { set => this.delegator.PlayerNextEvent = value; }
-    protected Delegator.DelPlayerDecision nextDecision { set => this.delegator.PlayerNextDecision = value; }
+    protected Delegator.DelEvent nextEvent { get => this.delegator.NextEvent!; set => this.delegator.NextEvent = value; }
 
-
+    /// shortcuts
+    protected int playerNumber => this.eventFlow.CurrentPlayerNumber;
+    protected int playerPosition => this.boardData.PlayerPositions[this.playerNumber];
+    protected string stringPlayer => String.Format("Player{0}", this.playerNumber);
+    protected bool CopyConditionBool(bool conditionBool) => this.boolCopier.CopyConditionBool(conditionBool);
+    protected bool CopydecisionBool(bool decisionBool) => this.boolCopier.CopyDecisionBool(decisionBool);
     protected BankData bankData => this.dataCenter.Bank;
     protected BoardData boardData => this.dataCenter.Board;
     protected DoubleSideEffectData doubleSideEffectData => this.dataCenter.DoubleSideEffect;
     protected JailHandlerData jailData => this.dataCenter.Jail;
+    protected List<TileData> tileDatas => this.dataCenter.TileDatas;
 
-    public Event(Event proviousEvent)
+
+    public Event(DataCenter dataCenter, Delegator delegator, BoolCopier boolCopier, EventFlow eventFlow, HandlerDistrubutor handlerDistrubutor)
     {
-        this.delegator = proviousEvent.delegator;
-        this.dataCenter = proviousEvent.dataCenter;
-        this.boolCopier = proviousEvent.boolCopier;
-    }
-
-    /// event
-
-    /// decision
-    protected WantPlayerUseJailFreeCard wantPlayerUseJailFreeCard => new WantPlayerUseJailFreeCard(this);
-
-    public void SetEvent(DataCenter dataCenter, Delegator delegator, BoolCopier boolCopier)
-    {
-        this.delegator = delegator;
         this.dataCenter = dataCenter;
-        this.boolCopier = boolCopier;
-    }
-    public Event(Delegator delegator, DataCenter dataCenter, BoolCopier boolCopier)
-    {
         this.delegator = delegator;
-        this.dataCenter = dataCenter;
         this.boolCopier = boolCopier;
+        this.eventFlow = eventFlow;
+        this.handlerDistrubutor = handlerDistrubutor;
     }
 
+    protected Event(Event previousEvent)
+    {
+        this.dataCenter = previousEvent.dataCenter;
+        this.delegator = previousEvent.delegator;
+        this.eventFlow = previousEvent.eventFlow;
+        this.boolCopier = previousEvent.boolCopier;
+        this.handlerDistrubutor = previousEvent.handlerDistrubutor;
+    }
+    protected void InheritInfo(Event previousEvent)
+    {
+        this.dataCenter = previousEvent.dataCenter;
+        this.delegator = previousEvent.delegator;
+        this.eventFlow = previousEvent.eventFlow;
+        this.boolCopier = previousEvent.boolCopier;
+        this.handlerDistrubutor = previousEvent.handlerDistrubutor;
+    }
 }

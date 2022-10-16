@@ -17,74 +17,34 @@
 
 public class Delegator
 {
-    private List<string> trackEvents = new List<string>();
     private int currentPlayerNumber;
-    private bool playerBoolDecision;
-    private string recommendedString = String.Empty;
-    private int[] playerRollDiceResult = new int[2];
+
     public int CurrentPlayerNumber { get => this.currentPlayerNumber; set => this.currentPlayerNumber = value;}
-    public bool PlayerBoolDecision { get => playerBoolDecision; set => playerBoolDecision = value; }
-    public int[] PlayerRollDiceResult { get => playerRollDiceResult; set => this.playerRollDiceResult = value; }
-    private bool isNextEventPlayerEvent;
-    public string RecommendedString 
-    { 
+
+    private DelEvent? nextEvent;
+    
+    public DelEvent? NextEvent
+    {
         get
         {
-            return this.recommendedString;
+            return this.nextEvent;
         }
         set
         {
-            this.IsRecommendedStringChanged = true;
-            this.recommendedString = value;
+            this.nextEvent = value;
+            if ( this.nextEvent!.GetInvocationList().Any(method => method.Target is not Event))
+            {
+                throw new Exception("Methods from Event can be only assigned");
+            }
         }
     }
 
-    private bool IsRecommendedStringChanged;
-    public delegate void DelPlayerEvent();
-    private DelPlayerEvent? playerNextEvent;
-    public DelPlayerEvent? PlayerNextEvent
-    {
-        set
-        {
-            this.isNextEventPlayerEvent = true;
-            this.playerNextEvent = value;
-        }
-    }
-    public delegate void DelPlayerDecision();
-    private DelPlayerDecision? playerNextDecision;
-    public DelPlayerDecision? PlayerNextDecision
-    {
-        set
-        {
-            this.isNextEventPlayerEvent = false;
-            this.playerNextDecision = value;
-        }
-    }
-    public delegate bool DelManualDecision();
-    public DelManualDecision? ManualDecision;
-    
+    public delegate void DelEvent();
 
     /// it runs a function of events
     public void RunEvent()
     {
-        do
-        {
 
-            if( this.isNextEventPlayerEvent)
-            {
-                this.trackEvents.Add(this.playerNextEvent!.GetInvocationList()[0].Target!.ToString()!);
-                this.playerNextEvent!();
-            }
-            else
-            {            
-                this.trackEvents.Add(this.playerNextDecision!.GetInvocationList()[0].Target!.ToString()!);
-                this.playerNextDecision!();
-            }
-
-
-        } while (this.IsRecommendedStringChanged is false);
-
-        this.IsRecommendedStringChanged = false;
+        this.nextEvent!();
     }
-
 }

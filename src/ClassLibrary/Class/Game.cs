@@ -1,43 +1,40 @@
-    /// Developer Note
-    ///  
-    /// 1. Lines above Run() need to be refactored by creating an initializer 
-    /// 2. All the objects are supposed to be independent on the UI System except for "ConnectConsolePrompt"
-    /// 3. Since the codes can't interact with users themselves, 
-    ///     it needs the connection to the system, so to run the game in the program, you need to design the "Prompter" as the connecter
-    /// 4. To understand what is going on in "Run()", please go to the "Delegator"
-
-
 
 public class Game
 {
 
     private Delegator delegator = new Delegator();
-    private BankHandler bank = new BankHandler();
+    private BankHandler bankHandler = new BankHandler();
     private TileManager tileManager = new TileManager();
-    private DoubleSideEffectHandler doubleSideEffectManager = new DoubleSideEffectHandler();
+    private DoubleSideEffectHandler doubleSideEffectHandler = new DoubleSideEffectHandler();
     private JailHandler jailManager = new JailHandler();
-    private BoardHandler boardData = new BoardHandler(40, 0);
+    private BoardHandler boardHandler = new BoardHandler();
     private DataCenter dataCenter;
 
     public Game()
     {
-        BankData bankdata = new BankData(this.bank);
-        BoardData boardData = new BoardData(this.boardData);
-        DoubleSideEffectData doubleSideEffectData = new DoubleSideEffectData(this.doubleSideEffectManager);
-        JailHandlerData jailData = new JailHandlerData(this.jailManager);
-        DelegatorData delegatorData = new DelegatorData(this.delegator);
-        this.dataCenter = new DataCenter(bankdata, boardData, doubleSideEffectData, jailData, delegatorData, tileManager);
+        this.dataCenter = this.GenerateDataCenter();
     }
 
-    public DataCenter Data => (DataCenter) this.dataCenter.Clone();
-    public void ConnectConsoleInteractor(ConsoleInteractor prompter)
-    {
-        this.delegator.ManualDecision = prompter.PromptBool;
-        
-    }
+    public DataCenter Data => (DataCenter)this.dataCenter.Clone();
 
     public void Run()
     {
         delegator.RunEvent();
+    }
+
+    private DataCenter GenerateDataCenter()
+    {
+        BankData bankdata = new BankData(this.bankHandler);
+        BoardData boardData = new BoardData(this.boardHandler);
+        DoubleSideEffectData doubleSideEffectData = new DoubleSideEffectData(this.doubleSideEffectHandler);
+        JailHandlerData jailData = new JailHandlerData(this.jailManager);
+        DelegatorData delegatorData = new DelegatorData(this.delegator);
+
+        return new DataCenter(bankdata, boardData, doubleSideEffectData, jailData, delegatorData, this.tileManager);
+    }
+
+    private void SetBoardInfo()
+    {
+        this.boardHandler.SetInfo(this.dataCenter.TileDatas);
     }
 }

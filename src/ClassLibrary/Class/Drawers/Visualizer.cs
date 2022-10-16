@@ -2,9 +2,10 @@
 public class Visualizer
 {
     private MapDrawer mapDrawer = new MapDrawer();
-    private PlayerDrawer? playerDrawer;
+    private TileDrawer? tileDrawer;
     public LoggingDrawer loggingDrawer = new LoggingDrawer(5);
-    private DisplayTiles displayTiles = new DisplayTiles();
+    private DisplayTileInfo displayTiles = new DisplayTileInfo();
+    private PlayerStatusDrawer playerStatusDrawer = new PlayerStatusDrawer();
     private DataCenter data;
     private int mapWidth;
     private int mapHeight;
@@ -19,7 +20,7 @@ public class Visualizer
         this.data = data;
     }
 
-    private string recommendedString => this.data.Delegator.RecommendedString;
+///    private string recommendedString => this.data.Delegator.RecommendedString;
 
     public void Setup(int mapWidth, int mapHeight, int tileWidth, int tileHeight)
     {
@@ -29,7 +30,7 @@ public class Visualizer
         this.tileHeight = tileHeight;
         this.tileEdgeInfo = mapDrawer.CreateTileEdgeCollection(mapWidth, mapHeight,  tileWidth,  tileHeight);
         this.innerMapEdge = mapDrawer.CreateInnerSpaceIndicator(mapWidth, mapHeight,  tileWidth,  tileHeight);
-        this.playerDrawer = new PlayerDrawer(tileEdgeInfo);
+        this.tileDrawer = new TileDrawer(tileEdgeInfo);
     }
 
     public void UpdatePromptMessage(string promptMessage)
@@ -38,7 +39,7 @@ public class Visualizer
     }
     public void UpdateLogging()
     {
-        loggingDrawer.UpdateLogging(this.recommendedString);
+///        loggingDrawer.UpdateLogging(this.recommendedString);
     }
 
     int backUpCursorLeft = Console.CursorLeft;
@@ -55,19 +56,19 @@ public class Visualizer
         mapDrawer.DrawMap(mapWidth, mapHeight,  tileWidth,  tileHeight);
 
         /// need
+        List<TileData> tileDatas = this.data.TileDatas;
+        List<RealEstateData> realEstateDatas = (from tileData in tileDatas where tileData is RealEstateData select tileData as RealEstateData).ToList();
+        List<RailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
+        List<UtilityData> utilityDatas = (from tileData in tileDatas where tileData is UtilityData select tileData as UtilityData).ToList();        
 
-        playerDrawer!.DrawPlayers(this.playerPositions);
-
-
-
-        /// need
-        List<TileData> tileDatas = this.data.TileDataSet;
-        List<RealEstateData> realEstates = (from tileData in tileDatas where tileData is RealEstateData select tileData as RealEstateData).ToList();
-        List<RailRoadData> railRoads = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
+        tileDrawer!.DrawPlayers(this.playerPositions);
+        tileDrawer.DrawTiles(tileDatas);
 
         /// need
-        displayTiles.DisplayRealEstates2( innerMapEdge[0][0] + 5, innerMapEdge[0][1] + 1, realEstates, 2);
-        displayTiles.DisplayRailRoad( innerMapEdge[0][0] + 65, innerMapEdge[0][1] + 1, railRoads, 2);
+        displayTiles.DisplayRealEstates( innerMapEdge[0][0] + 5, innerMapEdge[0][1] + 1, realEstateDatas, 2);
+        displayTiles.DisplayRailRoad( innerMapEdge[0][0] + 65, innerMapEdge[0][1] + 1, railRoadDatas, 2);
+        displayTiles.DisplayUtility( innerMapEdge[0][0] + 65, innerMapEdge[0][1] + 8, utilityDatas, 2);
+        playerStatusDrawer.DrawArrangedLines(innerMapEdge[0][0] + 65, innerMapEdge[0][1] + 13, data); 
 
         /// need
         loggingDrawer.DrawLogging(innerMapEdge[0][0] + 5, innerMapEdge[0][1] + 27);
@@ -79,17 +80,4 @@ public class Visualizer
         Console.BufferWidth = backUpBufferWidth;
     }
 
-    private List<RealEstate> FilterRealEstates(List<Tile> tiles)
-    {
-        var query = from tile in tiles where tile is RealEstate select tile as RealEstate;
-        List<RealEstate> realEstates = query.ToList();
-        return realEstates;
-    }
-
-    private List<RailRoad> FilterRailRoads(List<Tile> tiles)
-    {
-        var query = from tile in tiles where tile is RailRoad select tile as RailRoad;
-        List<RailRoad> railRoads = query.ToList();
-        return railRoads;
-    }
 }

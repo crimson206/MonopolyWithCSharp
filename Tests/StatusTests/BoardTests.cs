@@ -7,7 +7,7 @@ namespace Tests
         public void BoardTestsAll()
         {
             /// initiate
-            BoardHandler board = new BoardHandler(40, 0);
+            BoardHandler board = new BoardHandler();
 
             /// move
             board.MovePlayerAroundBoard(0, 20);

@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-public class DisplayTiles
+public class DisplayTileInfo
 {
     private string CreateRealEstatesBanner (int nameL, int colorL, int priceL, int rentL, int numHouseL, int ownerL)
     {
@@ -22,39 +22,8 @@ public class DisplayTiles
         return realestateBanner;
     }
 
-    public void DisplayRealEstates1 (int cursorLeft, int cursorTop, List<RealEstateData> realEstates , int buffer)
-    {
-        int maxNameLength = realEstates.Max(t => t.Name.Count());
-        int maxColorLength = realEstates.Max(t => t.Color.ToString().Count());
-        int maxPriceLength = realEstates.Max(t => t.Price.ToString().Count());
-        int maxRentsLength = realEstates.Max(t => t.Rents.ToString().Count());
-        
-        int spaceForName = maxNameLength + buffer;
-        int spaceForColor = maxColorLength + buffer;
-        int spaceForPrice = maxPriceLength + buffer;
-        int spaceForRents = maxRentsLength + buffer;
-        int spaceForHouses = 6 + buffer;
-        int spaceForOwner = 7 + buffer;
 
-        Console.CursorLeft = cursorLeft;
-        Console.CursorTop = cursorTop;
-
-        Console.Write(CreateRealEstatesBanner(spaceForName, spaceForColor, spaceForPrice, spaceForRents, spaceForHouses, spaceForOwner));
-
-        int index = 1;
-        foreach (var realEstate in realEstates)
-        {
-            Console.CursorLeft = cursorLeft;
-            Console.CursorTop = cursorTop + index;
-
-            Console.Write(ConvertRealEstateToStr(realEstate, spaceForName, spaceForColor,
-            spaceForPrice, spaceForRents, spaceForHouses, spaceForOwner));
-
-            index++;
-        }
-    }
-
-    public void DisplayRealEstates2 (int cursorLeft, int cursorTop, List<RealEstateData> realEstates , int buffer)
+    public void DisplayRealEstates (int cursorLeft, int cursorTop, List<RealEstateData> realEstates , int buffer)
     {
         int maxNameLength = realEstates.Max(t => t.Name.Count());
         int maxPriceLength = realEstates.Max(t => t.Price.ToString().Count());
@@ -111,6 +80,38 @@ public class DisplayTiles
         }
     }
 
+    public void DisplayUtility(int cursorLeft, int cursorTop, List<UtilityData> utilityDatas , int buffer)
+    {
+        int maxNameLength = utilityDatas.Max(t => t.Name.Count());
+        int maxPriceLength = utilityDatas.Max(t => t.Price.ToString().Count());
+        
+        int spaceForName = maxNameLength + buffer;
+        int spaceForPrice = maxPriceLength + buffer;
+        int spaceForRents = 4 + buffer;
+        int spaceForOwner = 7 + buffer;
+
+        Console.CursorLeft = cursorLeft;
+        Console.CursorTop = cursorTop;
+
+        WriteUtilityBanner(spaceForName, spaceForPrice, spaceForRents, spaceForOwner);
+
+        int index = 1;
+        foreach (var utilityData in utilityDatas)
+        {
+            Console.CursorLeft = cursorLeft;
+            Console.CursorTop = cursorTop + index;
+
+            WriteUtility(utilityData, spaceForName, spaceForPrice,
+            spaceForRents, spaceForOwner);
+
+            index++;
+        }
+    }
+
+
+
+
+
     private void WriteRailRoadBanner(int spaceForName, int  spaceForPrice, int  spaceForRent, int spaceForOwner)
     {
         WriteStringAtCenter("RailRoads", spaceForName);
@@ -119,18 +120,24 @@ public class DisplayTiles
         WriteStringAtCenter("Owner", spaceForOwner); 
     }
 
-
-
-
-    private void WriteRailRoad(RailRoadData railRoad, int nameL, int priceL, int rentL, int ownerL)
+    private void WriteUtilityBanner(int spaceForName, int  spaceForPrice, int  spaceForRent, int spaceForOwner)
     {
-        string ownerIDToStr = "Player" + railRoad.OwnerPlayerNumber.ToString();
-        string stringRents = railRoad.Rents[0].ToString();
+        WriteStringAtCenter("Utilities", spaceForName);
+        WriteStringAtCenter("Price", spaceForPrice);
+        WriteStringAtCenter("Rent", spaceForRent);
+        WriteStringAtCenter("Owner", spaceForOwner); 
+    }
 
-        WriteStringAtCenter(railRoad.Name, nameL);
-        WriteStringAtCenter(railRoad.Price.ToString(), priceL);
+
+    private void WriteRailRoad(RailRoadData railRoadData, int nameL, int priceL, int rentL, int ownerL)
+    {
+        string ownerIDToStr = "Player" + railRoadData.OwnerPlayerNumber.ToString();
+        string stringRents = railRoadData.Rents[0].ToString();
+
+        WriteStringAtCenter(railRoadData.Name, nameL);
+        WriteStringAtCenter(railRoadData.Price.ToString(), priceL);
         WriteStringAtCenter(stringRents, rentL);
-        if (railRoad.OwnerPlayerNumber is null)
+        if (railRoadData.OwnerPlayerNumber is null)
         {
             WriteStringAtCenter("free", ownerL);  
         }
@@ -139,6 +146,26 @@ public class DisplayTiles
             WriteStringAtCenter(ownerIDToStr, ownerL);   
         }                        
     }
+
+    private void WriteUtility(UtilityData utilityData, int nameL, int priceL, int rentL, int ownerL)
+    {
+        string ownerIDToStr = "Player" + utilityData.OwnerPlayerNumber.ToString();
+        string stringRents = utilityData.Rents[0].ToString();
+
+        WriteStringAtCenter(utilityData.Name, nameL);
+        WriteStringAtCenter(utilityData.Price.ToString(), priceL);
+        WriteStringAtCenter(stringRents+"x", rentL);
+        if (utilityData.OwnerPlayerNumber is null)
+        {
+            WriteStringAtCenter("free", ownerL);  
+        }
+        else
+        {
+            WriteStringAtCenter(ownerIDToStr, ownerL);   
+        }                        
+    }
+
+
 
     private void WriteRealEstateWithColor (RealEstateData realEstate, int nameL, int priceL, int rentL, int numHouseL, int ownerL)
     {

@@ -287,7 +287,7 @@ public class MapTilesFactory
         }
         for (int i = 0; i < numOfChests; i++)
         {
-            CommunityChest newCommunityChest = new CommunityChest("CommunityChest");
+            CommunityChest newCommunityChest = new CommunityChest("Community Chest");
             eventTiles.Add(newCommunityChest);
         }
         return eventTiles;

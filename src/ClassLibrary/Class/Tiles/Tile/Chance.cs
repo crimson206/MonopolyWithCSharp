@@ -1,5 +1,5 @@
 
-public class Chance : Tile
+public class Chance : EventTile
 {
     public Chance(string name) : base(name)
     {
