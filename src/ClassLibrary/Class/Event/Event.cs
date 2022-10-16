@@ -1,5 +1,5 @@
 
-public class Event
+public abstract class Event
 {
     protected DataCenter dataCenter;
     protected Delegator delegator;
@@ -8,13 +8,13 @@ public class Event
     protected HandlerDistrubutor handlerDistrubutor;
     protected Random random = new Random();
     protected EventStoragy events => new EventStoragy(this);
-
-    protected Delegator.DelEvent nextEvent { get => this.delegator.NextEvent!; set => this.delegator.NextEvent = value; }
+    protected Delegator.DelEvent newEvent { set => this.delegator.NextEvent = value; }
 
     /// shortcuts
     protected int playerNumber => this.eventFlow.CurrentPlayerNumber;
     protected int playerPosition => this.boardData.PlayerPositions[this.playerNumber];
     protected string stringPlayer => String.Format("Player{0}", this.playerNumber);
+
     protected bool CopyConditionBool(bool conditionBool) => this.boolCopier.CopyConditionBool(conditionBool);
     protected bool CopydecisionBool(bool decisionBool) => this.boolCopier.CopyDecisionBool(decisionBool);
     protected BankData bankData => this.dataCenter.Bank;
@@ -22,7 +22,6 @@ public class Event
     protected DoubleSideEffectData doubleSideEffectData => this.dataCenter.DoubleSideEffect;
     protected JailHandlerData jailData => this.dataCenter.Jail;
     protected List<TileData> tileDatas => this.dataCenter.TileDatas;
-
 
     public Event(DataCenter dataCenter, Delegator delegator, BoolCopier boolCopier, EventFlow eventFlow, HandlerDistrubutor handlerDistrubutor)
     {

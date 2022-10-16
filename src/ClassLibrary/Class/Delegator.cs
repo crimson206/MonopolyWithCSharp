@@ -21,23 +21,9 @@ public class Delegator
 
     public int CurrentPlayerNumber { get => this.currentPlayerNumber; set => this.currentPlayerNumber = value;}
 
-    private DelEvent? nextEvent;
-    
-    public DelEvent? NextEvent
-    {
-        get
-        {
-            return this.nextEvent;
-        }
-        set
-        {
-            this.nextEvent = value;
-            if ( this.nextEvent!.GetInvocationList().Any(method => method.Target is not Event))
-            {
-                throw new Exception("Methods from Event can be only assigned");
-            }
-        }
-    }
+    private List<DelEvent> nextEvents = new List<DelEvent>();
+
+    public DelEvent? NextEvent;
 
     public delegate void DelEvent();
 
@@ -45,6 +31,7 @@ public class Delegator
     public void RunEvent()
     {
 
-        this.nextEvent!();
+        this.NextEvent!();
+        var break1 = 1;
     }
 }

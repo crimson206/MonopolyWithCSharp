@@ -1,12 +1,12 @@
 
-public class TileEvent : Event
+public class TileManagerUserEvent : HandlerUserEvent
 {
-    private Tile currentTile => this.GetCurrentTile();
-    private TileManager tileManager;
+    private Tile currentTile;
+    private TileManager? tileManager;
 
-    public TileEvent(Event previousEvent) : base(previousEvent)
+    public TileManagerUserEvent(Event previousEvent) : base(previousEvent)
     {
-        
+        this.currentTile = this.GetCurrentTile();
     }
 
     public void LandOnTile()
@@ -15,7 +15,7 @@ public class TileEvent : Event
 
         if ( this.currentTile is Property )
         {
-            this.nextEvent += this.DealWithProperty;
+            this.newEvent = this.DealWithProperty;
         }
         else if ( currentTile is EventTile )
         {
@@ -39,6 +39,8 @@ public class TileEvent : Event
     {
         Property currentProperty = (Property) this.currentTile;
 
+        throw new NotImplementedException();
+
     }
 
     public void SetTileManager(TileManager tileManager)
@@ -46,15 +48,15 @@ public class TileEvent : Event
         this.tileManager = tileManager;
     }
 
-    private void VisitHandlerDistributor(HandlerDistrubutor handlerDistrubutor)
+    protected override void VisitHandlerDistributor()
     {
-        handlerDistrubutor.AcceptTileEvent(this);
+        this.handlerDistrubutor.AcceptTileHandlerUserEvent(this);
     }
 
     private Tile GetCurrentTile()
     {
         int playerPosition = this.boardData.PlayerPositions[this.playerNumber];
-        return this.tileManager.Tiles[playerPosition];
+        return this.tileManager!.Tiles[playerPosition];
     }
 
 }

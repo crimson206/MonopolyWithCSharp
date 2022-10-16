@@ -6,9 +6,10 @@ public class EventStoragy
     {
         this.previousEvent = previousEvent;
     }
-    public BankEvent BankEvent => new BankEvent(this.previousEvent);
-    public BoardEvent BoardEvent => new BoardEvent(this.previousEvent);
+    public BankHandlerUserEvent BankEvent => new BankHandlerUserEvent(this.previousEvent);
+    public BoardHandlerUserEvent BoardHandlerUser => new BoardHandlerUserEvent(this.previousEvent);
     public IndependentEvent IndependentEvent => new IndependentEvent(this.previousEvent);
-    public TileEvent TileEvent => new TileEvent(this.previousEvent);
+    public TileManagerUserEvent TileManagerUserEvent => new TileManagerUserEvent(this.previousEvent);
+    public DoubleSideEffectUserEvent DoubleSideEffectUser => new DoubleSideEffectUserEvent(this.previousEvent);
 
 }

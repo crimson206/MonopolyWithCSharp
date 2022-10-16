@@ -4,32 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Tests
+namespace Tests.GameTests
 {
     [TestClass]
-    public class EventTests
+    public class NewMSTest
     {
         [TestMethod]
         public void TestMethod1()
         {
-
             Game game = new Game();
 
-
-            IndependentEvent independentEvent = game.GenerateEvent();
-
-            for (int i = 0; i < 10; i++)
-            {
-                game.Run();
-
-
-                var makeBreakPointHere = 0;
-            }
-
-
         }
-
-
-
     }
 }

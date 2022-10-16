@@ -1,8 +1,12 @@
 public class IndependentEvent : Event
 {
+
+    private string stringRollDiceResult => this.ConvertRollDiceResultToString();
+    public IndependentEvent(DataCenter dataCenter, Delegator delegator, BoolCopier boolCopier, EventFlow eventFlow, HandlerDistrubutor handlerDistrubutor)
+    :base (dataCenter, delegator, boolCopier, eventFlow, handlerDistrubutor)
+    {}
     public IndependentEvent(Event previousEvent) : base(previousEvent)
     {
-        
     }
 
     public void StartTurn()
@@ -13,20 +17,19 @@ public class IndependentEvent : Event
         }
         else
         {
-            this.nextEvent += this.RollDice;
-            this.nextEvent += this.events.BoardEvent.Move;
-            if (this.CopyConditionBool(this.boardData.PlayerPassedGo[playerNumber]))
-            {
-                this.nextEvent += this.events.BankEvent.ReceiveSalary;
-            }
-            this.nextEvent += this.events.TileEvent.LandOnTile;
+            this.newEvent = this.events.DoubleSideEffectUser.RollDiceWithCountingDouble;
         }
     }
 
     public void RollDice()
     {
         this.eventFlow.RoolDiceResult = Dice.Roll(this.random);
-        this.eventFlow.RecommentedString = String.Format("Player{0} rolled" );
+        this.eventFlow.RecommentedString = this.stringPlayer + " rolled " + this.stringRollDiceResult;
+    }
+
+    private string ConvertRollDiceResultToString()
+    {
+        return String.Join(", ", (from dieValue in this.eventFlow.RoolDiceResult select dieValue.ToString()));
     }
 
 }

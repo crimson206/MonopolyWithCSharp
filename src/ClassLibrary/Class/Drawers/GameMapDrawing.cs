@@ -12,7 +12,7 @@ public class GameMapDrawing
 
 
             TileManager tileManager = new TileManager();
-            var tileDatas = tileManager.tileDataSet;
+            var tileDatas = tileManager.tileDatas;
 
             var realEstates = (from tileData in tileDatas where tileData is RealEstateData select tileData as RealEstateData).ToList();
             var railRoadDatas = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();

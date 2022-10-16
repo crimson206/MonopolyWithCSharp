@@ -1,11 +1,10 @@
 
-public class BankEvent : Event
+public class BankHandlerUserEvent : HandlerUserEvent
 {
     private BankHandler? bankHandler;
     private int salary => bankHandler!.Salary;
-    public BankEvent(Event previousEvent) : base(previousEvent)
+    public BankHandlerUserEvent(Event previousEvent) : base(previousEvent)
     {
-        
     }
 
     public void ReceiveSalary()
@@ -20,9 +19,9 @@ public class BankEvent : Event
         this.bankHandler = bankHandler;
     }
 
-    private void VisitHandlerDistributor(HandlerDistrubutor handlerDistrubutor)
+    protected override void VisitHandlerDistributor()
     {
-        handlerDistrubutor.AcceptBankEvent(this);
+        this.handlerDistrubutor.AcceptBankHandlerUserEvent(this);
     }
 
 }
