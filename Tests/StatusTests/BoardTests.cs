@@ -120,5 +120,19 @@ namespace Tests
             Assert.ThrowsException<Exception>(() => board.Teleport(index, outSide1));
             Assert.ThrowsException<Exception>(() => board.Teleport(index, outSide2));
         }
+        [TestMethod]
+        public void Are_Data_Protected_When_Their_Copies_Are_Modified()
+        {
+            BoardHandler board = new BoardHandler();
+            int index = 0;
+            int previousPosition = board.PlayerPositions[index];
+            bool previousPassedGo = board.PlayerPassedGo[index];
+
+            board.PlayerPositions[index] += 10;
+            board.PlayerPassedGo[index] = previousPassedGo is false;
+
+            Assert.AreEqual(board.PlayerPositions[index], previousPosition);
+            Assert.AreEqual(board.PlayerPassedGo[index], previousPassedGo);
+        }
     }
 }
