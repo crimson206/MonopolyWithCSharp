@@ -2,7 +2,7 @@ public class JailHandlerData : ICloneable
 {
     private JailHandler jailHandler;
     public List<int> TurnsInJailCounts => this.jailHandler.TurnsInJailCounts;
-    public List<int> FreeJailCardCounts => this.jailHandler.FreeJailCardCounts;
+    public List<int> FreeJailCardCounts => this.jailHandler.JailFreeCardCounts;
 
     public JailHandlerData(JailHandler jailHandler)
     {

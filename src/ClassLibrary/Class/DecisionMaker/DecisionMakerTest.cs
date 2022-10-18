@@ -59,7 +59,7 @@ public class DecisionMakerTest
 
     public bool WantToUseJailFreeCard(int playerNumber)
     {
-        if (jailManager.FreeJailCardCounts[playerNumber] != 0)
+        if (jailManager.JailFreeCardCounts[playerNumber] != 0)
         {
             return true;
         }

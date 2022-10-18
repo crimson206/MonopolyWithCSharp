@@ -14,6 +14,7 @@ public class Visualizer
     private List<int[]> tileEdgeInfo = new List<int[]>();
     private List<int[]> innerMapEdge = new List<int[]>();
     private List<int> playerPositions => this.data.Board.PlayerPositions;
+    private string recommendedString => this.data.EventFlow.RecommentedString;
 
     public Visualizer(DataCenter data)
     {
@@ -39,7 +40,7 @@ public class Visualizer
     }
     public void UpdateLogging()
     {
-///        loggingDrawer.UpdateLogging(this.recommendedString);
+        loggingDrawer.UpdateLogging(this.recommendedString);
     }
 
     int backUpCursorLeft = Console.CursorLeft;
@@ -48,10 +49,14 @@ public class Visualizer
     int backUpBufferHeight = Console.BufferHeight;
     int backUpBufferWidth = Console.BufferWidth;
 
+
+
     public void Visualize()
     {
         Console.Clear();
         Console.WindowHeight = 150;
+
+        
 
         mapDrawer.DrawMap(mapWidth, mapHeight,  tileWidth,  tileHeight);
 
@@ -71,6 +76,8 @@ public class Visualizer
         playerStatusDrawer.DrawArrangedLines(innerMapEdge[0][0] + 65, innerMapEdge[0][1] + 13, data); 
 
         /// need
+
+
         loggingDrawer.DrawLogging(innerMapEdge[0][0] + 5, innerMapEdge[0][1] + 27);
 
         Console.CursorLeft = backUpCursorLeft;

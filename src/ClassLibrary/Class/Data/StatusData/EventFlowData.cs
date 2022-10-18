@@ -9,7 +9,7 @@ public class EventFlowData : ICloneable
     public int CurrentPlayerNumber => this.eventFlow.CurrentPlayerNumber;
     public string RecommentedString => this.eventFlow.RecommentedString;
     public bool BoolDecision => this.eventFlow.BoolDecision;
-    public int[] RollDiceResult => new int[] {this.eventFlow.RoolDiceResult[0], this.eventFlow.RoolDiceResult[1]};
+    public int[] RollDiceResult => new int[] {this.eventFlow.RollDiceResult[0], this.eventFlow.RollDiceResult[1]};
     public bool AskedEventManualBoolDecision => this.eventFlow.AskedManualBoolDecision;
     public bool ChangedNoticeably => this.eventFlow.ChangedNoticeably;
 

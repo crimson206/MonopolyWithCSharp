@@ -24,16 +24,14 @@ public class BoardHandler
         }
     }
 
-    private bool PassedGo(int oldPosition, int newPosition)
+    public void Teleport(int playerNumber, int point)
     {
-        if (oldPosition < this.goPosition)
+        if(point >= this.size || point < 0)
         {
-            return (newPosition >= this.goPosition || newPosition < oldPosition);
+            throw new Exception();
         }
-        else
-        {
-            return (newPosition >= this.goPosition && newPosition < oldPosition );
-        }
+
+        this.playerPositions[playerNumber] = point;
     }
 
     public void SetInfo(List<TileData> tileDatas)
@@ -50,6 +48,18 @@ public class BoardHandler
         else
         {
             throw new Exception("This board supports TileMaps only with one Go tile");
+        }
+    }
+
+    private bool PassedGo(int oldPosition, int newPosition)
+    {
+        if (oldPosition < this.goPosition)
+        {
+            return (newPosition >= this.goPosition || newPosition < oldPosition);
+        }
+        else
+        {
+            return (newPosition >= this.goPosition && newPosition < oldPosition );
         }
     }
 }

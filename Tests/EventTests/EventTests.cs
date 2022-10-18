@@ -16,7 +16,7 @@ namespace Tests
             Game game = new Game();
 
 
-            IndependentEvent independentEvent = game.GenerateEvent();
+            StartTurn independentEvent = game.GenerateEvent();
 
             for (int i = 0; i < 10; i++)
             {

@@ -23,15 +23,46 @@ public class Delegator
 
     private List<DelEvent> nextEvents = new List<DelEvent>();
 
-    public DelEvent? NextEvent;
+    public DelEvent? ResetAndAddFollowingEvent
+    {
+        set
+        {   
+            nextEvents.Clear();
+            if ( value != null)
+            {
+                nextEvents.Add(value);
+            }
+            else
+            {
+                throw new Exception("No event was assigned");
+            }
+        }
+    }
+    public DelEvent? AddFollowingEvent
+    {
+        set
+        {
+            if ( value != null)
+            {
+                nextEvents.Add(value);
+            }
+            else
+            {
+                throw new Exception("No event was assigned");
+            }
+        }
+    }
+
 
     public delegate void DelEvent();
 
     /// it runs a function of events
     public void RunEvent()
     {
+        DelEvent currentEvent = nextEvents[0];
+        nextEvents.RemoveAt(0);
+        currentEvent();
 
-        this.NextEvent!();
-        var break1 = 1;
+        var DebuggingBreakPoint = 0;
     }
 }

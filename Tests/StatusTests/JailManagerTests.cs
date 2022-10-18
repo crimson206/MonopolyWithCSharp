@@ -21,13 +21,13 @@ namespace Tests.StatusTests
             jailManager.ResetTurnInJail(0);
             Assert.AreEqual(jailManager.TurnsInJailCounts[0], 0);
 
-            Assert.ThrowsException<Exception>(() => jailManager.RemoveAFreeJailCard(0));
+            Assert.ThrowsException<Exception>(() => jailManager.RemoveAJailFreeCard(0));
             
             jailManager.AddFreeJailCard(0);
-            Assert.AreEqual(jailManager.FreeJailCardCounts[0], 1);
+            Assert.AreEqual(jailManager.JailFreeCardCounts[0], 1);
 
-            jailManager.RemoveAFreeJailCard(0);
-            Assert.AreEqual(jailManager.FreeJailCardCounts[0], 0);
+            jailManager.RemoveAJailFreeCard(0);
+            Assert.AreEqual(jailManager.JailFreeCardCounts[0], 0);
         }
     }
 }

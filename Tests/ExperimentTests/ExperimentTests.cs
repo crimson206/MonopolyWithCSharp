@@ -6,6 +6,24 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests
 {
+
+    public class TestParent
+    {
+        public TestParent(int a)
+        {
+
+        }
+    }
+    
+    public class TestChild : TestParent
+    {
+        public TestChild(int a) : base (a)
+        {
+
+        }
+    }
+
+
     [TestClass]
     public class ExperimentTests
     {
@@ -52,7 +70,7 @@ namespace Tests
                 aa.Add(boolCollector);
                 boolCollector = new List<bool>();
             }
-            IndependentEvent independentEvent = game.GenerateEvent();
+            StartTurn independentEvent = game.GenerateEvent();
 
             var boolColr = new List<bool>();
 

@@ -13,6 +13,8 @@ public class Game
     private HandlerDistrubutor handlerDistributor;
     public BoolCopier boolCopier;
 
+    public StartTurn debugger;
+
     public Game()
     {
         this.bankHandler = new BankHandler();
@@ -29,7 +31,9 @@ public class Game
 
         this.SetBoardInfo();
 
-        this.delegator.NextEvent = this.GenerateEvent().StartTurn;
+        this.debugger = this.GenerateEvent();
+
+        this.delegator.ResetAndAddFollowingEvent = this.debugger.ResetAndAddEvent;
 
     }
 
@@ -53,7 +57,7 @@ public class Game
 
     private HandlerDistrubutor GenerateHandlerDistributor()
     {
-        return new HandlerDistrubutor(this.boardHandler, this.bankHandler, this.tileManager, this.doubleSideEffectHandler);
+        return new HandlerDistrubutor(this.boardHandler, this.bankHandler, this.tileManager, this.doubleSideEffectHandler, this.jailHandler);
     }
 
     private void SetBoardInfo()
@@ -61,9 +65,9 @@ public class Game
         this.boardHandler.SetInfo(this.dataCenter.TileDatas);
     }
 
-    public IndependentEvent GenerateEvent()
+    public StartTurn GenerateEvent()
     {
-        return new IndependentEvent(this.dataCenter, this.delegator, this.boolCopier, this.eventFlow, this.handlerDistributor);
+        return new StartTurn(this.delegator, this.boolCopier, this.eventFlow, this.handlerDistributor);
     }
 
 }
