@@ -10,7 +10,7 @@ public abstract class Event
 
     /// shortcuts
     protected int playerNumber => this.eventFlow.CurrentPlayerNumber;
-    protected string stringPlayer => String.Format("Player{0}", this.playerNumber);
+    protected string stringPlayer => String.Format("Player {0}", this.playerNumber);
 
 
     protected bool CopyConditionBool(bool conditionBool) => this.boolCopier.CopyConditionBool(conditionBool);

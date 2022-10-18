@@ -1,4 +1,3 @@
-
 public class DataCenter : ICloneable
 {
     private BankData bank;
@@ -9,8 +8,12 @@ public class DataCenter : ICloneable
     private EventFlowData eventFlowData;
 
     public DataCenter(
-        BankData bankData, BoardData boardData, DoubleSideEffectData doubleSideEffectData,
-        JailHandlerData jailData, TileManager tileManager, EventFlowData eventFlowData)
+        BankData bankData,
+        BoardData boardData,
+        DoubleSideEffectData doubleSideEffectData,
+        JailHandlerData jailData,
+        TileManager tileManager,
+        EventFlowData eventFlowData)
     {
         this.bank = bankData;
         this.board = boardData;
@@ -20,17 +23,22 @@ public class DataCenter : ICloneable
         this.eventFlowData = eventFlowData;
     }
 
-    public BankData Bank => (BankData) this.bank.Clone();
-    public BoardData Board => (BoardData) this.board.Clone();
-    public DoubleSideEffectData DoubleSideEffect => (DoubleSideEffectData) this.doubleSideEffect.Clone();
-    public JailHandlerData Jail => (JailHandlerData) this.jail.Clone();
-    public EventFlowData EventFlow => (EventFlowData) this.eventFlowData.Clone();
+    public BankData Bank => (BankData)this.bank.Clone();
+
+    public BoardData Board => (BoardData)this.board.Clone();
+
+    public DoubleSideEffectData DoubleSideEffect => (DoubleSideEffectData)this.doubleSideEffect.Clone();
+
+    public JailHandlerData Jail => (JailHandlerData)this.jail.Clone();
+
+    public EventFlowData EventFlow => (EventFlowData)this.eventFlowData.Clone();
+
     public List<TileData> TileDatas => new List<TileData>(this.tileDatas);
 
     public object Clone()
     {
         /// without cast, the type of clone is ICloneable
-        DataCenter clone = (DataCenter) this.MemberwiseClone();
+        DataCenter clone = (DataCenter)this.MemberwiseClone();
         return clone;
     }
 }

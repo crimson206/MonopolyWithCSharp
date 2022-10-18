@@ -1,11 +1,11 @@
-
 public class GoData : TileData
 {
-    protected Go go;
+    private Go go;
 
-    public GoData(Tile tile) : base(tile)
+    public GoData(Tile tile)
+        : base(tile)
     {
-        this.go = (Go) tile;
+        this.go = (Go)tile;
     }
 
     public int Salary => this.go.Salary;

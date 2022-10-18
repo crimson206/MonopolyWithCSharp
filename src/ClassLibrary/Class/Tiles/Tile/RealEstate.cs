@@ -71,11 +71,18 @@ public class RealEstate : Property
 
         if (this.ownerPlayerNumber is not null)
         {
-            if (colorGroup.All(realEstate => realEstate.OwnerPlayerNumber == this.ownerPlayerNumber))
+            if (this.isMortgaged)
             {
-                return Rents[houseCount+1];
+                return 0;
             }
-            return Rents[0];
+            else
+            {
+                if (colorGroup.All(realEstate => realEstate.OwnerPlayerNumber == this.ownerPlayerNumber))
+                {
+                    return Rents[houseCount+1];
+                }
+                return Rents[0];
+            }
         }
         else
         {

@@ -18,7 +18,7 @@ public class CheckAndDoExtraTurn : Event
         else
         {
             this.doubleSideEffectHandler.SetExtraTurn(this.playerNumber, false);
-            this.eventFlow.RecommentedString = this.stringPlayer + "rolled double last time, so roll one more time";
+            this.eventFlow.RecommentedString = this.stringPlayer + " rolled double last time, so roll one more time";
 
             this.delegator.ResetAndAddFollowingEvent = this.events.RollDice.Pass;
             this.delegator.AddFollowingEvent = this.events.CountRolledDouble.Pass;

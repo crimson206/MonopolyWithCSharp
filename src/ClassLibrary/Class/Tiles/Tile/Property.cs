@@ -32,8 +32,15 @@ public class Property : Tile , IPurchasable
     {
         if ( this.ownerPlayerNumber is not null)
         {
-            int numRailRoadsWithSameOwner = group.Where(group => group.OwnerPlayerNumber == this.ownerPlayerNumber).ToList().Count();
-            return this.rents[numRailRoadsWithSameOwner-1];
+            if ( this.isMortgaged )
+            {
+                return 0;
+            }
+            else
+            {
+                int numRailRoadsWithSameOwner = group.Where(group => group.OwnerPlayerNumber == this.ownerPlayerNumber).ToList().Count();
+                return this.rents[numRailRoadsWithSameOwner-1];
+            }
         }
         else
         {

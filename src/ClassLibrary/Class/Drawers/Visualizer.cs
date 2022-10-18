@@ -3,7 +3,7 @@ public class Visualizer
 {
     private MapDrawer mapDrawer = new MapDrawer();
     private TileDrawer? tileDrawer;
-    public LoggingDrawer loggingDrawer = new LoggingDrawer(5);
+    public LoggingDrawer loggingDrawer = new LoggingDrawer(8);
     private DisplayTileInfo displayTiles = new DisplayTileInfo();
     private PlayerStatusDrawer playerStatusDrawer = new PlayerStatusDrawer();
     private DataCenter data;
