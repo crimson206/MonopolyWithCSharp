@@ -30,7 +30,7 @@ public class BoardHandler
     /// The range of position is from 0 to 39.
     /// </summary>
     /// <value> Initially PlayerPositions = { 0, 0, 0, 0 } </value>
-    public List<int> PlayerPositions { get => this.playerPositions; }
+    public List<int> PlayerPositions { get => new List<int>(this.playerPositions); }
 
     /// <summary>
     /// It is a readonly list of players' bool status "PassedGo".
@@ -38,7 +38,7 @@ public class BoardHandler
     /// It tells if a player passed the position 0 by the last "MovePlayerAroungBoard()"
     /// </summary>
     /// <value> Initially PlayerPositions = { false, false, false, false } </value>
-    public List<bool> PlayerPassedGo { get => this.playerPassedGo; }
+    public List<bool> PlayerPassedGo { get => new List<bool>(this.playerPassedGo); }
 
     /// <summary>
     /// It moves a position of an index by the amount in circle.
