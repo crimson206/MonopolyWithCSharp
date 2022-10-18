@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "5Ix6rybWuqLq/UHTMt22Yt2gXFdlHnDtwNT7HPWotYItjzeaCn3qxTia+wUsGTmZkP0KstvrCsAhbGoVY/21GQ==",
+  "dgSpecHash": "0eGXveuckw+OuPslyUNH7Yc3GEQG25rpJsxwTUiE5/37ba+vpCaVEqcLi71gFukWiV6jrX5WeqKebhvJzg69hQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\sgkm\\MonopolyWithCSharp\\Tests\\Tests.csproj",
+  "projectFilePath": "c:\\Users\\sgkm\\VSCodeFolders\\MonopolyWithCSharp\\Tests\\Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\sgkm\\.nuget\\packages\\coverlet.collector\\3.1.2\\coverlet.collector.3.1.2.nupkg.sha512",
     "C:\\Users\\sgkm\\.nuget\\packages\\microsoft.codecoverage\\17.1.0\\microsoft.codecoverage.17.1.0.nupkg.sha512",
