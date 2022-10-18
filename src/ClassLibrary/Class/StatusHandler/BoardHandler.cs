@@ -75,6 +75,10 @@ public class BoardHandler
         this.playerPositions[playerNumber] = point;
     }
 
+    /// Developer note :
+    /// This is unnecessarily complex for the simple configuration where Go tile is at 0.
+    /// I want to keep it in this way to extend the function of this board handler later
+    /// for Monopoly maps whose Go tiles can be randomly located.
     private bool PassedGo(int oldPosition, int newPosition)
     {
         if (oldPosition < this.goPosition)
