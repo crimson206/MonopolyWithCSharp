@@ -13,22 +13,17 @@ public class TileManager
     private List<Property> properties;
     private List<RealEstate> realEstates;
     private Random random = new Random();
-    private MapTilesFactory mapTilesFactory = new MapTilesFactory();
     public Analyser Analyser;
     public PropertyManager propertyManager;
-    public List<TileData> tileDatas;
 
 
     public TileManager()
     {
-        this.tiles = this.CreateTiles();
-        
         List<Property> properties = this.FilterProperties(this.tiles);
         this.realEstates = this.FilterRealEstates(this.tiles);
         this.properties = properties;
         this.Analyser = new Analyser(properties, realEstates);
         this.propertyManager = new PropertyManager();
-        this.tileDatas = this.mapTilesFactory.ExtractTileDataSet(tiles);
     }
 
 
@@ -37,11 +32,6 @@ public class TileManager
 
     public List<Property> Properties { get => new List<Property> (this.properties); }
     public List<RealEstate> RealEstates { get => new List<RealEstate> (this.realEstates); }
-
-    private List<Tile> CreateTiles()
-    {
-        return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3);
-    }
 
     private List<Property> FilterProperties(List<Tile> tiles)
     {

@@ -1,5 +1,5 @@
 
 public interface IGroupable
 {
-        public abstract void SetGroup(List<PropertyData> group);
+        public abstract void SetGroup(List<Property> group);
 }
