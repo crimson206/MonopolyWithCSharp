@@ -96,6 +96,26 @@ namespace Tests
             Assert.AreEqual(board.PlayerPassedGo[index], expectedValueOfPassedGo);
         }
         [TestMethod]
+        public void Move_Player_Around_Board_Especially_Nearby_GoPosition_And_PlayerPassedGo_Is_True_Only_When_Player_Arrived_At_GoPosition()
+        {
+            BoardHandler board = new BoardHandler();
+            int AroundGoPosition = board.GoPosition - 2;
+            if (AroundGoPosition < 0)
+            {
+                AroundGoPosition += board.Size;
+            }
+            int index = 0;
+            int tightStepToMakeNearbyGoPosition = 1;
+            board.Teleport(0, AroundGoPosition);
+            bool[] expectedPassedGos = { false, true, false, false };
+
+            foreach (var expectedPassedGo in expectedPassedGos)
+            {
+                board.MovePlayerAroundBoard(index, tightStepToMakeNearbyGoPosition);
+                bool currentPassedGo = board.PlayerPassedGo[index];
+                Assert.AreEqual(currentPassedGo, expectedPassedGo);
+            }
+        }
         public void Teleport_Player_To_Designated_Position()
         {
             BoardHandler board = new BoardHandler();
