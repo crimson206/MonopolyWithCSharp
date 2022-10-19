@@ -64,7 +64,7 @@ namespace Tests
             Assert.AreEqual(decreasedAmount, expectedDecreasedAmount);
         }
         [TestMethod]
-        public void Transfer_Money_Fomm_Index_To_Another_By_Amount()
+        public void Transfer_Money_From_Index_To_Another_By_Amount()
         {
             BankHandler bank = new BankHandler();
             int fromIndex = 0;
@@ -83,15 +83,33 @@ namespace Tests
             Assert.AreEqual(increasedAmountOfToIndexBalance, expectedIncreasedAmount);
         }
         [TestMethod]
-        public void Is_Negative_Integer_Not_Accepted_By_BankHandler_Methods()
+        public void Can_Not_Decrease_Balance_Wiht_Negative_Input()
+        {
+            BankHandler bank = new BankHandler();
+            int index = 0;
+
+            int negativeInteger = -100;
+
+            Assert.ThrowsException<Exception>(() => bank.DecreaseBalance(index, negativeInteger));
+        }
+        [TestMethod]
+        public void Can_Not_Increase_Balance_Wiht_Negative_Input()
+        {
+            BankHandler bank = new BankHandler();
+            int index = 0;
+            int negativeInteger = -100;
+
+            Assert.ThrowsException<Exception>(() => bank.DecreaseBalance(index, negativeInteger));
+        }
+        [TestMethod]
+        public void Can_Not_Transfer_Balance_Wiht_Negative_Input()
         {
             BankHandler bank = new BankHandler();
             int index1 = 0;
             int index2 = 1;
             int negativeInteger = -100;
 
-            Assert.ThrowsException<Exception>(() => bank.DecreaseBalance(index1, negativeInteger));
-            Assert.ThrowsException<Exception>(() => bank.IncreaseBalance(index1, negativeInteger));
+
             Assert.ThrowsException<Exception>(() => bank.TransferBalanceFromTo(index1, index2, negativeInteger));            
         }
         [TestMethod]

@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 /// <summary>
-/// This class stores players' game money and can increase of decrease the money
+/// This class stores players' game money and can increase or decrease the money
 /// </summary>
 public class BankHandler
 {
