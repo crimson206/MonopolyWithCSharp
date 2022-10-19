@@ -114,17 +114,16 @@ public class TestEvent2
                     
                 }
             }
-            else if (this.isAbleToMove)
+            else
             {
                 if ( this.isDoubleSideEffectOn && this.doubleSideEffectHandler.DoubleCounts[this.playerNumber] == 3)
                 {
                     this.AddNextEvent(this.HasJailPenalty);
                 }
+                else
+                {
                 this.AddNextEvent(this.MoveByRollDiceResultTotal);
-            }
-            else
-            {
-                throw new NotImplementedException();
+                }
             }
             return;
         }
@@ -186,6 +185,7 @@ public class TestEvent2
             }
             return;
         }
+
         if (this.lastEvent == this.CheckExtraTurn)
         {
             if ( this.doubleSideEffectHandler.ExtraTurns[this.playerNumber])
@@ -260,6 +260,10 @@ public class TestEvent2
 
     private void RollDice()
     {
+
+        /// reset value before setting a new value
+        this.doubleSideEffectHandler.SetExtraTurn(this.playerNumber, false);
+
         this.eventFlow.RollDiceResult = Dice.Roll(random);
 
         if (this.isDoubleSideEffectOn)
@@ -397,7 +401,6 @@ public class TestEvent2
 
     public void MoveByRollDiceResultTotal()
     {
-        this.doubleSideEffectHandler.SetExtraTurn(this.playerNumber,false);
         int rollDiceResultTotal = this.eventFlow.RollDiceResult.Sum();
         this.eventFlow.RecommentedString = this.stringPlayer + String.Format(" moved {0} steps", rollDiceResultTotal);
 
@@ -424,7 +427,7 @@ public class TestEvent2
     {
         if (this.isDoubleSideEffectOn && this.doubleSideEffectHandler.ExtraTurns[this.playerNumber])
         {
-            this.eventFlow.RecommentedString = this.stringPlayer + " rolled double last time and has an extra turn";
+            this.eventFlow.RecommentedString = this.stringPlayer + " rolled double last time, and will have an extra turn";
         }
 
         this.CallNextEvent();
