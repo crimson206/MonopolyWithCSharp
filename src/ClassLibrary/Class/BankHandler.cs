@@ -26,7 +26,7 @@ public class BankHandler
     /// <summary>
     /// This is a readonly list of players' game money.
     /// </summary>
-    public List<int> Balances { get => new List<int>(this.balances); private set => this.balances = value; }
+    public List<int> Balances { get => new List<int>(this.balances); }
 
     /// <summary>
     /// It increases one value of balances at the index playerNumber by the amount
