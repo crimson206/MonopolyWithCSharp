@@ -10,10 +10,10 @@ public class Game
     private BoardHandler boardHandler;
     private EventFlow eventFlow;
     private DataCenter dataCenter;
-    private HandlerDistrubutor handlerDistributor;
     public BoolCopier boolCopier;
 
-    public StartTurn debugger;
+    private TestEvent testEvent;
+    private TestEvent2 testEvent2;
 
     public Game()
     {
@@ -27,13 +27,10 @@ public class Game
         this.boardHandler = new BoardHandler();
 
         this.dataCenter = this.GenerateDataCenter();
-        this.handlerDistributor = this.GenerateHandlerDistributor();
 
         this.SetBoardInfo();
 
-        this.debugger = this.GenerateEvent();
-
-        this.delegator.ResetAndAddFollowingEvent = this.debugger.ResetAndAddEvent;
+        this.testEvent2 = this.GetTestEvent2();
 
     }
 
@@ -55,19 +52,21 @@ public class Game
         return new DataCenter(bankdata, boardData, doubleSideEffectData, jailData, this.tileManager, eventFlowData);
     }
 
-    private HandlerDistrubutor GenerateHandlerDistributor()
-    {
-        return new HandlerDistrubutor(this.boardHandler, this.bankHandler, this.tileManager, this.doubleSideEffectHandler, this.jailHandler);
-    }
-
     private void SetBoardInfo()
     {
         this.boardHandler.SetInfo(this.dataCenter.TileDatas);
     }
 
-    public StartTurn GenerateEvent()
+
+    public TestEvent GetTestEvent1()
     {
-        return new StartTurn(this.delegator, this.boolCopier, this.eventFlow, this.handlerDistributor);
+        return new TestEvent(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
     }
 
+    public TestEvent2 GetTestEvent2()
+    {
+
+        return new TestEvent2(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
+
+    }
 }

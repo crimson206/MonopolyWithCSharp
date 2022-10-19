@@ -70,7 +70,7 @@ namespace Tests
                 aa.Add(boolCollector);
                 boolCollector = new List<bool>();
             }
-            StartTurn independentEvent = game.GenerateEvent();
+
 
             var boolColr = new List<bool>();
 
