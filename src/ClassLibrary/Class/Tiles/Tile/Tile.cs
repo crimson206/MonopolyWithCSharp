@@ -4,10 +4,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 /// <summary>
-/// This abstract class has the field "name" and its property.
+/// This class has the field "name" and its property.
 /// It is also cloneable to be passed as data which can't effect on the original.
 /// </summary>
-public abstract class Tile : ICloneable
+public class Tile : ICloneable
 {
     private string name = "Tile";
 
@@ -21,8 +21,9 @@ public abstract class Tile : ICloneable
     }
 
     /// <summary>
-    /// A readonly name of a tile object
+    /// Gets the name of Tile
     /// </summary>
+    /// <value>a name of a tile</value>
     public string Name { get => this.name; }
 
     /// <summary>

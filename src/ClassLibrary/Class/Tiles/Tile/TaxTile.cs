@@ -4,9 +4,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 /// <summary>
-/// This abstract class categorize the IncomeTax and LuxuryTax together.
+/// This class categorize the IncomeTax and LuxuryTax together.
 /// </summary>
-public abstract class TaxTile : Tile
+public class TaxTile : Tile
 {
     private int tax;
 
