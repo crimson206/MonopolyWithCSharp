@@ -8,14 +8,15 @@
 /// </summary>
 public class JailHandler
 {
-    private List<int> jailFreeCardCounts = new List<int> () {0, 0, 0, 0};
-    private List<int> turnsInJailCounts = new List<int>() {0, 0, 0, 0};
+    private List<int> jailFreeCardCounts = new List<int>() { 0, 0, 0, 0 };
+    private List<int> turnsInJailCounts = new List<int>() { 0, 0, 0, 0 };
 
     /// <summary>
     /// It is a readonly list of ints whose initial values are 0. The size of it is fixed to be 4.
     /// You will want to use it to count how many turns players stayed in jail.
     /// </summary>
     public List<int> TurnsInJailCounts { get => new List<int>(this.turnsInJailCounts); }
+
     /// <summary>
     /// It is a readonoly list of ints whose initial values are 0. The size of it is fixed to be 4.
     /// You wiil want to use it to count how many jail free cards players have.
