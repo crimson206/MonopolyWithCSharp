@@ -1,14 +1,17 @@
 # MonopolyWithCSharp
 
 In Master Branch
-- empty
-
-Currently Working on
-1. Refactoring the lowest level classes to add here
-  - BankHandler
   - BoardHandler
   - DoubleSideEffectHandler
   - JailHandler
+
+Currently Working on
+1. Waiting feedback
+  - BankHandler
+    : Handlers in master were refactored by myself as much as possible.
+      This handler was refactored together, but I decided to keep it out of the master to ask for a feedback.
+      All the handlers will have to be refactored again based on the feedback later.
+
 2. Designing Event Flow.
   - Basic Concept
     : Event class has functions of all events such as Move(), RollDice(), LandOnTile() and so on.
