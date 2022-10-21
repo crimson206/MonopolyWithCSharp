@@ -5,13 +5,14 @@ namespace Tests
     public class BankTests
     {
         [TestMethod]
-        public void Initialize_Basic_Constructor_BankHandler_With_Balances_With_Initial_Value_1500()
+        public void Initialize_Basic_Constructor_BankHandler_With_Balances_With_Initial_Balance()
         {
             BankHandler bank = new BankHandler();
+            int initialBalance = bank.InitialBalance;
 
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(bank.Balances[i], 1500);
+                Assert.AreEqual(bank.Balances[i], initialBalance);
             }
         }
         [TestMethod]
