@@ -24,8 +24,10 @@ public class BankHandler
     }
 
     /// <summary>
-    /// This is a readonly list of players' game money.
+    /// Gets a readonly balances of a bank handler
     /// </summary>
+    /// <typeparam name="int">An integer</typeparam>
+    /// <returns> A readonly List<int> whose initial values are the initial balance of a bank handler </returns>
     public List<int> Balances { get => new List<int>(this.balances); }
 
     /// <summary>
