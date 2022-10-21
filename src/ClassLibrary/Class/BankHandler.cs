@@ -48,6 +48,12 @@ public class BankHandler
     }
 
     /// <summary>
+    /// Gets a initial balance of a bank handler
+    /// </summary>
+    /// <value> it would be an initial game money for Monopoly players </value>
+    public int InitialBalance { get => this.initialBalance; }
+
+    /// <summary>
     /// It decreases one value of balances at the index playerNumber by the amount
     /// </summary>
     /// <param name="playerNumber">An integer between 0 and 3</param>
