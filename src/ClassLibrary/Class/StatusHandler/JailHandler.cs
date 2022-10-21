@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 /// <summary>
-/// This class stores players' positions and manage the movement in circle.
+/// This class stores information for jail feature of Monopoly, and manage the values
 /// </summary>
 public class JailHandler
 {
