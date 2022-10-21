@@ -14,30 +14,28 @@ public class BoardHandler
     private List<bool> playerPassedGo = new List<bool>() { false, false, false, false };
 
     /// <summary>
-    /// It is the size of the board.
+    /// Gets a size of a board handler
     /// </summary>
-    /// <value> Size = 40 </value>
+    /// <value> It would be the size of a board of Monopoly </value>
     public int Size { get => this.size; }
 
     /// <summary>
-    /// It is the position of "Go" tile
+    /// Gets a go position of a board handler
     /// </summary>
-    /// <value> GoPosition = 0 </value>
+    /// <value> It is the position of "Go" tile </value>
     public int GoPosition { get => this.goPosition; }
 
     /// <summary>
-    /// It is a readonly list of 4 integers representing players positions.
-    /// The range of position is from 0 to 39.
+    /// Gets a readonly PlayerPositions of a board handler
     /// </summary>
-    /// <value> Initially PlayerPositions = { 0, 0, 0, 0 } </value>
+    /// <value> a list of ints which are from 0 to the size of a board handler represent players positions </value>
     public List<int> PlayerPositions { get => new List<int>(this.playerPositions); }
 
     /// <summary>
-    /// It is a readonly list of players' bool status "PassedGo".
-    /// This board handler assumes that "Go" tile is placed at 0.
-    /// It tells if a player passed the position 0 by the last "MovePlayerAroungBoard()"
+    /// Gets a readonly playerPassedGo of a board handler
     /// </summary>
-    /// <value> Initially PlayerPositions = { false, false, false, false } </value>
+    /// <value> It tells if a player passed the position 0 by the last "MovePlayerAroungBoard()"
+    /// their initial values are false </value>
     public List<bool> PlayerPassedGo { get => new List<bool>(this.playerPassedGo); }
 
     /// <summary>
