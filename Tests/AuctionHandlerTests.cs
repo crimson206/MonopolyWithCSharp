@@ -10,78 +10,164 @@ namespace Tests
     public class AuctionHandlerTests
     {
         [TestMethod]
-        public void TestMethod1()
+        public void Initialize_Basic_Constructor_An_Object_With_Null_Final_Price()
         {
             AuctionHandler auctionHandler = new AuctionHandler();
-            int participantCount = 3;
+            
+            int? expectedFinalPrice = null;
+            Assert.AreEqual(auctionHandler.FinalPrice, expectedFinalPrice);
+        }
+        [TestMethod]
+        public void Initialize_Basic_Constructor_An_Object_With_Null_Winner_Number()
+        {
+            AuctionHandler auctionHandler = new AuctionHandler();
+            
+            int? expectedFinalWinnerNumber = null;
+            Assert.AreEqual(auctionHandler.FinalPrice, expectedFinalWinnerNumber);
+        }
+
+        [TestMethod]
+        public void Set_AuctionCondision_By_Generating_SuggestedPrices_With_Wanted_Size()
+        {
+            AuctionHandler auctionHandler = new AuctionHandler();
+            int wantedSize = 4;
+            auctionHandler.SetAuctionCondition(wantedSize, initialPrice:100);
+
+            int expectedSize = 4;
+            Assert.AreEqual(auctionHandler.SuggestedPrices.Count(), expectedSize);
+        }
+        [TestMethod]
+        public void Set_AuctionCondision_By_Generating_SuggestedPrices_With_Initial_Price()
+        {
+            AuctionHandler auctionHandler = new AuctionHandler();
+            int size = 4;
             int initialPrice = 100;
+            auctionHandler.SetAuctionCondition(participantCount:size, initialPrice);
 
-            auctionHandler.SetAuctionCondition(participantCount, initialPrice);
-            Assert.AreEqual(auctionHandler.SuggestedPrices.Max(), 100);
+            int expectedInitialPrice = 100;
+            for (int i = 0; i < size; i++)
+            {
+                Assert.AreEqual(auctionHandler.SuggestedPrices[i], expectedInitialPrice); 
+            }
+        }
 
-            /// suggest new price, and keep tracking the max price
-
-            int newPrice = 120;
-
-            auctionHandler.SuggestNewPriceInTurn(newPrice);
-
-            Assert.AreEqual(auctionHandler.SuggestedPrices.Max(), newPrice);
-
-            int priceSmallerThanMax = 100;
-
-            Assert.AreNotEqual(auctionHandler.SuggestedPrices.Max(), priceSmallerThanMax);
-
-
-            /// after suggesting, participantNumber changed
-            int previousParticipantNumber = auctionHandler.CurrentParticipantNumber;
-            auctionHandler.SuggestNewPriceInTurn(130);
-            int currentParticipantNumber = auctionHandler.CurrentParticipantNumber;
-            int auctionSize = auctionHandler.SuggestedPrices.Count();
-            Assert.AreEqual(currentParticipantNumber, (previousParticipantNumber + 1)%auctionSize);
-
-            /// p1 suggested 140, p2, p0 didn't suggest higher price, and SuggestNewPriceInTurn doesn't work any more
-            /// handler sets winnerNumber
-            int winnerNumber = auctionHandler.CurrentParticipantNumber;
-            auctionHandler.SuggestNewPriceInTurn(140);
-            auctionHandler.SuggestNewPriceInTurn(120);
-            auctionHandler.SuggestNewPriceInTurn(110);
-            auctionHandler.SuggestNewPriceInTurn(120);
-
-            Assert.AreEqual(auctionHandler.isAuctionOn, false);
-            Assert.AreEqual(auctionHandler.winnerNumber, winnerNumber);
-            Assert.AreEqual(auctionHandler.FinalPrice, 140 );
-            /// try to change by suggesting hight number after auction is done, doens't change anything
-        
-            auctionHandler.SuggestNewPriceInTurn(150);
-            auctionHandler.SuggestNewPriceInTurn(170);
-            auctionHandler.SuggestNewPriceInTurn(180);
-
-            Assert.AreEqual(auctionHandler.isAuctionOn, false);
-            Assert.AreEqual(auctionHandler.winnerNumber, winnerNumber);
-            Assert.AreEqual(auctionHandler.FinalPrice, 140 );
-
-            /// handler is reusable after setup
-            
+        public AuctionHandler Get_AuctionHandler_With_Size_4_And_InitialPrice_100()
+        {
+            AuctionHandler auctionHandler = new AuctionHandler();
             auctionHandler.SetAuctionCondition(4, 100);
+            return auctionHandler;
+        }
+        [TestMethod]
+        public void Is_SuggestedPrices_Protected_From_Change_Of_Its_Copy()
+        {
+            AuctionHandler auctionHandler = Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+
+            List<int> copy = auctionHandler.SuggestedPrices;
+            copy[0] = 20;
+
+            int expectedValueIfItWasNotProtected = 20;
+            Assert.AreNotEqual(auctionHandler.SuggestedPrices[0], expectedValueIfItWasNotProtected);
+        }
+        [TestMethod]
+        public void Seggest_NewPriceInTurn_For_One_Round()
+        {
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+            int[] suggestedPrices = new int[] { 200, 100, 240, 300};
+            int[] expectedPrices = new int[] { 200, 100, 240, 300};
+
+            for (int i = 0; i < 4; i++)
+            {
+                auctionHandler.SuggestNewPriceInTurn(suggestedPrices[i]);
+                Assert.AreEqual(auctionHandler.SuggestedPrices[i], expectedPrices[i]);
+            }
+        }
+        [TestMethod]
+        public void Do_Not_Set_Auction_Condition_And_IsAuctionOn_Is_False()
+        {
+            AuctionHandler auctionHandler = new AuctionHandler();
+
+            bool expectedIsAuctionOn = false;
+            Assert.AreEqual(auctionHandler.IsAuctionOn, expectedIsAuctionOn);
+        }
+        [TestMethod]
+        public void Set_Auction_Condition_To_Make_IsAuctionOn_True()
+        {
+            AuctionHandler auctionHandler = new AuctionHandler();
             
-            /// check status first
-            Assert.AreEqual(auctionHandler.isAuctionOn, true);
-            Assert.AreEqual(auctionHandler.SuggestedPrices.Max(), 100);
-            Assert.AreEqual(auctionHandler.FinalPrice, null);
-            Assert.AreEqual(auctionHandler.winnerNumber, null);
+            auctionHandler.SetAuctionCondition(participantCount:4,initialPrice:100);
 
-            /// try another auction event
-        
-            auctionHandler.SuggestNewPriceInTurn(300);
-            auctionHandler.SuggestNewPriceInTurn(240);
-            auctionHandler.SuggestNewPriceInTurn(350);
-            Assert.AreEqual(auctionHandler.SuggestedPrices.Max(), 350);
+            bool expectedIsAuctionOn = true;
+            Assert.AreEqual(auctionHandler.IsAuctionOn, expectedIsAuctionOn);
+        }
+        [TestMethod]
+        public void Seggest_NewPriceInTurn_With_Smaller_Prices_Than_Max_Price_To_Close_Auction()
+        {
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+            int[] suggestedPrices = new int[] { 200, 100, 100, 140};
 
-            auctionHandler.SuggestNewPriceInTurn(300);
-            auctionHandler.SuggestNewPriceInTurn(240);
-            auctionHandler.SuggestNewPriceInTurn(300);
-            auctionHandler.SuggestNewPriceInTurn(240);
-            Assert.AreEqual(auctionHandler.isAuctionOn, false);
+            for (int i = 0; i < 4; i++)
+            {
+                auctionHandler.SuggestNewPriceInTurn(suggestedPrices[i]);
+            }
+
+            bool expectedIsAuctionOn = false;
+            Assert.AreEqual(auctionHandler.IsAuctionOn, expectedIsAuctionOn);
+        }
+        [TestMethod]
+        public void Seggest_NewPriceInTurn_Always_With_Lower_Price_Than_Initial_Price_To_Force_First_Participant_To_Win()
+        {
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+            int[] suggestedPrices = new int[] { 50, 50, 40, 60};
+
+            for (int i = 0; i < 4; i++)
+            {
+                auctionHandler.SuggestNewPriceInTurn(suggestedPrices[i]);
+            }
+
+            int expectedWinnerNumber = 0;
+            Assert.AreEqual(auctionHandler.WinnerNumber, expectedWinnerNumber);
+        }
+        [TestMethod]
+        public void Seggest_NewPriceInTurn_And_The_Last_Suggested_Price_Is_Updated_Even_If_The_Auction_Is_Closed()
+        {
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+            int lastParticipantNum = auctionHandler.SuggestedPrices.Count() - 1;
+            int lastSuggestedPrice = 200;
+
+            for (int i = 0; i < 4; i++)
+            {
+                auctionHandler.SuggestNewPriceInTurn(lastSuggestedPrice);
+            }
+
+            int expectedLastSuggestedPrice = 200;
+            Assert.AreEqual(auctionHandler.SuggestedPrices[lastParticipantNum], expectedLastSuggestedPrice);
+        }
+        [TestMethod]
+        public void Seggest_NewPriceInTurn_To_With_Prices_To_Close_Auction_And_Initla_Max_Price_Is_Final_Price()
+        {
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+
+            for (int i = 0; i < 4; i++)
+            {
+                auctionHandler.SuggestNewPriceInTurn(200);
+            }
+
+            int expectedFinalPrice = 200;
+            Assert.AreEqual(auctionHandler.FinalPrice, expectedFinalPrice);
+        }
+        [TestMethod]
+        public void Seggest_NewPriceInTurn_With_Higher_Price_Than_Last_Price_To_Make_Several_Rounds()
+        {
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+            int constantIncreaseOfSuggestedPrice = 10;
+
+            for (int i = 0; i < 20; i++)
+            {
+                auctionHandler.SuggestNewPriceInTurn(100 + i * constantIncreaseOfSuggestedPrice);
+            }
+
+            bool expectedIsAuctionOn = true;
+            Assert.AreEqual(auctionHandler.IsAuctionOn, expectedIsAuctionOn);
         }
     }
 }
