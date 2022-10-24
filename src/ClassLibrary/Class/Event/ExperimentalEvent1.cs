@@ -1,4 +1,4 @@
-public class TestEvent
+public class ExperimentalEvent1
 {
     private IBankHandler bankHandler;
     private IBoardHandler boardHandler;
@@ -9,7 +9,7 @@ public class TestEvent
     private IDelegator delegator;
     private Random random = new Random();
 
-    public TestEvent
+    public ExperimentalEvent1
     (
         IBankHandler bankHandler,
         IBoardHandler boardHandler,

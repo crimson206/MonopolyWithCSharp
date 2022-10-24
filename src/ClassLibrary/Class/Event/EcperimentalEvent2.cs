@@ -1,4 +1,4 @@
-public class TestEvent2
+public class ExperimentalEvent2
 {
     private IBankHandler bankHandler;
     private IBoardHandler boardHandler;
@@ -14,7 +14,7 @@ public class TestEvent2
     private Tile currentTile => this.GetCurrentTile();
     private bool rolledDouble => this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
 
-    public TestEvent2
+    public ExperimentalEvent2
     (
         IBankHandler bankHandler,
         IBoardHandler boardHandler,
