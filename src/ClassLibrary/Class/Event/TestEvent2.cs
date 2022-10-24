@@ -1,15 +1,14 @@
 public class TestEvent2
 {
-    private BankHandler bankHandler;
-    private BoardHandler boardHandler;
-    private DoubleSideEffectHandler doubleSideEffectHandler;
-    private TileManager tileManager;
-    private JailHandler jailHandler;
+    private IBankHandler bankHandler;
+    private IBoardHandler boardHandler;
+    private IDoubleSideEffectHandler doubleSideEffectHandler;
+    private ITileManager tileManager;
+    private IJailHandler jailHandler;
     private EventFlow eventFlow;
-    private Delegator delegator;
-    private BoolCopier boolCopier = new BoolCopier();
+    private IDelegator delegator;
     private Random random = new Random();
-    private DecisionMakerDummy decisionMaker = new DecisionMakerDummy();
+    private IDecisionMaker decisionMaker;
     private bool isDoubleSideEffectOn = true;
     private bool isAbleToMove = true;
     private Tile currentTile => this.GetCurrentTile();
@@ -17,13 +16,14 @@ public class TestEvent2
 
     public TestEvent2
     (
-        BankHandler bankHandler,
-        BoardHandler boardHandler,
-        DoubleSideEffectHandler doubleSideEffectHandler,
-        TileManager tileManager,
-        JailHandler jailHandler,
+        IBankHandler bankHandler,
+        IBoardHandler boardHandler,
+        IDoubleSideEffectHandler doubleSideEffectHandler,
+        ITileManager tileManager,
+        IJailHandler jailHandler,
         EventFlow eventFlow,
-        Delegator delegator
+        IDelegator delegator,
+        IDecisionMaker decisionMaker
     )
     {
         this.bankHandler = bankHandler;
@@ -33,6 +33,7 @@ public class TestEvent2
         this.eventFlow = eventFlow;
         this.delegator = delegator;
         this.doubleSideEffectHandler = doubleSideEffectHandler;
+        this.decisionMaker = decisionMaker;
         this.delegator.SetNextEvent(this.StartTurn);
         this.lastEvent = this.StartTurn;
     }

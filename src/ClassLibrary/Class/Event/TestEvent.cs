@@ -1,24 +1,23 @@
 public class TestEvent
 {
-    private BankHandler bankHandler;
-    private BoardHandler boardHandler;
-    private DoubleSideEffectHandler doubleSideEffectHandler;
-    private TileManager tileManager;
-    private JailHandler jailHandler;
+    private IBankHandler bankHandler;
+    private IBoardHandler boardHandler;
+    private IDoubleSideEffectHandler doubleSideEffectHandler;
+    private ITileManager tileManager;
+    private IJailHandler jailHandler;
     private EventFlow eventFlow;
-    private Delegator delegator;
-    private BoolCopier boolCopier = new BoolCopier();
+    private IDelegator delegator;
     private Random random = new Random();
 
     public TestEvent
     (
-        BankHandler bankHandler,
-        BoardHandler boardHandler,
-        DoubleSideEffectHandler doubleSideEffectHandler,
-        TileManager tileManager,
-        JailHandler jailHandler,
+        IBankHandler bankHandler,
+        IBoardHandler boardHandler,
+        IDoubleSideEffectHandler doubleSideEffectHandler,
+        ITileManager tileManager,
+        IJailHandler jailHandler,
         EventFlow eventFlow,
-        Delegator delegator
+        IDelegator delegator
     )
     {
         this.bankHandler = bankHandler;
