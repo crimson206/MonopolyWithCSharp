@@ -7,7 +7,7 @@ namespace Tests.TileManagersTests
         [TestMethod]
         public void TestMethod1()
         {
-            TileManager tileManager = new TileManager();
+            TileManager tileManager = new TileManager(isTileSamll:false);
             List<RealEstate> realEstates = tileManager.RealEstates;
             
             foreach (var item in tileManager.Properties)

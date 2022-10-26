@@ -14,10 +14,12 @@ public class MapTilesFactory
             randomlyAssembledTiles = AssembleTwoTileGroupsRandomly(differentTileGroups[i], randomlyAssembledTiles, random);
         }
 
+        int totalSize = numOfRealRestates + numOfRailRoads + numOfUtilities + numOfChances + numOfCommunityChests + 6;
+
         randomlyAssembledTiles.Insert(0, new Go("Go!", 200));
-        randomlyAssembledTiles.Insert(10, new Jail("Jail", 60));
-        randomlyAssembledTiles.Insert(20, new FreeParking("FreeParking"));
-        randomlyAssembledTiles.Insert(30, new GoToJail("GoToJail"));
+        randomlyAssembledTiles.Insert(totalSize / 4, new Jail("Jail", 60));
+        randomlyAssembledTiles.Insert(totalSize / 2, new FreeParking("FreeParking"));
+        randomlyAssembledTiles.Insert(3 * totalSize / 4, new GoToJail("GoToJail"));
 
         groupSetter.SetGroups(randomlyAssembledTiles);
 

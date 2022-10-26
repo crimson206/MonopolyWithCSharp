@@ -13,21 +13,20 @@ public class TileDrawer
 
     public void DrawPlayers(List<int> playerPositions)
     {
-        
-
         for (int i = 0; i < 4; i++)
         {
             Console.WindowHeight = 200;
             Console.CursorLeft = this.tileEdgeInfo[playerPositions[i]][0] + 3 * i + 1;
-            Console.CursorTop = this.tileEdgeInfo[playerPositions[i]][1] + 3;
-            
+            Console.CursorTop = this.tileEdgeInfo[playerPositions[i]][1] + 2;
             Console.Write(String.Format("P{0}", i));
         }
     }
 
     public void DrawTiles(List<TileData> tileDatas)
     {
-        for (int i = 0; i < 40; i++)
+        int tileSize = tileDatas.Count();
+
+        for (int i = 0; i < tileSize; i++)
         {
             Console.CursorLeft = this.tileEdgeInfo[i][0] ;
             Console.CursorTop = this.tileEdgeInfo[i][1] ;

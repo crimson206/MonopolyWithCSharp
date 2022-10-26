@@ -3,7 +3,7 @@ public class Visualizer
 {
     private MapDrawer mapDrawer = new MapDrawer();
     private TileDrawer? tileDrawer;
-    public LoggingDrawer loggingDrawer = new LoggingDrawer(8);
+    public LoggingDrawer loggingDrawer = new LoggingDrawer(4);
     private DisplayTileInfo displayTiles = new DisplayTileInfo();
     private PlayerStatusDrawer playerStatusDrawer = new PlayerStatusDrawer();
     private DataCenter data;
@@ -79,6 +79,42 @@ public class Visualizer
 
 
         loggingDrawer.DrawLogging(innerMapEdge[0][0] + 5, innerMapEdge[0][1] + 27);
+
+        Console.CursorLeft = backUpCursorLeft;
+        Console.CursorTop = backUpCursorTop;
+        Console.WindowHeight = backupWindowHeight;
+        Console.BufferHeight = backUpBufferHeight;
+        Console.BufferWidth = backUpBufferWidth;
+    }
+
+    public void VisualizeSmallMap()
+    {
+        Console.Clear();
+        Console.WindowHeight = 150;
+
+        
+
+        mapDrawer.DrawMap(mapWidth, mapHeight,  tileWidth,  tileHeight);
+
+        /// need
+        List<TileData> tileDatas = this.data.TileDatas;
+        List<RealEstateData> realEstateDatas = (from tileData in tileDatas where tileData is RealEstateData select tileData as RealEstateData).ToList();
+        List<RailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
+        List<UtilityData> utilityDatas = (from tileData in tileDatas where tileData is UtilityData select tileData as UtilityData).ToList();        
+
+        tileDrawer!.DrawPlayers(this.playerPositions);
+        tileDrawer.DrawTiles(tileDatas);
+
+        /// need
+        displayTiles.DisplayRealEstates( innerMapEdge[0][0] + 3, innerMapEdge[0][1] + 1, realEstateDatas, 2);
+        displayTiles.DisplayRailRoad( innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 1, railRoadDatas, 2);
+        displayTiles.DisplayUtility( innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 5, utilityDatas, 2);
+        playerStatusDrawer.DrawArrangedLines(innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 9, data); 
+
+        /// need
+
+
+        loggingDrawer.DrawLogging(innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 15);
 
         Console.CursorLeft = backUpCursorLeft;
         Console.CursorTop = backUpCursorTop;

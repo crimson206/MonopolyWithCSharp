@@ -427,7 +427,7 @@ public class TestEvent2
     {
         if (this.isDoubleSideEffectOn && this.doubleSideEffectHandler.ExtraTurns[this.playerNumber])
         {
-            this.eventFlow.RecommentedString = this.stringPlayer + " rolled double last time, and will have an extra turn";
+            this.eventFlow.RecommentedString = this.stringPlayer + " has an extra turn due to rolling double";
         }
 
         this.CallNextEvent();

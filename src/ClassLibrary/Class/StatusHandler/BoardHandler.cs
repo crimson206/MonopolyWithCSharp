@@ -7,6 +7,12 @@ public class BoardHandler
     private List<bool> playerPassedGo = new List<bool>() { false, false, false, false };
     private List<TileData>? tileDatas;
 
+    public BoardHandler(int size, int goPosition)
+    {
+        this.size = size;
+        this.goPosition = goPosition;
+    }
+
     public List<int> PlayerPositions { get => this.playerPositions; private set => this.playerPositions = value; }
     public List<bool> PlayerPassedGo { get => this.playerPassedGo; private set => this.playerPassedGo = value; }
 

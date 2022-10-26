@@ -9,7 +9,7 @@ internal class Program
     {
         Game game = new Game();
         Visualizer visualizer = new Visualizer(game.Data);
-        visualizer.Setup(11, 11, 13, 4);
+        visualizer.Setup(10, 8, 13, 3);
         ConsoleInteractor prompter = new ConsoleInteractor(visualizer);
         string oldRecommendedString = String.Empty;
 
@@ -22,7 +22,7 @@ internal class Program
                 Console.ReadKey();
             }
 
-            visualizer.Visualize();
+            visualizer.VisualizeSmallMap();
 
             
             game.Run();

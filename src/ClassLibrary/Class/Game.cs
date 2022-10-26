@@ -18,13 +18,17 @@ public class Game
     public Game()
     {
         this.bankHandler = new BankHandler();
-        this.tileManager = new TileManager();
+        this.tileManager = new TileManager(isTileSamll:true);
         this.boolCopier = new BoolCopier();
         this.doubleSideEffectHandler = new DoubleSideEffectHandler();
         this.delegator = new Delegator();
         this.eventFlow = new EventFlow();
         this.jailHandler = new JailHandler();
-        this.boardHandler = new BoardHandler();
+
+        int boardSize = this.tileManager.tileDatas.Count();
+        int goPosition = (from tile in this.tileManager.Tiles where tile is Go select this.tileManager.Tiles.IndexOf(tile)).ToList()[0];
+
+        this.boardHandler = new BoardHandler(boardSize, goPosition);
 
         this.dataCenter = this.GenerateDataCenter();
 

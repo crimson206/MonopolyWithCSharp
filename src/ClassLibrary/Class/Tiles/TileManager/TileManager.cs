@@ -18,10 +18,20 @@ public class TileManager
     public PropertyManager propertyManager;
     public List<TileData> tileDatas;
 
-
-    public TileManager()
+    /// <summary>
+    /// normal tiles size = 40, smaller tiles size = 32
+    /// </summary>
+    /// <param name="isTileSamll"></param>
+    public TileManager(bool isTileSamll)
     {
-        this.tiles = this.CreateTiles();
+        if (isTileSamll)
+        {
+            this.tiles = this.CreateSmallerTiles();
+        }
+        else
+        {
+            this.tiles = this.CreateTiles();
+        }
         
         List<Property> properties = this.FilterProperties(this.tiles);
         this.realEstates = this.FilterRealEstates(this.tiles);
@@ -41,6 +51,10 @@ public class TileManager
     private List<Tile> CreateTiles()
     {
         return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3);
+    }
+    private List<Tile> CreateSmallerTiles()
+    {
+        return this.mapTilesFactory.CreateRandomMapTiles(20, 2, 2, 1, 1);
     }
 
     private List<Property> FilterProperties(List<Tile> tiles)
