@@ -4,6 +4,7 @@ public class DoubleSideEffectHandler
     private List<bool> extraTurns = new List<bool> { false, false, false, false };
 
     public List<int> DoubleCounts { get => new List<int>(this.doubleCounts); private set => this.doubleCounts = value; }
+
     public List<bool> ExtraTurns { get => new List<bool>(this.extraTurns); private set => this.ExtraTurns = value; }
 
     public void CountDouble(int playerNumber)

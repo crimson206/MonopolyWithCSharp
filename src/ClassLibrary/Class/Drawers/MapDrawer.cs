@@ -204,6 +204,8 @@ public class MapDrawer
 
     private void DrawTileAt(int left, int top, int width, int height)
     {
+        Console.WindowHeight = 150;
+
         string horizontal = string.Empty;
         string empty = string.Empty;
         for (int i = 0; i < width - 1; i++)

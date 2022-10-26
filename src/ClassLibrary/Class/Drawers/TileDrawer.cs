@@ -1,6 +1,5 @@
 public class TileDrawer
 {
-
     private StringConverter stringConverter = new StringConverter();
 
     private List<int[]> tileEdgeInfo;
@@ -14,7 +13,7 @@ public class TileDrawer
     {
         for (int i = 0; i < 4; i++)
         {
-            Console.CursorLeft = this.tileEdgeInfo[playerPositions[i]][0] + 3 * i + 1;
+            Console.CursorLeft = this.tileEdgeInfo[playerPositions[i]][0] + (3 * i) + 1;
             Console.CursorTop = this.tileEdgeInfo[playerPositions[i]][1] + 2;
             Console.Write(string.Format("P{0}", i));
         }
@@ -32,6 +31,7 @@ public class TileDrawer
             string tileName = currentTileData.Name;
             List<string> splitName = tileName.Split(" ").ToList();
             int spaceCount = tileName.ToList().Count(c => c == ' ');
+
             for (int j = 0; j < spaceCount + 1; j++)
             {
                 if (currentTileData is RealEstateData)

@@ -69,7 +69,7 @@ public class DecisionMakerTest
 
     private void CalDangerFactor(int cost)
     {
-        this.dangerFactor = (double)(5 * (2 * this.otherPlayersRentsSum - this.numActivePlayers * this.playerRentsSum )) / (double)((this.playerBalance - cost) + (10 * this.otherPlayersRentsSum));
+        this.dangerFactor = (double)(5 * (2 * this.otherPlayersRentsSum - (this.numActivePlayers * this.playerRentsSum))) / (double)((this.playerBalance - cost) + (10 * this.otherPlayersRentsSum));
     }
 
     private double CalCostEfficiency(int cost, int increasedRent)

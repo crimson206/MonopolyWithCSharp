@@ -19,8 +19,6 @@ namespace Tests
             {
                 game.Run();
 
-
-                var makeBreakPointHere = 0;
             }
 
 

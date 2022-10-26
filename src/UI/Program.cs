@@ -11,7 +11,7 @@ internal class Program
         Visualizer visualizer = new Visualizer(game.Data);
         visualizer.Setup(10, 8, 13, 3);
         ConsoleInteractor prompter = new ConsoleInteractor(visualizer);
-        string oldRecommendedString = String.Empty;
+        string oldRecommendedString = string.Empty;
 
         while (true)
         {

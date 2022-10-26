@@ -4,7 +4,6 @@ public class PlayerStatusDrawer
 
     public void DrawPlayerStatus(int cursorLeft, int cursorTop, DataCenter dataCenter)
     {
-        Console.WindowHeight = 200;
         Console.CursorLeft = cursorLeft;
         Console.CursorTop = cursorTop;
         List<string> strings = this.GenerateStrings(dataCenter);
@@ -63,5 +62,4 @@ public class PlayerStatusDrawer
 
         return stringLines;
     }
-
 }

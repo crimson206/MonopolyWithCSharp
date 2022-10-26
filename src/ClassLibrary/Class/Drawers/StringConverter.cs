@@ -1,22 +1,13 @@
 public class StringConverter
 {
-    private string EmptyStr (int length)
-    {
-        string emptyString = string.Empty;
-        for (int i = 0; i < length; i++)
-        {
-            emptyString += " ";
-        }
-        return emptyString;
-    }
-
     public string ConvertListIntToString(List<int> ints)
     {
         string str = "[";
         foreach (var item in ints)
         {
-            str += item.ToString() +", ";
+            str += item.ToString() + ", ";
         }
+
         str += "]";
         return str;
     }
@@ -24,7 +15,7 @@ public class StringConverter
     public void WriteStringWithColorAtCenter(string str, string color, int length)
     {
         ConsoleColor backUpColor = Console.ForegroundColor;
-        ConsoleColor[] colors = (ConsoleColor[]) Enum.GetValues(typeof(ConsoleColor));
+        ConsoleColor[] colors = (ConsoleColor[])Enum.GetValues(typeof(ConsoleColor));
         int emptyLength = length - str.Count();
         foreach (var consoleColor in colors)
         {
@@ -60,7 +51,7 @@ public class StringConverter
         {
             newLine += this.ArrangeCenter(strings[i], spaces[i]);
         }
-                    
+
         return newLine;
     }
 
@@ -86,5 +77,16 @@ public class StringConverter
         string frontEmpty = this.EmptyStr(emptyLength / 2);
         string backEmpty = this.EmptyStr((emptyLength + 1) / 2);
         return frontEmpty + str + backEmpty;
+    }
+
+    private string EmptyStr(int length)
+    {
+        string emptyString = string.Empty;
+        for (int i = 0; i < length; i++)
+        {
+            emptyString += " ";
+        }
+
+        return emptyString;
     }
 }

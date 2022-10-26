@@ -16,15 +16,13 @@ public class TestEvent2
     private bool rolledDouble => this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
 
     public TestEvent2
-    (
-        BankHandler bankHandler,
-        BoardHandler boardHandler,
-        DoubleSideEffectHandler doubleSideEffectHandler,
-        TileManager tileManager,
-        JailHandler jailHandler,
-        EventFlow eventFlow,
-        Delegator delegator
-    )
+    (BankHandler bankHandler,
+    BoardHandler boardHandler,
+    DoubleSideEffectHandler doubleSideEffectHandler,
+    TileManager tileManager,
+    JailHandler jailHandler,
+    EventFlow eventFlow,
+    Delegator delegator)
     {
         this.bankHandler = bankHandler;
         this.boardHandler = boardHandler;
@@ -37,18 +35,17 @@ public class TestEvent2
         this.lastEvent = this.StartTurn;
     }
 
-    private int playerNumber => this.eventFlow.CurrentPlayerNumber;
-    private string stringPlayer => String.Format("Player {0}", this.playerNumber);
-    private Action lastEvent;
+    private int PlayerNumber => this.eventFlow.CurrentPlayerNumber;
 
-    
+    private string stringPlayer => String.Format("Player {0}", this.PlayerNumber);
+
+    private Action lastEvent;
 
     private void CallNextEvent()
     {
         if (this.lastEvent == this.StartTurn)
         {
-            
-            if (this.jailHandler.TurnsInJailCounts[this.playerNumber] > 0)
+            if (this.jailHandler.TurnsInJailCounts[this.PlayerNumber] > 0)
             {
                 this.AddNextEvent(this.MakeDecisionOnUsageOfJailFreeCard);
             }
@@ -69,6 +66,7 @@ public class TestEvent2
             {
                 this.AddNextEvent(this.MakeDecisionOnPaymentOfJailFine);
             }
+
             return;
         }
 
@@ -103,7 +101,7 @@ public class TestEvent2
                 }
                 else
                 {
-                    if (this.jailHandler.TurnsInJailCounts[this.playerNumber] == 3)
+                    if (this.jailHandler.TurnsInJailCounts[this.PlayerNumber] == 3)
                     {
                         this.AddNextEvent(this.PayJailFine);
                     }
@@ -111,12 +109,11 @@ public class TestEvent2
                     {
                         this.AddNextEvent(this.StayInJail);
                     }
-                    
                 }
             }
             else
             {
-                if ( this.isDoubleSideEffectOn && this.doubleSideEffectHandler.DoubleCounts[this.playerNumber] == 3)
+                if (this.isDoubleSideEffectOn && this.doubleSideEffectHandler.DoubleCounts[this.PlayerNumber] == 3)
                 {
                     this.AddNextEvent(this.HasJailPenalty);
                 }
@@ -125,12 +122,13 @@ public class TestEvent2
                 this.AddNextEvent(this.MoveByRollDiceResultTotal);
                 }
             }
+
             return;
         }
 
         if (this.lastEvent == this.MoveByRollDiceResultTotal)
         {
-            if (this.boardHandler.PlayerPassedGo[this.playerNumber])
+            if (this.boardHandler.PlayerPassedGo[this.PlayerNumber])
             {
                 this.AddNextEvent(this.ReceiveSalary);
             }
@@ -138,6 +136,7 @@ public class TestEvent2
             {
                 this.AddNextEvent(this.LandOnTile);
             }
+
             return;
         }
 
@@ -149,19 +148,19 @@ public class TestEvent2
 
         if (this.lastEvent == this.LandOnTile)
         {
-            if ( this.currentTile is Property)
+            if (this.currentTile is Property)
             {
                 Property currentProperty = (Property)this.currentTile;
 
-                if (currentProperty.OwnerPlayerNumber == this.playerNumber)
+                if (currentProperty.OwnerPlayerNumber == this.PlayerNumber)
                 {
                     this.AddNextEvent(this.CheckExtraTurn);
                 }
                 else if (currentProperty.OwnerPlayerNumber == null)
                 {
-                    bool canBuyProperty = this.bankHandler.Balances[this.playerNumber] >= currentProperty.Price;
+                    bool canBuyProperty = this.bankHandler.Balances[this.PlayerNumber] >= currentProperty.Price;
 
-                    if ( canBuyProperty )
+                    if (canBuyProperty)
                     {
                         this.AddNextEvent(this.MakeDecisionOnPurchaseOfProperty);
                     }
@@ -183,12 +182,13 @@ public class TestEvent2
             {
                 this.AddNextEvent(this.CheckExtraTurn);
             }
+
             return;
         }
 
         if (this.lastEvent == this.CheckExtraTurn)
         {
-            if ( this.doubleSideEffectHandler.ExtraTurns[this.playerNumber])
+            if ( this.doubleSideEffectHandler.ExtraTurns[this.PlayerNumber])
             {
                 this.AddNextEvent(this.RollDice);
             }
@@ -196,6 +196,7 @@ public class TestEvent2
             {
                 this.AddNextEvent(this.EndTurn);
             }
+
             return;
         }
 
@@ -209,6 +210,7 @@ public class TestEvent2
             {
                 this.AddNextEvent(this.IsReleasedFromJail);
             }
+
             return;
         }
 
@@ -222,6 +224,7 @@ public class TestEvent2
             {
                 this.AddNextEvent(this.DontPurchaseProperty);
             }
+
             return;
         }
 
@@ -260,9 +263,8 @@ public class TestEvent2
 
     private void RollDice()
     {
-
         /// reset value before setting a new value
-        this.doubleSideEffectHandler.SetExtraTurn(this.playerNumber, false);
+        this.doubleSideEffectHandler.SetExtraTurn(this.PlayerNumber, false);
 
         this.eventFlow.RollDiceResult = Dice.Roll(random);
 
@@ -270,39 +272,35 @@ public class TestEvent2
         {
             this.UpdateNextDoubleSideEffect();
         }
-        
+
         this.eventFlow.RecommentedString = this.stringPlayer + " rolled " + this.ConvertRollDiceResultToString();
 
         this.CallNextEvent();
-
     }
 
     private void PayJailFine()
     {
-        this.bankHandler.DecreaseBalance(this.playerNumber, this.bankHandler.JailFine);
-        this.jailHandler.ResetTurnInJail(this.playerNumber);
+        this.bankHandler.DecreaseBalance(this.PlayerNumber, this.bankHandler.JailFine);
+        this.jailHandler.ResetTurnInJail(this.PlayerNumber);
         this.eventFlow.RecommentedString = this.stringPlayer + " paid the jail fine";
 
         this.CallNextEvent();
-
     }
 
     private void UseJailFreeCard()
     {
-        this.jailHandler.RemoveAJailFreeCard(this.playerNumber);
-        this.jailHandler.ResetTurnInJail(this.playerNumber);
+        this.jailHandler.RemoveAJailFreeCard(this.PlayerNumber);
+        this.jailHandler.ResetTurnInJail(this.PlayerNumber);
         this.eventFlow.RecommentedString = this.stringPlayer + " paid the jail fine";
 
         this.CallNextEvent();
-
     }
 
     public void EscapeJail()
     {
-        this.jailHandler.ResetTurnInJail(this.playerNumber);
+        this.jailHandler.ResetTurnInJail(this.PlayerNumber);
         this.eventFlow.RecommentedString = this.stringPlayer + " escaped the jail";
         this.CallNextEvent();
-
     }
 
     public void StartTurn()
@@ -314,18 +312,18 @@ public class TestEvent2
 
     public void MakeDecisionOnUsageOfJailFreeCard()
     {
-        if (this.jailHandler.JailFreeCardCounts[this.playerNumber] > 0)
+        if (this.jailHandler.JailFreeCardCounts[this.PlayerNumber] > 0)
         {
             this.isDoubleSideEffectOn = true;
             this.eventFlow.BoolDecision = this.decisionMaker.MakeDecision();
         }
-        
+
         this.CallNextEvent();
     }
 
     public void MakeDecisionOnPaymentOfJailFine()
     {
-        if (this.bankHandler.Balances[this.playerNumber] >= this.bankHandler.JailFine)
+        if (this.bankHandler.Balances[this.PlayerNumber] >= this.bankHandler.JailFine)
         {
             this.isDoubleSideEffectOn = true;
             this.eventFlow.BoolDecision = this.decisionMaker.MakeDecision();
@@ -336,10 +334,10 @@ public class TestEvent2
 
     public void BeReleasedIfAlreadyStayed3TurnsInJail()
     {
-        if (this.jailHandler.TurnsInJailCounts[this.playerNumber] == 3)
+        if (this.jailHandler.TurnsInJailCounts[this.PlayerNumber] == 3)
         {
-            this.jailHandler.ResetTurnInJail(this.playerNumber);
-            this.bankHandler.DecreaseBalance(this.playerNumber, this.bankHandler.JailFine);
+            this.jailHandler.ResetTurnInJail(this.PlayerNumber);
+            this.bankHandler.DecreaseBalance(this.PlayerNumber, this.bankHandler.JailFine);
 
             this.eventFlow.RecommentedString = this.stringPlayer + " is released after staying 3 turns in jail";
 
@@ -349,7 +347,7 @@ public class TestEvent2
 
     public void StayInJail()
     {
-        this.jailHandler.CountTurnInJail(this.playerNumber);
+        this.jailHandler.CountTurnInJail(this.PlayerNumber);
         this.eventFlow.RecommentedString = this.stringPlayer + " stays one more turn in jail";
 
         this.CallNextEvent();
@@ -357,15 +355,15 @@ public class TestEvent2
 
     public void IsReleasedFromJail()
     {
-        this.jailHandler.ResetTurnInJail(this.playerNumber);
+        this.jailHandler.ResetTurnInJail(this.PlayerNumber);
         this.isDoubleSideEffectOn = false;
 
-        if(this.lastEvent == this.RollDice)
+        if (this.lastEvent == this.RollDice)
         {
             this.eventFlow.RecommentedString = this.stringPlayer + " is released from jail becasue he/she rolled double";
         }
 
-        if(this.lastEvent == this.PayJailFine)
+        if (this.lastEvent == this.PayJailFine)
         {
             this.eventFlow.RecommentedString = this.stringPlayer + " is released from jail";
         }
@@ -378,28 +376,28 @@ public class TestEvent2
             this.eventFlow.RecommentedString = this.stringPlayer + " rolled double 3 times in a row. It is so suspicious. "
                                             + this.stringPlayer + " is moved to the jail";
         }
-        
+
         if (this.lastEvent == this.LandOnTile)
         {
             this.eventFlow.RecommentedString = this.stringPlayer + " is moved to the jail";
         }
 
-        this.boardHandler.Teleport(this.playerNumber, GetJailPosition());
+        this.boardHandler.Teleport(this.PlayerNumber, this.GetJailPosition());
         this.CallNextEvent();
     }
 
     public void LandOnTile()
     {
-        this.eventFlow.RecommentedString = this.stringPlayer + String.Format(" landed on {0}", currentTile.Name);
+        this.eventFlow.RecommentedString = this.stringPlayer + string.Format(" landed on {0}", this.currentTile.Name);
         this.CallNextEvent();
     }
 
     public void MoveByRollDiceResultTotal()
     {
         int rollDiceResultTotal = this.eventFlow.RollDiceResult.Sum();
-        this.eventFlow.RecommentedString = this.stringPlayer + String.Format(" moved {0} steps", rollDiceResultTotal);
+        this.eventFlow.RecommentedString = this.stringPlayer + string.Format(" moved {0} steps", rollDiceResultTotal);
 
-        this.boardHandler.MovePlayerAroundBoard(this.playerNumber, rollDiceResultTotal);
+        this.boardHandler.MovePlayerAroundBoard(this.PlayerNumber, rollDiceResultTotal);
         this.CallNextEvent();
     }
 
@@ -409,7 +407,7 @@ public class TestEvent2
         int propertyOwner = (int)property.OwnerPlayerNumber!;
 
         int rentOfProperty = property.CurrentRent;
-        this.bankHandler.TransferBalanceFromTo(this.playerNumber, propertyOwner, rentOfProperty);
+        this.bankHandler.TransferBalanceFromTo(this.PlayerNumber, propertyOwner, rentOfProperty);
         this.eventFlow.RecommentedString = this.stringPlayer + " paid a rent to the owner of the property";
 
         this.CallNextEvent();
@@ -417,7 +415,7 @@ public class TestEvent2
 
     public void CheckExtraTurn()
     {
-        if (this.isDoubleSideEffectOn && this.doubleSideEffectHandler.ExtraTurns[this.playerNumber])
+        if (this.isDoubleSideEffectOn && this.doubleSideEffectHandler.ExtraTurns[this.PlayerNumber])
         {
             this.eventFlow.RecommentedString = this.stringPlayer + " has an extra turn due to rolling double";
         }
@@ -427,10 +425,10 @@ public class TestEvent2
 
     public void PayTax()
     {
-        TaxTile taxTile = (TaxTile) this.currentTile;
+        TaxTile taxTile = (TaxTile)this.currentTile;
         int tax = taxTile.Tax;
 
-        this.bankHandler.DecreaseBalance(this.playerNumber, tax);
+        this.bankHandler.DecreaseBalance(this.PlayerNumber, tax);
         this.eventFlow.RecommentedString = this.stringPlayer + " paid the tax";
 
         this.CallNextEvent();
@@ -449,8 +447,8 @@ public class TestEvent2
     {
         Property property = (Property)this.currentTile;
 
-        this.tileManager.PropertyManager.ChangeOwner(property, this.playerNumber);
-        this.bankHandler.DecreaseBalance(this.playerNumber, property.Price);
+        this.tileManager.PropertyManager.ChangeOwner(property, this.PlayerNumber);
+        this.bankHandler.DecreaseBalance(this.PlayerNumber, property.Price);
         this.eventFlow.RecommentedString = this.stringPlayer + " bought the property";
 
         this.CallNextEvent();
@@ -473,7 +471,7 @@ public class TestEvent2
         {
             this.eventFlow.RecommentedString = "Congratulations!! " + this.stringPlayer + " won the game!";
         }
-        else if(playerCountInGame < 1)
+        else if (playerCountInGame < 1)
         {
             throw new Exception();
         }
@@ -489,18 +487,18 @@ public class TestEvent2
     public void ReceiveSalary()
     {
         this.eventFlow.RecommentedString = this.stringPlayer + " passed go and received the salary";
-        this.bankHandler.IncreaseBalance(this.playerNumber, this.bankHandler.Salary);
+        this.bankHandler.IncreaseBalance(this.PlayerNumber, this.bankHandler.Salary);
 
         this.CallNextEvent();
     }
 
     private void ResetDoubleSideEffect()
     {
-        this.doubleSideEffectHandler.ResetDoubleCount(this.playerNumber);
-        this.doubleSideEffectHandler.SetExtraTurn(this.playerNumber, false);
+        this.doubleSideEffectHandler.ResetDoubleCount(this.PlayerNumber);
+        this.doubleSideEffectHandler.SetExtraTurn(this.PlayerNumber, false);
         this.isDoubleSideEffectOn = true;
     }
-    
+
     private int GetJailPosition()
     {
         Tile jail = this.tileManager.Tiles.Where(tile => tile is Jail).ToList()[0];
@@ -509,15 +507,15 @@ public class TestEvent2
 
     private string ConvertRollDiceResultToString()
     {
-        return String.Join(", ", from dieValue in this.eventFlow.RollDiceResult select dieValue.ToString());
+        return string.Join(", ", from dieValue in this.eventFlow.RollDiceResult select dieValue.ToString());
     }
 
     private int CalculateNextPlayer()
     {
         for (int i = 0; i < 3; i++)
         {
-            int candidate = (this.playerNumber + 1 + i) % 4;
-            if ( this.bankHandler.Balances[candidate] >= 0)
+            int candidate = (this.PlayerNumber + 1 + i) % 4;
+            if (this.bankHandler.Balances[candidate] >= 0)
             {
                 return candidate;
             }
@@ -528,7 +526,7 @@ public class TestEvent2
 
     private Tile GetCurrentTile()
     {
-        int playerPosition = this.boardHandler.PlayerPositions[this.playerNumber];
+        int playerPosition = this.boardHandler.PlayerPositions[this.PlayerNumber];
         return this.tileManager.Tiles[playerPosition];
     }
 
@@ -543,8 +541,8 @@ public class TestEvent2
         bool rolledDouble = this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
         if (rolledDouble)
         {
-            this.doubleSideEffectHandler.CountDouble(this.playerNumber);
-            this.doubleSideEffectHandler.SetExtraTurn(this.playerNumber, true);
+            this.doubleSideEffectHandler.CountDouble(this.PlayerNumber);
+            this.doubleSideEffectHandler.SetExtraTurn(this.PlayerNumber, true);
         }
     }
 }
