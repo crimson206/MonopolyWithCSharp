@@ -36,7 +36,7 @@ public class TileManager
     public List<Property> Properties { get => new List<Property>(this.properties); }
     public List<RealEstate> RealEstates { get => new List<RealEstate>(this.realEstates); }
     public List<TileData> TileDatas { get => new List<TileData>(this.tileDatas); }
-    public PropertyManager PropertyManager { get => this.PropertyManager; }
+    public PropertyManager PropertyManager { get => this.propertyManager; }
     private List<Tile> CreateTiles()
     {
         return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3);
