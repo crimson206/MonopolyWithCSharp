@@ -1,4 +1,3 @@
-
 public class TileFilter
 {
     public List<Property> FilterProperties(List<Tile> tiles)
@@ -12,7 +11,7 @@ public class TileFilter
         var query = from tile in tiles where tile is RealEstate select tile as RealEstate;
         return query.ToList();
     }
-    
+
     public List<RailRoad> FilterRailRoads(List<Tile> tiles)
     {
         var query = from tile in tiles where tile is RailRoad select tile as RailRoad;
@@ -32,7 +31,7 @@ public class TileFilter
 
         foreach (var color in colors)
         {
-            List<RealEstate> colorGroup = FilterRealEstateByColor(color, realEstates);
+            List<RealEstate> colorGroup = this.FilterRealEstateByColor(color, realEstates);
             colorGroups.Add(color, colorGroup);
         }
 
@@ -52,7 +51,7 @@ public class TileFilter
         return colorGroup;
     }
 
-    public List<Property> UpriseToProperties(List<Property> property)
+    private List<Property> UpriseToProperties(List<Property> property)
     {
         return property;
     }

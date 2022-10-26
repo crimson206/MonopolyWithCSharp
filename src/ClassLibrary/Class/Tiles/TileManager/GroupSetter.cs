@@ -1,22 +1,21 @@
-
 public class GroupSetter
 {
     private TileFilter tileFilter = new TileFilter();
 
     public void SetGroups(List<Tile> tiles)
     {
-        List<RealEstate> realEstates = tileFilter.FilterRealEstates(tiles);
-        Dictionary<string, List<RealEstate>> colorGroups = tileFilter.DivideRealEstatesByColor(realEstates);
-        List<Property> railRoads = tileFilter.FilterRailRoads(tiles).Cast<Property>().ToList();
-        List<Property> utilities = tileFilter.FilterUtilities(tiles).Cast<Property>().ToList();
+        List<RealEstate> realEstates = this.tileFilter.FilterRealEstates(tiles);
+        Dictionary<string, List<RealEstate>> colorGroups = this.tileFilter.DivideRealEstatesByColor(realEstates);
+        List<Property> railRoads = this.tileFilter.FilterRailRoads(tiles).Cast<Property>().ToList();
+        List<Property> utilities = this.tileFilter.FilterUtilities(tiles).Cast<Property>().ToList();
 
         foreach (var colorGroup in colorGroups.Values)
         {
-            SetGroup( colorGroup.Cast<Property>().ToList());
+            this.SetGroup(colorGroup.Cast<Property>().ToList());
         }
 
-        SetGroup( railRoads);
-        SetGroup( utilities);
+        this.SetGroup(railRoads);
+        this.SetGroup(utilities);
     }
 
     private void SetGroup(List<Property> group)
@@ -26,5 +25,4 @@ public class GroupSetter
             property.SetGroup(group);
         }
     }
-
 }

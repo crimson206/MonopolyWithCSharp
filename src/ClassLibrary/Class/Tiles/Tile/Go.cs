@@ -1,11 +1,12 @@
 public class Go : Tile
 {
-    protected int salary;
+    private int salary;
 
-    public Go(string name, int salary) : base(name)
+    public Go(string name, int salary)
+        : base(name)
     {
         this.salary = salary;
     }
 
-    public int Salary { get=>salary; }
+    public int Salary { get => this.salary; }
 }

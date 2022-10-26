@@ -24,10 +24,7 @@ internal class Program
 
             visualizer.VisualizeSmallMap();
 
-            
             game.Run();
-
-
         }
     }
 }

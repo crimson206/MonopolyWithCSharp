@@ -1,4 +1,3 @@
-
 public class DoubleSideEffectHandler
 {
     private List<int> doubleCounts = new List<int> { 0, 0, 0, 0 };
@@ -21,5 +20,4 @@ public class DoubleSideEffectHandler
     {
         this.extraTurns[playerNumber] = extraTurn;
     }
-
 }

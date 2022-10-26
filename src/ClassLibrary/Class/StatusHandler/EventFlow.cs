@@ -1,11 +1,10 @@
 
 public class EventFlow
 {
-    public int CurrentPlayerNumber;
-    public string RecommentedString = String.Empty;
-    public bool BoolDecision;
-    public int[] RollDiceResult = new int [2];
-    public bool AskedManualBoolDecision;
-    public bool ChangedNoticeably;
-
+    public int CurrentPlayerNumber{ get; set; }
+    public string RecommentedString{ get; set; } = String.Empty;
+    public bool BoolDecision{ get; set; }
+    public int[] RollDiceResult{ get; set; } = new int [2];
+    public bool AskedManualBoolDecision { get; set; }
+    public bool ChangedNoticeably { get; set; }
 }

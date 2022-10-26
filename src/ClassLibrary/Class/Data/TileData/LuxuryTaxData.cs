@@ -1,11 +1,11 @@
-
 public class LuxuryTaxData : TileData
 {
-    protected LuxuryTax luxuryTax;
+    private LuxuryTax luxuryTax;
 
-    public LuxuryTaxData(Tile tile) : base(tile)
+    public LuxuryTaxData(Tile tile)
+        : base(tile)
     {
-        this.luxuryTax = (LuxuryTax) tile;
+        this.luxuryTax = (LuxuryTax)tile;
     }
 
     public int Tax => this.luxuryTax.Tax;

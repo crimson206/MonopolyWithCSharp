@@ -343,7 +343,7 @@ public class TestEvent2
 
             this.eventFlow.RecommentedString = this.stringPlayer + " is released after staying 3 turns in jail";
 
-            this.delegator.ResetAndAddEvent(this.MoveByRollDiceResultTotal);
+            this.delegator.SetNextEvent(this.MoveByRollDiceResultTotal);
         }
     }
 
@@ -364,38 +364,33 @@ public class TestEvent2
         {
             this.eventFlow.RecommentedString = this.stringPlayer + " is released from jail becasue he/she rolled double";
         }
-        
+
         if(this.lastEvent == this.PayJailFine)
         {
             this.eventFlow.RecommentedString = this.stringPlayer + " is released from jail";
         }
-
     }
 
     public void HasJailPenalty()
     {
-        if ( this.lastEvent == this.RollDice)
+        if (this.lastEvent == this.RollDice)
         {
             this.eventFlow.RecommentedString = this.stringPlayer + " rolled double 3 times in a row. It is so suspicious. "
                                             + this.stringPlayer + " is moved to the jail";
         }
         
-        if ( this.lastEvent == this.LandOnTile )
+        if (this.lastEvent == this.LandOnTile)
         {
             this.eventFlow.RecommentedString = this.stringPlayer + " is moved to the jail";
         }
 
         this.boardHandler.Teleport(this.playerNumber, GetJailPosition());
-
         this.CallNextEvent();
-
     }
 
     public void LandOnTile()
     {
-
         this.eventFlow.RecommentedString = this.stringPlayer + String.Format(" landed on {0}", currentTile.Name);
-    
         this.CallNextEvent();
     }
 
@@ -405,17 +400,14 @@ public class TestEvent2
         this.eventFlow.RecommentedString = this.stringPlayer + String.Format(" moved {0} steps", rollDiceResultTotal);
 
         this.boardHandler.MovePlayerAroundBoard(this.playerNumber, rollDiceResultTotal);
-        
         this.CallNextEvent();
     }
-
-
 
     public void PayRent()
     {
         Property property = (Property)this.currentTile;
-        int propertyOwner = (int) property.OwnerPlayerNumber!;
-        
+        int propertyOwner = (int)property.OwnerPlayerNumber!;
+
         int rentOfProperty = property.CurrentRent;
         this.bankHandler.TransferBalanceFromTo(this.playerNumber, propertyOwner, rentOfProperty);
         this.eventFlow.RecommentedString = this.stringPlayer + " paid a rent to the owner of the property";
@@ -457,7 +449,7 @@ public class TestEvent2
     {
         Property property = (Property)this.currentTile;
 
-        this.tileManager.propertyManager.ChangeOwner(property, this.playerNumber);
+        this.tileManager.PropertyManager.ChangeOwner(property, this.playerNumber);
         this.bankHandler.DecreaseBalance(this.playerNumber, property.Price);
         this.eventFlow.RecommentedString = this.stringPlayer + " bought the property";
 
@@ -502,14 +494,13 @@ public class TestEvent2
         this.CallNextEvent();
     }
 
-
     private void ResetDoubleSideEffect()
     {
         this.doubleSideEffectHandler.ResetDoubleCount(this.playerNumber);
         this.doubleSideEffectHandler.SetExtraTurn(this.playerNumber, false);
         this.isDoubleSideEffectOn = true;
     }
-
+    
     private int GetJailPosition()
     {
         Tile jail = this.tileManager.Tiles.Where(tile => tile is Jail).ToList()[0];

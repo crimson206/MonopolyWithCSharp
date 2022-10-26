@@ -1,4 +1,4 @@
-public class ConsoleInteractor : IPrompter
+public class ConsoleInteractor
 {
     private Visualizer visualizer;
     private ConsoleKeyInfo readKey;

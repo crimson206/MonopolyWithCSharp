@@ -12,7 +12,7 @@ namespace Tests.TileManagersTests
             
             foreach (var item in tileManager.Properties)
             {
-                tileManager.propertyManager.ChangeOwner(item, 0);
+                tileManager.PropertyManager.ChangeOwner(item, 0);
             }
             tileManager.Analyser.Test();
             List<int> a = (from aaaa in tileManager.Properties where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
@@ -33,7 +33,7 @@ namespace Tests.TileManagersTests
             RealEstate realEstate = (RealEstate) tileManager.Properties.Where(property => property is RealEstate).ToList()[0];
 
             /// get property manager
-            PropertyManager propertyManager = tileManager.propertyManager;
+            PropertyManager propertyManager = tileManager.PropertyManager;
             propertyManager.ChangeOwner(realEstate, 1);
 
             Assert.AreEqual(realEstate.OwnerPlayerNumber, 1);

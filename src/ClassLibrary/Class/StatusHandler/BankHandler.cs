@@ -1,4 +1,3 @@
-
 public class BankHandler
 {
     private int salary = 200;
@@ -15,7 +14,7 @@ public class BankHandler
     public int JailFine { get => this.jailFine; }
     public void IncreaseBalance(int playerNumber, int amount)
     {
-        if ( amount < 0 )
+        if (amount < 0)
         {
             throw new Exception();
         }
@@ -24,9 +23,10 @@ public class BankHandler
             this.balances[playerNumber] += amount;
         }
     }
+
     public void DecreaseBalance(int playerNumber, int amount)
     {
-        if ( amount < 0 )
+        if (amount < 0)
         {
             throw new Exception();
         }
@@ -35,11 +35,13 @@ public class BankHandler
             this.balances[playerNumber] -= amount;
         }
     }
+
     public void TransferBalanceFromTo(int fromPlayerNumber, int toPlayerNumber, int amount)
     {
         this.DecreaseBalance(fromPlayerNumber, amount);
         this.IncreaseBalance(toPlayerNumber, amount);
     }
+
     public void GiveSalary(int playerNumber)
     {
         this.IncreaseBalance(playerNumber, this.salary);

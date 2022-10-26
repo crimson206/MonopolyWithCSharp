@@ -18,7 +18,7 @@ public class Analyser
         int numFreeRealEstates = colorGroup.Where(member => member.OwnerPlayerNumber == null).ToList().Count();
         int numMyRealEstates = colorGroup.Where(member => member.OwnerPlayerNumber == playerNumber).ToList().Count();
         int numTotalGroup = colorGroup.Count();
-        if ( numFreeRealEstates + numMyRealEstates == numTotalGroup)
+        if (numFreeRealEstates + numMyRealEstates == numTotalGroup)
         {
             return true;
         }
@@ -35,6 +35,13 @@ public class Analyser
         return costEfficiencies;
     }
 
+    public void Test()
+    {
+        List<int> a = (from aaaa in this.properties where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
+        List<int> c = (from aaaa in this.realEstates where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
+        List<int> b = (from aaaa in this.properties where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
+    }
+
     private double CalBuildingHouseCostEfficiency(RealEstate realEstate)
     {
         if (realEstate.IsHouseBuildable is false)
@@ -45,8 +52,8 @@ public class Analyser
         {
             int currentRent = realEstate.CurrentRent;
             int currentNumHouses = realEstate.Rents.IndexOf(currentRent);
-            int nextRent = realEstate.Rents[currentNumHouses+1];
-            double costEfficiency = (double) (nextRent - currentRent)/realEstate.BuildingCost;
+            int nextRent = realEstate.Rents[currentNumHouses + 1];
+            double costEfficiency = (double)(nextRent - currentRent) / realEstate.BuildingCost;
             return costEfficiency;
         }
     }
@@ -60,6 +67,7 @@ public class Analyser
             int priceSum = pricesOfPropertiesUnderPlayeri.Sum();
             totalPrices.Add(priceSum);
         }
+
         return totalPrices;
     }
 
@@ -72,6 +80,7 @@ public class Analyser
             int rentSum = this.CalTotalRentOfProperties(propertiesUnderSameOwner);
             totalRents.Add(rentSum);
         }
+
         return totalRents;
     }
 
@@ -93,14 +102,6 @@ public class Analyser
     {
         List<RealEstate> colorGroup = this.realEstates.Where(member => member.Color == realEstate.Color).ToList();
         return colorGroup;
-    }
-
-    public void Test()
-    {
-        List<int> a = (from aaaa in this.properties where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
-        List<int> c = (from aaaa in this.realEstates where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
-        List<int> b = (from aaaa in this.properties where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
-
     }
 
 }

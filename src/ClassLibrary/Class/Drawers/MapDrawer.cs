@@ -139,19 +139,19 @@ public class MapDrawer
     /// 1. draws a map with the parameters.
     /// 2. write tile numbes at the positions calculated by the "CreateTileEdgeCollection()".
     /// 3. measure the size of the inner space of the map using the calculated values by "CreateInnerSpaceIndicator()"
-    /// 
+    ///
     /// See the example below.
-    /// 
+    ///
     /// **The discription for n and m is not the result of the method.
     /// N = tileWidth
     /// M = tileHeight
-    /// 
+    ///
     /// </summary>
     /// <example>
     /// <code = c#>
-    /// 
+    ///
     /// mapDrawer.Test(mapWidth:4, mapHeight:3, tileWidth:10, tileHeight:3);
-    /// 
+    ///
     /// >>>
     /// _____________________________________________
     /// |0         |123456789N|2         |3         |
@@ -166,7 +166,7 @@ public class MapDrawer
     /// |          |          |          |          |
     /// |          |          |          |          |
     /// |__________|__________|__________|__________|
-    /// 
+    ///
     /// </code>
     /// </example>
 

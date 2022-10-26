@@ -1,8 +1,8 @@
-
 public class FreeParking : Tile
 {
-    public FreeParking(string name) : base(name)
+    public FreeParking(string name)
+        : base(name)
     {
-        
+
     }
 }

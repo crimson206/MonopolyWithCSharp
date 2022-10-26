@@ -1,4 +1,11 @@
-
+//-----------------------------------------------------------------------
+// <copyright file="Game.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+/// <summary>
+///
+/// </summary>
 public class Game
 {
 
@@ -11,38 +18,33 @@ public class Game
     private EventFlow eventFlow;
     private DataCenter dataCenter;
     public BoolCopier boolCopier;
-
-    private TestEvent testEvent;
     private TestEvent2 testEvent2;
 
     public Game()
     {
         this.bankHandler = new BankHandler();
-        this.tileManager = new TileManager(isTileSamll:true);
+        this.tileManager = new TileManager(isTileSamll : true);
         this.boolCopier = new BoolCopier();
         this.doubleSideEffectHandler = new DoubleSideEffectHandler();
         this.delegator = new Delegator();
         this.eventFlow = new EventFlow();
         this.jailHandler = new JailHandler();
 
-        int boardSize = this.tileManager.tileDatas.Count();
+        int boardSize = this.tileManager.TileDatas.Count();
         int goPosition = (from tile in this.tileManager.Tiles where tile is Go select this.tileManager.Tiles.IndexOf(tile)).ToList()[0];
 
-        this.boardHandler = new BoardHandler(boardSize, goPosition);
+        this.boardHandler = new BoardHandler();
 
         this.dataCenter = this.GenerateDataCenter();
-
         this.SetBoardInfo();
-
         this.testEvent2 = this.GetTestEvent2();
-
     }
 
     public DataCenter Data => (DataCenter)this.dataCenter.Clone();
 
     public void Run()
     {
-        delegator.RunEvent();
+        this.delegator.RunEvent();
     }
 
     private DataCenter GenerateDataCenter()
@@ -61,16 +63,8 @@ public class Game
         this.boardHandler.SetInfo(this.dataCenter.TileDatas);
     }
 
-
-    public TestEvent GetTestEvent1()
-    {
-        return new TestEvent(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
-    }
-
     public TestEvent2 GetTestEvent2()
     {
-
         return new TestEvent2(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
-
     }
 }

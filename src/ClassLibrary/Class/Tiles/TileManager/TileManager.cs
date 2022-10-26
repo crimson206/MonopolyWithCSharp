@@ -1,12 +1,3 @@
-/// Now it is getting bigger to be given to the events
-/// The events only need the features of the property manager and the information of tiles
-/// Maybe the board can store the information of tiles
-/// Only the property manager needs to share the  with properties.
-/// Make tiles with the tile factory and give the tiles to the board.
-/// Board can deal with simple events "PayRent" "Pass" without the property manager.
-/// Property manager will be called when they need to by the property.
-
-
 public class TileManager
 {
     private List<Tile> tiles;
@@ -15,8 +6,8 @@ public class TileManager
     private Random random = new Random();
     private MapTilesFactory mapTilesFactory = new MapTilesFactory();
     public Analyser Analyser;
-    public PropertyManager propertyManager;
-    public List<TileData> tileDatas;
+    private PropertyManager propertyManager;
+    private List<TileData> tileDatas;
 
     /// <summary>
     /// normal tiles size = 40, smaller tiles size = 32
@@ -32,26 +23,25 @@ public class TileManager
         {
             this.tiles = this.CreateTiles();
         }
-        
-        List<Property> properties = this.FilterProperties(this.tiles);
+
         this.realEstates = this.FilterRealEstates(this.tiles);
-        this.properties = properties;
+        this.properties = this.FilterProperties(this.tiles);
         this.Analyser = new Analyser(properties, realEstates);
         this.propertyManager = new PropertyManager();
-        this.tileDatas = this.mapTilesFactory.ExtractTileDataSet(tiles);
+        this.tileDatas = this.mapTilesFactory.ExtractTileDataSet(this.tiles);
     }
 
+    public List<Tile> Tiles { get => new List<Tile>(this.tiles); }
 
-
-    public List<Tile> Tiles { get => new List<Tile> (this.tiles); }
-
-    public List<Property> Properties { get => new List<Property> (this.properties); }
-    public List<RealEstate> RealEstates { get => new List<RealEstate> (this.realEstates); }
-
+    public List<Property> Properties { get => new List<Property>(this.properties); }
+    public List<RealEstate> RealEstates { get => new List<RealEstate>(this.realEstates); }
+    public List<TileData> TileDatas { get => new List<TileData>(this.tileDatas); }
+    public PropertyManager PropertyManager { get => this.PropertyManager; }
     private List<Tile> CreateTiles()
     {
         return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3);
     }
+
     private List<Tile> CreateSmallerTiles()
     {
         return this.mapTilesFactory.CreateRandomMapTiles(20, 2, 2, 1, 1);
@@ -68,7 +58,7 @@ public class TileManager
         var query = from tile in this.tiles where tile is RealEstate select tile as RealEstate;
         return query.ToList();
     }
-    
+
     private List<RailRoad> FilterRailRoads(List<Tile> tiles)
     {
         var query = from tile in this.tiles where tile is RailRoad select tile as RailRoad;

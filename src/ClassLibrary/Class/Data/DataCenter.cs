@@ -19,7 +19,7 @@ public class DataCenter : ICloneable
         this.board = boardData;
         this.doubleSideEffect = doubleSideEffectData;
         this.jail = jailData;
-        this.tileDatas = tileManager.tileDatas;
+        this.tileDatas = tileManager.TileDatas;
         this.eventFlowData = eventFlowData;
     }
 

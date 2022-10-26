@@ -2,20 +2,12 @@ public class StringConverter
 {
     private string EmptyStr (int length)
     {
-        string emptyString = String.Empty;
+        string emptyString = string.Empty;
         for (int i = 0; i < length; i++)
         {
             emptyString += " ";
         }
         return emptyString;
-    }
-
-    private string ArrangeCenter(string str, int length)
-    {
-        int emptyLength = length - str.Count();
-        string frontEmpty = EmptyStr(emptyLength / 2);
-        string backEmpty = EmptyStr((emptyLength+1) / 2);
-        return frontEmpty + str + backEmpty;
     }
 
     public string ConvertListIntToString(List<int> ints)
@@ -39,36 +31,37 @@ public class StringConverter
             if (color == consoleColor.ToString())
             {
                 Console.ForegroundColor = consoleColor;
-                Console.Write(EmptyStr(emptyLength/2));
+                Console.Write(this.EmptyStr(emptyLength / 2));
                 Console.Write(str);
-                Console.Write(EmptyStr((emptyLength+1)/2));
+                Console.Write(this.EmptyStr((emptyLength + 1) / 2));
             }
         }
+
         Console.ForegroundColor = backUpColor;
     }
+
     public void WriteStringAtCenter(string str, int length)
     {
         int emptyLength = length - str.Count();
-        Console.Write(EmptyStr(emptyLength/2));
+        Console.Write(this.EmptyStr(emptyLength / 2));
         Console.Write(str);
-        Console.Write(EmptyStr((emptyLength+1)/2));
+        Console.Write(this.EmptyStr((emptyLength + 1) / 2));
     }
 
     public string ArrangeStringList(List<string> strings, List<int> spaces)
     {
-        if ( strings.Count() != spaces.Count())
+        if (strings.Count() != spaces.Count())
         {
             throw new Exception();
         }
 
-        string newLine = String.Empty;
+        string newLine = string.Empty;
         for (int i = 0; i < strings.Count(); i++)
         {
-            newLine += ArrangeCenter(strings[i], spaces[i]);
+            newLine += this.ArrangeCenter(strings[i], spaces[i]);
         }
                     
         return newLine;
-
     }
 
     public void WriteCenterArrangedLines(int cursorLeft, int cursorTop, List<List<string>> stringLines, List<int> spaceOfEachStringElementOfList)
@@ -85,7 +78,13 @@ public class StringConverter
             string arrangedLine = this.ArrangeStringList(stringLines[i], spaceOfEachStringElementOfList);
             Console.Write(arrangedLine);
         }
-
     }
 
+    private string ArrangeCenter(string str, int length)
+    {
+        int emptyLength = length - str.Count();
+        string frontEmpty = this.EmptyStr(emptyLength / 2);
+        string backEmpty = this.EmptyStr((emptyLength + 1) / 2);
+        return frontEmpty + str + backEmpty;
+    }
 }

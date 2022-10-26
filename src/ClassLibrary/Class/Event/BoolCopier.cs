@@ -1,4 +1,3 @@
-
 public class BoolCopier
 {
     private int boolMockingCount = 0;
@@ -6,30 +5,30 @@ public class BoolCopier
     public bool isDecisionBoolMocked = false;
     private bool mockedBool;
     private bool autoMockingBoolSetting = true;
-    public bool MockedBool { get => this.mockedBool; set => mockedBool = value; }
+    public bool MockedBool { get => this.mockedBool; set => this.mockedBool = value; }
 
     public bool CopyConditionBool(bool conditionBool)
     {
-        if (isConditionBoolMocked is false)
+        if (this.isConditionBoolMocked is false)
         {
             return conditionBool;
         }
         else
         {
-            boolMockingCount++;
+            this.boolMockingCount++;
             return mockedBool;
         }
     }
 
     public bool CopyDecisionBool(bool decisionBool)
     {
-        if (isDecisionBoolMocked is false)
+        if (this.isDecisionBoolMocked is false)
         {
             return decisionBool;
         }
         else
         {
-            boolMockingCount++;
+            this.boolMockingCount++;
             return mockedBool;
         }
     }
@@ -46,7 +45,7 @@ public class BoolCopier
         int count = booleans.Count();
         if (index < count)
         {
-            return booleans[count-index-1];
+            return booleans[count - index - 1];
         }
         else
         {
@@ -87,5 +86,4 @@ public class BoolCopier
             boolCollector = new List<bool>();
         }
     }
-
 }

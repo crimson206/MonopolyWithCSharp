@@ -1,42 +1,41 @@
 public class LoggingDrawer
 {
+    private List<string> loggingMsgs = new List<string>();
+    private string promptMessage = "Press any key to continue";
     private int numLines;
+
     public LoggingDrawer(int numLines)
     {
         this.numLines = numLines;
         for (int i = 0; i < numLines; i++)
         {
-            loggingMsgs.Add("");
+            this.loggingMsgs.Add(string.Empty);
         }
     }
 
     public void DrawLogging(int cursorLeft, int cursorTop)
     {
-        Console.WindowHeight = 200;
         Console.CursorLeft = cursorLeft;
         Console.CursorTop = cursorTop;
         Console.Write(this.promptMessage);
-        for (int i = 0; i < numLines; i++)
+        for (int i = 0; i < this.numLines; i++)
         {
             Console.CursorLeft = cursorLeft;
             Console.CursorTop = cursorTop + 2 + i;
-            Console.Write(loggingMsgs[i]);
+            Console.Write(this.loggingMsgs[i]);
         }
     }
 
-    private List<string> loggingMsgs = new List<string>();
-    private string promptMessage = "Press any key to continue";
-
-    public void UpdateLogging(string Msg)
+    public void UpdateLogging(string msg)
     {
-        if (Msg == String.Empty)
+        if (msg == string.Empty)
         {
             return;
         }
         else
         {
-            loggingMsgs.RemoveAt(numLines - 1);
-            loggingMsgs.Insert(0, Msg);
+            this.loggingMsgs.RemoveAt(this.numLines - 1);
+            this.loggingMsgs.Insert(0, msg);
         }
     }
 
@@ -44,5 +43,4 @@ public class LoggingDrawer
     {
         this.promptMessage = promptMessage;
     }
-
 }

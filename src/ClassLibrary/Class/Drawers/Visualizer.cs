@@ -1,9 +1,15 @@
 
 public class Visualizer
 {
+    private int backUpCursorLeft = Console.CursorLeft;
+    private int backUpCursorTop = Console.CursorTop;
+    private int backupWindowHeight = Console.WindowHeight;
+    private int backUpBufferHeight = Console.BufferHeight;
+    private int backUpBufferWidth = Console.BufferWidth;
+
+    private LoggingDrawer loggingDrawer = new LoggingDrawer(4);
     private MapDrawer mapDrawer = new MapDrawer();
     private TileDrawer? tileDrawer;
-    public LoggingDrawer loggingDrawer = new LoggingDrawer(4);
     private DisplayTileInfo displayTiles = new DisplayTileInfo();
     private PlayerStatusDrawer playerStatusDrawer = new PlayerStatusDrawer();
     private DataCenter data;
@@ -21,16 +27,14 @@ public class Visualizer
         this.data = data;
     }
 
-///    private string recommendedString => this.data.Delegator.RecommendedString;
-
     public void Setup(int mapWidth, int mapHeight, int tileWidth, int tileHeight)
     {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
-        this.tileEdgeInfo = mapDrawer.CreateTileEdgeCollection(mapWidth, mapHeight,  tileWidth,  tileHeight);
-        this.innerMapEdge = mapDrawer.CreateInnerSpaceIndicator(mapWidth, mapHeight,  tileWidth,  tileHeight);
+        this.tileEdgeInfo = mapDrawer.CreateTileEdgeCollection(mapWidth, mapHeight, tileWidth, tileHeight);
+        this.innerMapEdge = mapDrawer.CreateInnerSpaceIndicator(mapWidth, mapHeight, tileWidth, tileHeight);
         this.tileDrawer = new TileDrawer(tileEdgeInfo);
     }
 
@@ -38,53 +42,39 @@ public class Visualizer
     {
         this.loggingDrawer.UpdatePromptMessage(promptMessage);
     }
+
     public void UpdateLogging()
     {
-        loggingDrawer.UpdateLogging(this.recommendedString);
+        this.loggingDrawer.UpdateLogging(this.recommendedString);
     }
-
-    int backUpCursorLeft = Console.CursorLeft;
-    int backUpCursorTop = Console.CursorTop;
-    int backupWindowHeight = Console.WindowHeight;
-    int backUpBufferHeight = Console.BufferHeight;
-    int backUpBufferWidth = Console.BufferWidth;
-
-
 
     public void Visualize()
     {
         Console.Clear();
         Console.WindowHeight = 150;
 
-        
-
         mapDrawer.DrawMap(mapWidth, mapHeight,  tileWidth,  tileHeight);
 
-        /// need
         List<TileData> tileDatas = this.data.TileDatas;
         List<RealEstateData> realEstateDatas = (from tileData in tileDatas where tileData is RealEstateData select tileData as RealEstateData).ToList();
         List<RailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
         List<UtilityData> utilityDatas = (from tileData in tileDatas where tileData is UtilityData select tileData as UtilityData).ToList();        
 
-        tileDrawer!.DrawPlayers(this.playerPositions);
-        tileDrawer.DrawTiles(tileDatas);
+        this.tileDrawer!.DrawPlayers(this.playerPositions);
+        this.tileDrawer.DrawTiles(tileDatas);
 
-        /// need
-        displayTiles.DisplayRealEstates( innerMapEdge[0][0] + 5, innerMapEdge[0][1] + 1, realEstateDatas, 2);
-        displayTiles.DisplayRailRoad( innerMapEdge[0][0] + 65, innerMapEdge[0][1] + 1, railRoadDatas, 2);
-        displayTiles.DisplayUtility( innerMapEdge[0][0] + 65, innerMapEdge[0][1] + 8, utilityDatas, 2);
-        playerStatusDrawer.DrawArrangedLines(innerMapEdge[0][0] + 65, innerMapEdge[0][1] + 13, data); 
+        this.displayTiles.DisplayRealEstates( this.innerMapEdge[0][0] + 5, this.innerMapEdge[0][1] + 1, realEstateDatas, 2);
+        this.displayTiles.DisplayRailRoad( this.innerMapEdge[0][0] + 65, this.innerMapEdge[0][1] + 1, railRoadDatas, 2);
+        this.displayTiles.DisplayUtility( this.innerMapEdge[0][0] + 65, this.innerMapEdge[0][1] + 8, utilityDatas, 2);
+        this.playerStatusDrawer.DrawArrangedLines(innerMapEdge[0][0] + 65, innerMapEdge[0][1] + 13, data);
 
-        /// need
+        this.loggingDrawer.DrawLogging(this.innerMapEdge[0][0] + 5, this.innerMapEdge[0][1] + 27);
 
-
-        loggingDrawer.DrawLogging(innerMapEdge[0][0] + 5, innerMapEdge[0][1] + 27);
-
-        Console.CursorLeft = backUpCursorLeft;
-        Console.CursorTop = backUpCursorTop;
-        Console.WindowHeight = backupWindowHeight;
-        Console.BufferHeight = backUpBufferHeight;
-        Console.BufferWidth = backUpBufferWidth;
+        Console.CursorLeft = this.backUpCursorLeft;
+        Console.CursorTop = this.backUpCursorTop;
+        Console.WindowHeight = this.backupWindowHeight;
+        Console.BufferHeight = this.backUpBufferHeight;
+        Console.BufferWidth = this.backUpBufferWidth;
     }
 
     public void VisualizeSmallMap()
@@ -92,35 +82,27 @@ public class Visualizer
         Console.Clear();
         Console.WindowHeight = 150;
 
-        
+        this.mapDrawer.DrawMap(mapWidth, mapHeight, tileWidth, tileHeight);
 
-        mapDrawer.DrawMap(mapWidth, mapHeight,  tileWidth,  tileHeight);
-
-        /// need
         List<TileData> tileDatas = this.data.TileDatas;
         List<RealEstateData> realEstateDatas = (from tileData in tileDatas where tileData is RealEstateData select tileData as RealEstateData).ToList();
         List<RailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
-        List<UtilityData> utilityDatas = (from tileData in tileDatas where tileData is UtilityData select tileData as UtilityData).ToList();        
+        List<UtilityData> utilityDatas = (from tileData in tileDatas where tileData is UtilityData select tileData as UtilityData).ToList();
 
-        tileDrawer!.DrawPlayers(this.playerPositions);
-        tileDrawer.DrawTiles(tileDatas);
+        this.tileDrawer!.DrawPlayers(this.playerPositions);
+        this.tileDrawer.DrawTiles(tileDatas);
 
-        /// need
-        displayTiles.DisplayRealEstates( innerMapEdge[0][0] + 3, innerMapEdge[0][1] + 1, realEstateDatas, 2);
-        displayTiles.DisplayRailRoad( innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 1, railRoadDatas, 2);
-        displayTiles.DisplayUtility( innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 5, utilityDatas, 2);
-        playerStatusDrawer.DrawArrangedLines(innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 9, data); 
+        this.displayTiles.DisplayRealEstates(innerMapEdge[0][0] + 3, innerMapEdge[0][1] + 1, realEstateDatas, 2);
+        this.displayTiles.DisplayRailRoad(innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 1, railRoadDatas, 2);
+        this.displayTiles.DisplayUtility(innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 5, utilityDatas, 2);
+        this.playerStatusDrawer.DrawArrangedLines(innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 9, this.data);
 
-        /// need
+        this.loggingDrawer.DrawLogging(innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 15);
 
-
-        loggingDrawer.DrawLogging(innerMapEdge[0][0] + 57, innerMapEdge[0][1] + 15);
-
-        Console.CursorLeft = backUpCursorLeft;
-        Console.CursorTop = backUpCursorTop;
-        Console.WindowHeight = backupWindowHeight;
-        Console.BufferHeight = backUpBufferHeight;
-        Console.BufferWidth = backUpBufferWidth;
+        Console.CursorLeft = this.backUpCursorLeft;
+        Console.CursorTop = this.backUpCursorTop;
+        Console.WindowHeight = this.backupWindowHeight;
+        Console.BufferHeight = this.backUpBufferHeight;
+        Console.BufferWidth = this.backUpBufferWidth;
     }
-
 }
