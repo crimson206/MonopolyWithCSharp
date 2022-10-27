@@ -20,10 +20,10 @@ public class Game
     public BoolCopier boolCopier;
     private Event testEvent2;
 
-    public Game()
+    public Game(bool isBoardSmall)
     {
         this.bankHandler = new BankHandler();
-        this.tileManager = new TileManager(isTileSamll : true);
+        this.tileManager = new TileManager(isBoardSmall);
         this.boolCopier = new BoolCopier();
         this.doubleSideEffectHandler = new DoubleSideEffectHandler();
         this.delegator = new Delegator();

@@ -12,10 +12,10 @@ public class TileManager
     /// <summary>
     /// normal tiles size = 40, smaller tiles size = 32
     /// </summary>
-    /// <param name="isTileSamll"></param>
-    public TileManager(bool isTileSamll)
+    /// <param name="isBoardSamll"></param>
+    public TileManager(bool isBoardSamll)
     {
-        if (isTileSamll)
+        if (isBoardSamll)
         {
             this.tiles = this.CreateSmallerTiles();
         }

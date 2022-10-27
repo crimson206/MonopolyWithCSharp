@@ -10,7 +10,7 @@ namespace Tests.TileManagersTests
             
             /// initiate
             MapTilesFactory mapTilesFactory = new MapTilesFactory();
-            List<Tile> tiles = mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3);
+            List<Tile> tiles = mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3, true, 0, 10, 20, 30);
 
             GroupSetter groupSetter = new GroupSetter();
             groupSetter.SetGroups(tiles);
