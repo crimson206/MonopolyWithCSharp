@@ -10,6 +10,9 @@ public class BoardHandler
 
     public List<bool> PlayerPassedGo { get => this.playerPassedGo; private set => this.playerPassedGo = value; }
 
+    public int Size => this.size;
+    public int GoPosition => this.goPosition; 
+
     public void MovePlayerAroundBoard(int playerNumber, int amount)
     {
         int oldPosition = this.playerPositions[playerNumber];
