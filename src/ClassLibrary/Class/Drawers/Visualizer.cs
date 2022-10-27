@@ -7,7 +7,7 @@ public class Visualizer
     private int backUpBufferHeight = Console.BufferHeight;
     private int backUpBufferWidth = Console.BufferWidth;
 
-    private LoggingDrawer loggingDrawer = new LoggingDrawer(4);
+    private LoggingDrawer loggingDrawer;
     private MapDrawer mapDrawer = new MapDrawer();
     private TileDrawer? tileDrawer;
     private DisplayTileInfo displayTiles = new DisplayTileInfo();
@@ -27,10 +27,12 @@ public class Visualizer
         this.isBoardSmall = isBoardSmall;
         if (isBoardSmall)
         {
+            this.loggingDrawer = new LoggingDrawer(7);
             this.Setup(10, 8, 13, 3);
         }
         else
         {
+            this.loggingDrawer = new LoggingDrawer(9);
             this.Setup(11, 11, 13, 4);
         }
     }
@@ -115,12 +117,12 @@ public class Visualizer
         this.tileDrawer!.DrawPlayers(this.PlayerPositions);
         this.tileDrawer.DrawTiles(tileDatas);
 
-        this.displayTiles.DisplayRealEstates(this.innerMapEdge[0][0] + 3, this.innerMapEdge[0][1] + 1, realEstateDatas, 2);
-        this.displayTiles.DisplayRailRoad(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 1, railRoadDatas, 2);
-        this.displayTiles.DisplayUtility(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 5, utilityDatas, 2);
-        this.playerStatusDrawer.DrawArrangedLines(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 9, this.data);
+        this.displayTiles.DisplayRealEstates(this.innerMapEdge[0][0] + 3, this.innerMapEdge[0][1], realEstateDatas, 2);
+        this.displayTiles.DisplayRailRoad(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1], railRoadDatas, 2);
+        this.displayTiles.DisplayUtility(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 4, utilityDatas, 2);
+        this.playerStatusDrawer.DrawArrangedLines(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 8, this.data);
 
-        this.loggingDrawer.DrawLogging(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 15);
+        this.loggingDrawer.DrawLogging(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 14);
 
         Console.CursorLeft = this.backUpCursorLeft;
         Console.CursorTop = this.backUpCursorTop;
