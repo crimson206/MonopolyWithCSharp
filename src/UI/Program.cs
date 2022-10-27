@@ -7,9 +7,12 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        Game game = new Game();
-        Visualizer visualizer = new Visualizer(game.Data);
-        visualizer.Setup(10, 8, 13, 3);
+
+        bool isBoardSmall = true;
+
+        Game game = new Game(isBoardSmall);
+        Visualizer visualizer = new Visualizer(game.Data, isBoardSmall);
+
         ConsoleInteractor prompter = new ConsoleInteractor(visualizer);
         string oldRecommendedString = string.Empty;
 
@@ -22,7 +25,7 @@ internal class Program
                 Console.ReadKey();
             }
 
-            visualizer.VisualizeSmallMap();
+            visualizer.Visualize();
 
             game.Run();
         }

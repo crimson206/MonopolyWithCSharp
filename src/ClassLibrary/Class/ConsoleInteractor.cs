@@ -11,7 +11,7 @@ public class ConsoleInteractor
     public bool PromptBool()
     {
         this.visualizer.UpdatePromptMessage("Press Y or N");
-        this.visualizer.Visualize();
+        this.visualizer.VisualizeLargeMap();
 
         do
         {

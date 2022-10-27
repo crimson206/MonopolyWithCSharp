@@ -19,14 +19,36 @@ public class Visualizer
     private int tileHeight;
     private List<int[]> tileEdgeInfo = new List<int[]>();
     private List<int[]> innerMapEdge = new List<int[]>();
+    private bool isBoardSmall;
 
-    public Visualizer(DataCenter data)
+    public Visualizer(DataCenter data, bool isBoardSmall)
     {
         this.data = data;
+        this.isBoardSmall = isBoardSmall;
+        if (isBoardSmall)
+        {
+            this.Setup(10, 8, 13, 3);
+        }
+        else
+        {
+            this.Setup(11, 11, 13, 4);
+        }
     }
 
     private List<int> PlayerPositions => this.data.Board.PlayerPositions;
     private string RecommendedString => this.data.EventFlow.RecommentedString;
+
+    public void Visualize()
+    {
+        if (isBoardSmall)
+        {
+            this.VisualizeSmallMap();
+        }
+        else
+        {
+            this.VisualizeLargeMap();
+        }
+    }
 
     public void Setup(int mapWidth, int mapHeight, int tileWidth, int tileHeight)
     {
@@ -49,7 +71,7 @@ public class Visualizer
         this.loggingDrawer.UpdateLogging(this.RecommendedString);
     }
 
-    public void Visualize()
+    public void VisualizeLargeMap()
     {
         Console.Clear();
         Console.WindowHeight = 150;
