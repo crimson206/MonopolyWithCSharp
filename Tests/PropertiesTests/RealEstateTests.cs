@@ -34,7 +34,7 @@ namespace Tests
             /// make is mortgaged
             realEstate1.SetIsMortgaged(true);
             Assert.AreEqual(realEstate1.IsMortgaged, true);
-            Assert.AreEqual(realEstate1.CurrentRent, 10);
+            Assert.AreEqual(realEstate1.CurrentRent, 0);
 
             /// recoverty from mortgaged
             realEstate1.SetIsMortgaged(false);

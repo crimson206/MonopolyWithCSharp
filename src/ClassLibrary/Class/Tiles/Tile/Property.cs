@@ -1,4 +1,4 @@
-public class Property : Tile , IPurchasable
+public class Property : Tile, IPurchasable
 {
     protected int? ownerPlayerNumber = null;
     protected int price;
@@ -11,21 +11,37 @@ public class Property : Tile , IPurchasable
         this.price = price;
         this.rents = rents;
         this.mortgage = mortgageValue;
-         ;
     }
 
-    public int? OwnerPlayerNumber { get=>ownerPlayerNumber; }
-    public int Price { get => price; }
-    public List<int> Rents { get => rents; }
-    public int CurrentRent => CalCurrentRent();
-    public int Mortgage { get => mortgage; }
+    public int? OwnerPlayerNumber { get => this.ownerPlayerNumber; }
+
+    public int Price { get => this.price; }
+
+    public List<int> Rents { get => this.rents; }
+
+    public int CurrentRent => this.CalCurrentRent();
+
+    public int Mortgage { get => this.mortgage; }
+
     public bool IsMortgaged { get => this.isMortgaged; }
+
     public bool IsMortgagible => this.CheckMortgagible();
+
     public void SetOnwerPlayerNumber(int? playerNumber)
     {
 
         this.ownerPlayerNumber = playerNumber;
  
+    }
+
+    public virtual void SetIsMortgaged(bool isMortgaged)
+    {
+        this.isMortgaged = isMortgaged;
+    }
+
+    public void SetGroup(List<Property> group)
+    {
+        this.group = group;
     }
 
     protected virtual int CalCurrentRent()
@@ -38,7 +54,7 @@ public class Property : Tile , IPurchasable
             }
             else
             {
-                int numRailRoadsWithSameOwner = group.Where(group => group.OwnerPlayerNumber == this.ownerPlayerNumber).ToList().Count();
+                int numRailRoadsWithSameOwner = this.group.Where(group => group.OwnerPlayerNumber == this.ownerPlayerNumber).ToList().Count();
                 return this.rents[numRailRoadsWithSameOwner-1];
             }
         }
@@ -58,15 +74,5 @@ public class Property : Tile , IPurchasable
         {
             return false;
         }
-    }
-
-    public virtual void SetIsMortgaged(bool isMortgaged)
-    {
-        this.isMortgaged = isMortgaged;
-    }
-
-    public void SetGroup(List<Property> group)
-    {
-        this.group = group;
     }
 }

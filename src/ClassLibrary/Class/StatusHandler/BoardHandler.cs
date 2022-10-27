@@ -1,4 +1,3 @@
-
 public class BoardHandler
 {
     private int size = 40;

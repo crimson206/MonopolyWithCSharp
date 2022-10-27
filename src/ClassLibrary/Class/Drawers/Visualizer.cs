@@ -19,13 +19,14 @@ public class Visualizer
     private int tileHeight;
     private List<int[]> tileEdgeInfo = new List<int[]>();
     private List<int[]> innerMapEdge = new List<int[]>();
-    private List<int> playerPositions => this.data.Board.PlayerPositions;
-    private string recommendedString => this.data.EventFlow.RecommentedString;
 
     public Visualizer(DataCenter data)
     {
         this.data = data;
     }
+
+    private List<int> PlayerPositions => this.data.Board.PlayerPositions;
+    private string RecommendedString => this.data.EventFlow.RecommentedString;
 
     public void Setup(int mapWidth, int mapHeight, int tileWidth, int tileHeight)
     {
@@ -33,8 +34,8 @@ public class Visualizer
         this.mapHeight = mapHeight;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
-        this.tileEdgeInfo = mapDrawer.CreateTileEdgeCollection(mapWidth, mapHeight, tileWidth, tileHeight);
-        this.innerMapEdge = mapDrawer.CreateInnerSpaceIndicator(mapWidth, mapHeight, tileWidth, tileHeight);
+        this.tileEdgeInfo = this.mapDrawer.CreateTileEdgeCollection(mapWidth, mapHeight, tileWidth, tileHeight);
+        this.innerMapEdge = this.mapDrawer.CreateInnerSpaceIndicator(mapWidth, mapHeight, tileWidth, tileHeight);
         this.tileDrawer = new TileDrawer(tileEdgeInfo);
     }
 
@@ -45,7 +46,7 @@ public class Visualizer
 
     public void UpdateLogging()
     {
-        this.loggingDrawer.UpdateLogging(this.recommendedString);
+        this.loggingDrawer.UpdateLogging(this.RecommendedString);
     }
 
     public void Visualize()
@@ -60,7 +61,7 @@ public class Visualizer
         List<RailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
         List<UtilityData> utilityDatas = (from tileData in tileDatas where tileData is UtilityData select tileData as UtilityData).ToList();        
 
-        this.tileDrawer!.DrawPlayers(this.playerPositions);
+        this.tileDrawer!.DrawPlayers(this.PlayerPositions);
         this.tileDrawer.DrawTiles(tileDatas);
 
         this.displayTiles.DisplayRealEstates(this.innerMapEdge[0][0] + 5, this.innerMapEdge[0][1] + 1, realEstateDatas, 2);
@@ -89,7 +90,7 @@ public class Visualizer
         List<RailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
         List<UtilityData> utilityDatas = (from tileData in tileDatas where tileData is UtilityData select tileData as UtilityData).ToList();
 
-        this.tileDrawer!.DrawPlayers(this.playerPositions);
+        this.tileDrawer!.DrawPlayers(this.PlayerPositions);
         this.tileDrawer.DrawTiles(tileDatas);
 
         this.displayTiles.DisplayRealEstates(this.innerMapEdge[0][0] + 3, this.innerMapEdge[0][1] + 1, realEstateDatas, 2);
