@@ -18,7 +18,7 @@ public class Game
     private EventFlow eventFlow;
     private DataCenter dataCenter;
     public BoolCopier boolCopier;
-    private TestEvent2 testEvent2;
+    private Event testEvent2;
 
     public Game()
     {
@@ -63,8 +63,8 @@ public class Game
         this.boardHandler.SetInfo(this.dataCenter.TileDatas);
     }
 
-    public TestEvent2 GetTestEvent2()
+    public Event GetTestEvent2()
     {
-        return new TestEvent2(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
+        return new Event(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
     }
 }

@@ -1,4 +1,4 @@
-public class TestEvent2
+public class Event
 {
     private BankHandler bankHandler;
     private BoardHandler boardHandler;
@@ -15,7 +15,7 @@ public class TestEvent2
     private Tile currentTile => this.GetCurrentTile();
     private bool rolledDouble => this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
 
-    public TestEvent2
+    public Event
     (BankHandler bankHandler,
     BoardHandler boardHandler,
     DoubleSideEffectHandler doubleSideEffectHandler,
@@ -224,6 +224,13 @@ public class TestEvent2
             {
                 this.AddNextEvent(this.DontPurchaseProperty);
             }
+
+            return;
+        }
+
+        if (this.lastEvent == this.HasJailPenalty)
+        {
+            this.AddNextEvent(this.EndTurn);
 
             return;
         }
