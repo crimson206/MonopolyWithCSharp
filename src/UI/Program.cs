@@ -7,6 +7,27 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+
+        bool isBoardSmall = true;
+
+        Game game = new Game(isBoardSmall);
+        Visualizer visualizer = new Visualizer(game.Data, isBoardSmall);
+
+        ConsoleInteractor prompter = new ConsoleInteractor(visualizer);
+        string oldRecommendedString = string.Empty;
+
+        while (true)
+        {
+            if (oldRecommendedString != game.Data.EventFlow.RecommentedString)
+            {
+                visualizer.UpdateLogging();
+                oldRecommendedString = game.Data.EventFlow.RecommentedString;
+                Console.ReadKey();
+            }
+
+            visualizer.Visualize();
+
+            game.Run();
+        }
     }
 }
