@@ -3,9 +3,20 @@ public class MapTilesFactory
     private Random random = new Random();
     private GroupSetter groupSetter = new GroupSetter();
 
-    public List<Tile> CreateRandomMapTiles(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests)
+    public List<Tile> CreateRandomMapTiles(
+        int numOfRealRestates,
+        int numOfRailRoads, 
+        int numOfUtilities,
+        int numOfChances, 
+        int numOfCommunityChests,
+        bool twoTaxes,
+        int goPosition,
+        int jailPosition,
+        int freeParkingPosition,
+        int goToJailPositoin
+        )
     {
-        List<List<Tile>> differentTileGroups = this.CreateDifferentTileGroups(numOfRealRestates, numOfRailRoads, numOfUtilities, numOfChances, numOfCommunityChests);
+        List<List<Tile>> differentTileGroups = this.CreateDifferentTileGroups(numOfRealRestates, numOfRailRoads, numOfUtilities, numOfChances, numOfCommunityChests, twoTaxes);
 
         List<Tile> randomlyAssembledTiles = differentTileGroups[0];
 
@@ -16,10 +27,10 @@ public class MapTilesFactory
 
         int totalSize = numOfRealRestates + numOfRailRoads + numOfUtilities + numOfChances + numOfCommunityChests + 6;
 
-        randomlyAssembledTiles.Insert(0, new Go("Go!", 200));
-        randomlyAssembledTiles.Insert(totalSize / 4, new Jail("Jail", 60));
-        randomlyAssembledTiles.Insert(totalSize / 2, new FreeParking("FreeParking"));
-        randomlyAssembledTiles.Insert(3 * totalSize / 4, new GoToJail("GoToJail"));
+        randomlyAssembledTiles.Insert(goPosition, new Go("Go!", 200));
+        randomlyAssembledTiles.Insert(jailPosition, new Jail("Jail", 60));
+        randomlyAssembledTiles.Insert(freeParkingPosition, new FreeParking("FreeParking"));
+        randomlyAssembledTiles.Insert(goToJailPositoin, new GoToJail("GoToJail"));
 
         this.groupSetter.SetGroups(randomlyAssembledTiles);
 
@@ -72,14 +83,17 @@ public class MapTilesFactory
         return tileDataSet;
     }
 
-    private List<List<Tile>> CreateDifferentTileGroups(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests)
+    private List<List<Tile>> CreateDifferentTileGroups(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests, bool twoTaxes)
     {
         List<List<Tile>> differentTileGroups = new List<List<Tile>>();
         differentTileGroups.Add(this.CreateRealEstateGroups(numOfRealRestates, 80, 400, this.random));
         differentTileGroups.Add(this.CreateRailRoads(numOfRailRoads, 200, 2));
         differentTileGroups.Add(this.CreateUtilities(numOfUtilities, 100, 4, 6));
         differentTileGroups.Add(this.CreateEventTiles(numOfChances, numOfCommunityChests));
-        differentTileGroups.Add(this.CreateTaxes());
+        if (twoTaxes)
+        {
+            differentTileGroups.Add(this.CreateTaxes());
+        }
 
         return differentTileGroups;
     }

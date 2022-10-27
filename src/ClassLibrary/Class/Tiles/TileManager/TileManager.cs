@@ -39,12 +39,12 @@ public class TileManager
     public PropertyManager PropertyManager { get => this.propertyManager; }
     private List<Tile> CreateTiles()
     {
-        return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3);
+        return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3, true, 0, 10, 20, 30);
     }
 
     private List<Tile> CreateSmallerTiles()
     {
-        return this.mapTilesFactory.CreateRandomMapTiles(20, 2, 2, 1, 1);
+        return this.mapTilesFactory.CreateRandomMapTiles(22, 2, 2, 0, 0, true, 0, 9, 16, 27);
     }
 
     private List<Property> FilterProperties(List<Tile> tiles)
