@@ -34,7 +34,7 @@ public class PlayerStatusDrawer
         List<int> jailTurnCountsInts = dataCenter.Jail.TurnsInJailCounts;
         string jailTurnCounts = string.Join(", ", jailTurnCountsInts.ToArray());
 
-        List<int> jailFreeCardCountsInts = dataCenter.Jail.FreeJailCardCounts;
+        List<int> jailFreeCardCountsInts = dataCenter.Jail.JailFreeCardCounts;
         string jailFreeCardCounts = string.Join(", ", jailFreeCardCountsInts.ToArray());
 
         strings.Add("Balances : " + balances);
@@ -55,7 +55,7 @@ public class PlayerStatusDrawer
         List<string> jailTurnCounts = (from jailTurnCount in jailTurnCountsInts select jailTurnCount.ToString()).ToList();
         jailTurnCounts.Insert(0, "Turns in Jail : ");
 
-        List<int> jailFreeCardCountsInts = dataCenter.Jail.FreeJailCardCounts;
+        List<int> jailFreeCardCountsInts = dataCenter.Jail.JailFreeCardCounts;
         List<string> jailFreeCardCounts = (from jailFreeCard in jailFreeCardCountsInts select jailFreeCard.ToString()).ToList();
         jailFreeCardCounts.Insert(0, "FreeJailCards : ");
 

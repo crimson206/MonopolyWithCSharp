@@ -287,7 +287,7 @@ public class Event
 
     private void PayJailFine()
     {
-        this.bankHandler.DecreaseBalance(this.PlayerNumber, this.bankHandler.JailFine);
+        this.bankHandler.DecreaseBalance(this.PlayerNumber, 60);
         this.jailHandler.ResetTurnInJail(this.PlayerNumber);
         this.eventFlow.RecommentedString = this.stringPlayer + " paid the jail fine";
 
@@ -330,7 +330,7 @@ public class Event
 
     public void MakeDecisionOnPaymentOfJailFine()
     {
-        if (this.bankHandler.Balances[this.PlayerNumber] >= this.bankHandler.JailFine)
+        if (this.bankHandler.Balances[this.PlayerNumber] >= 60)
         {
             this.isDoubleSideEffectOn = true;
             this.eventFlow.BoolDecision = this.decisionMaker.MakeDecision();
@@ -344,7 +344,7 @@ public class Event
         if (this.jailHandler.TurnsInJailCounts[this.PlayerNumber] == 3)
         {
             this.jailHandler.ResetTurnInJail(this.PlayerNumber);
-            this.bankHandler.DecreaseBalance(this.PlayerNumber, this.bankHandler.JailFine);
+            this.bankHandler.DecreaseBalance(this.PlayerNumber, 60);
 
             this.eventFlow.RecommentedString = this.stringPlayer + " is released after staying 3 turns in jail";
 
@@ -494,7 +494,7 @@ public class Event
     public void ReceiveSalary()
     {
         this.eventFlow.RecommentedString = this.stringPlayer + " passed go and received the salary";
-        this.bankHandler.IncreaseBalance(this.PlayerNumber, this.bankHandler.Salary);
+        this.bankHandler.IncreaseBalance(this.PlayerNumber, 200);
 
         this.CallNextEvent();
     }

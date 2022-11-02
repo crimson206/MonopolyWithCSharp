@@ -1,4 +1,4 @@
-public class BoardHandler
+public class BoardHandler : IBoardHandlerData
 {
     private int size = 40;
     private int goPosition = 0;
@@ -6,9 +6,9 @@ public class BoardHandler
     private List<bool> playerPassedGo = new List<bool>() { false, false, false, false };
     private List<TileData>? tileDatas;
 
-    public List<int> PlayerPositions { get => this.playerPositions; private set => this.playerPositions = value; }
+    public List<int> PlayerPositions { get => new List<int>(this.playerPositions); }
 
-    public List<bool> PlayerPassedGo { get => this.playerPassedGo; private set => this.playerPassedGo = value; }
+    public List<bool> PlayerPassedGo { get => new List<bool>(this.playerPassedGo); }
 
     public int Size => this.size;
     public int GoPosition => this.goPosition; 
