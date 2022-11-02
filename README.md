@@ -7,11 +7,11 @@ I decided to open the Monopoly Demo version on this master branch instead of onl
 1. For fun, please check the "prototpye.gif" file
 
 2. If you want to try the demo version,
-  - open this project with Visual Studio Code
-  - write "dotnet build" on your command line and execute (without double quotation marks)
+  - open this project with VSCode
+  - execute "dotnet build" in your terminal command line (without double quotation marks)
   - make your terminal as big as possible
   - press f5
-  - I couldn't try my project with other IDEs yet...
+  - It is checked that some lines are not working in Visual Studio, therefore it is executable only in Visual Studio Code for now.
 
 3. Currently two different sized maps are serviced. The bigger map won't work with normal sized monitors.
    The default size is the smaller map. To change the size,
