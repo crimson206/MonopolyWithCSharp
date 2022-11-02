@@ -49,13 +49,9 @@ public class Game
 
     private DataCenter GenerateDataCenter()
     {
-        BankData bankdata = new BankData(this.bankHandler);
-        BoardData boardData = new BoardData(this.boardHandler);
-        DoubleSideEffectData doubleSideEffectData = new DoubleSideEffectData(this.doubleSideEffectHandler);
-        JailHandlerData jailData = new JailHandlerData(this.jailHandler);
         EventFlowData eventFlowData = new EventFlowData(this.eventFlow);
 
-        return new DataCenter(bankdata, boardData, doubleSideEffectData, jailData, this.tileManager, eventFlowData);
+        return new DataCenter(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.jailHandler, this.tileManager, eventFlowData);
     }
 
     private void SetBoardInfo()

@@ -1,17 +1,17 @@
 public class DataCenter : ICloneable
 {
-    private BankData bank;
-    private BoardData board;
-    private DoubleSideEffectData doubleSideEffect;
-    private JailHandlerData jail;
+    private IBankHandlerData bank;
+    private IBoardHandlerData board;
+    private IDoubleSideEffectHandlerData doubleSideEffect;
+    private IJailHandlerData jail;
     private List<TileData> tileDatas;
     private EventFlowData eventFlowData;
 
     public DataCenter(
-        BankData bankData,
-        BoardData boardData,
-        DoubleSideEffectData doubleSideEffectData,
-        JailHandlerData jailData,
+        IBankHandlerData bankData,
+        IBoardHandlerData boardData,
+        IDoubleSideEffectHandlerData doubleSideEffectData,
+        IJailHandlerData jailData,
         TileManager tileManager,
         EventFlowData eventFlowData)
     {
@@ -23,13 +23,13 @@ public class DataCenter : ICloneable
         this.eventFlowData = eventFlowData;
     }
 
-    public BankData Bank => (BankData)this.bank.Clone();
+    public IBankHandlerData Bank => this.bank;
 
-    public BoardData Board => (BoardData)this.board.Clone();
+    public IBoardHandlerData Board => this.board;
 
-    public DoubleSideEffectData DoubleSideEffect => (DoubleSideEffectData)this.doubleSideEffect.Clone();
+    public IDoubleSideEffectHandlerData DoubleSideEffect => this.doubleSideEffect;
 
-    public JailHandlerData Jail => (JailHandlerData)this.jail.Clone();
+    public IJailHandlerData Jail => this.jail;
 
     public EventFlowData EventFlow => (EventFlowData)this.eventFlowData.Clone();
 
