@@ -1,5 +1,7 @@
 # MonopolyWithCSharp
 
+0. There are UML diagrams below
+
 1. For fun, please check the "prototpye.gif" file
 
 2. If you want to try the demo version,
@@ -18,16 +20,6 @@
   - added Class and Sequence diagrams for the current Monopoly Demo version. See Below.
   - Game provides not only the Run() method, but a DataCenter object to UI. It is to run the game in different UIs later(WPF, Window Forms...)
   - A planned refactoring for the architecture is now at one of pull requests. --> (WIP) Refactor : prepared EventStateMachine design
-
-DONTREADME :
-Ha... I still think it is not difficult to make Monopoly if my goal is just to make it work.
-It is totally different if I try to make it perfect as much as possible.
-I began to use interfaces quite recently, and unfortunately I already wrote lots of lines without them.
-It is literally imposible to make unit tests for high-level classes without them.
-My Event class makes it worse because it is too large to test properly.
-It is why I have to refactor them before studying the machine learning for AI.
-As hard as I recently studied, I learned a lot, and I like to apply new knowledge,
-however things to learn are infinite and time to learn is finite. :(
 
 
 The class diagram for the current Monopoly Demo version
@@ -135,3 +127,14 @@ opt RecommendedString was changed
 end
 UI->>Game : Run
 ```
+
+
+DONTREADME :
+Ha... I still think it is not difficult to make Monopoly if my goal is just to make it work.
+It is totally different if I try to make it perfect as much as possible.
+I began to use interfaces quite recently, and unfortunately I already wrote lots of lines without them.
+It is literally imposible to make unit tests for high-level classes without them.
+My Event class makes it worse because it is too large to test properly.
+It is why I have to refactor them before studying the machine learning for AI.
+As hard as I recently studied, I learned a lot, and I like to apply new knowledge,
+however things to learn are infinite and time to learn is finite. :(
