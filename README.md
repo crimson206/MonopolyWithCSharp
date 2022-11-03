@@ -27,3 +27,63 @@ I decided to open the Monopoly Demo version on this master branch instead of onl
     If I am satisfied enough with the inteligence of them, it would be the time to add the interface to play against them.
     
  5. I will try to keep updating UML diagrams for current and planned designs in different aspects
+
+```mermaid
+classDiagram
+
+class UI{
++Visualizer
++Game
+}
+
+class Visualizer{
++Visualize()
+}
+
+class Game{
++Run()
+}
+
+class DataCenter{
++IBoardHandlerData
++IBankHandlerData
++IMoreHandlersData
+}
+
+class Delegator{
+-nextEvent << delegate or generally function pointer >>
++AddNextEvent()
++RunEvent()
+}
+
+class Event{
++RollDice()
++MoveByRollDiceResultTotal()
++PayJailFine()
++BuyProperty()
++MoreEventMethods()
++CallNextEvent()
+}
+
+class BoardHandler{
++List~int~ Positions 
++List~bool~ PassedGos 
++MoveAroundBoard(playerNumber int, amount int)
++Teleport(playerNumber int, point int)
+}
+
+class IBoardHandlerData
+<<interface>> IBoardHandlerData
+IBoardHandlerData : Positions
+IBoardHandlerData : PassedGo
+
+UI --> Game
+UI --> Visualizer
+Visualizer ..> DataCenter
+Event --> Delegator
+Game *--> Delegator
+Event --> "*" BoardHandler
+BoardHandler ..|> IBoardHandlerData
+DataCenter --> [<font size=6>"*" IBoardHandlerData ] 
+
+```
