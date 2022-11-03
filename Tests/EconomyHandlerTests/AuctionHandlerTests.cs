@@ -27,40 +27,40 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Set_AuctionCondision_By_Generating_SuggestedPrices_With_Wanted_Size()
+        public void Set_AuctionCondition_By_Generating_SuggestedPrices_With_Target_Participants_Count()
         {
             AuctionHandler auctionHandler = new AuctionHandler();
-            int wantedSize = 4;
-            auctionHandler.SetAuctionCondition(wantedSize, initialPrice:100);
+            List<bool> participants = new List<bool> {true, true, false, true};
+            auctionHandler.SetAuctionCondition(participants, initialAuctionerNumber:3 , initialPrice:100);
 
-            int expectedSize = 4;
-            Assert.AreEqual(auctionHandler.SuggestedPrices.Count(), expectedSize);
+            int expectedPositiveSuggestedPriceCount = 3;
+            Assert.AreEqual(auctionHandler.SuggestedPrices.Where(price => price >= 0).Count(), expectedPositiveSuggestedPriceCount);
         }
         [TestMethod]
         public void Set_AuctionCondision_By_Generating_SuggestedPrices_With_Initial_Price()
         {
             AuctionHandler auctionHandler = new AuctionHandler();
-            int size = 4;
+            List<bool> participants = new List<bool> {true, true, false, true};
             int initialPrice = 100;
-            auctionHandler.SetAuctionCondition(participantCount:size, initialPrice);
+            auctionHandler.SetAuctionCondition(participants, initialAuctionerNumber:3, initialPrice);
 
             int expectedInitialPrice = 100;
-            for (int i = 0; i < size; i++)
-            {
-                Assert.AreEqual(auctionHandler.SuggestedPrices[i], expectedInitialPrice); 
-            }
+
+            Assert.AreEqual(auctionHandler.SuggestedPrices[3], expectedInitialPrice); 
+
         }
 
-        public AuctionHandler Get_AuctionHandler_With_Size_4_And_InitialPrice_100()
+        public AuctionHandler Get_AuctionHandler_With_4Player_But_3Participants_And_InitialPlayerNumber_3_InitialPrice_100()
         {
             AuctionHandler auctionHandler = new AuctionHandler();
-            auctionHandler.SetAuctionCondition(4, 100);
+            List<bool> participants = new List<bool> {true, true, false, true};
+            auctionHandler.SetAuctionCondition(participants, 3, 100);
             return auctionHandler;
         }
         [TestMethod]
         public void Is_SuggestedPrices_Protected_From_Change_Of_Its_Copy()
         {
-            AuctionHandler auctionHandler = Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+            AuctionHandler auctionHandler = Get_AuctionHandler_With_4Player_But_3Participants_And_InitialPlayerNumber_3_InitialPrice_100();
 
             List<int> copy = auctionHandler.SuggestedPrices;
             copy[0] = 20;
@@ -71,14 +71,25 @@ namespace Tests
         [TestMethod]
         public void Seggest_NewPriceInTurn_For_One_Round()
         {
-            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_4Player_But_3Participants_And_InitialPlayerNumber_3_InitialPrice_100();
             int[] suggestedPrices = new int[] { 200, 100, 240, 300};
             int[] expectedPrices = new int[] { 200, 100, 240, 300};
 
+            int j = 3;
             for (int i = 0; i < 4; i++)
             {
+                if ((i + 3) % 4 != 2)
+                {
+                    j++;
+                }
+                else
+                {
+                    j += 2;
+                }
                 auctionHandler.SuggestNewPriceInTurn(suggestedPrices[i]);
-                Assert.AreEqual(auctionHandler.SuggestedPrices[i], expectedPrices[i]);
+                Assert.AreEqual(auctionHandler.SuggestedPrices[j % 4], expectedPrices[i]);
+
+
             }
         }
         [TestMethod]
@@ -93,8 +104,9 @@ namespace Tests
         public void Set_Auction_Condition_To_Make_IsAuctionOn_True()
         {
             AuctionHandler auctionHandler = new AuctionHandler();
+            List<bool> participants = new List<bool> {true, true, false, true};
             
-            auctionHandler.SetAuctionCondition(participantCount:4,initialPrice:100);
+            auctionHandler.SetAuctionCondition(participants, 3, initialPrice:100);
 
             bool expectedIsAuctionOn = true;
             Assert.AreEqual(auctionHandler.IsAuctionOn, expectedIsAuctionOn);
@@ -102,7 +114,7 @@ namespace Tests
         [TestMethod]
         public void Seggest_NewPriceInTurn_With_Smaller_Prices_Than_Max_Price_To_Close_Auction()
         {
-            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_4Player_But_3Participants_And_InitialPlayerNumber_3_InitialPrice_100();
             int[] suggestedPrices = new int[] { 200, 100, 100, 140};
 
             for (int i = 0; i < 4; i++)
@@ -116,10 +128,10 @@ namespace Tests
         [TestMethod]
         public void Seggest_NewPriceInTurn_Always_With_Lower_Price_Than_Initial_Price_To_Force_First_Participant_To_Win()
         {
-            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
-            int[] suggestedPrices = new int[] { 50, 50, 40, 60};
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_4Player_But_3Participants_And_InitialPlayerNumber_3_InitialPrice_100();
+            int[] suggestedPrices = new int[] { 50, 50, 60};
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 auctionHandler.SuggestNewPriceInTurn(suggestedPrices[i]);
             }
@@ -130,11 +142,11 @@ namespace Tests
         [TestMethod]
         public void Seggest_NewPriceInTurn_And_The_Last_Suggested_Price_Is_Updated_Even_If_The_Auction_Is_Closed()
         {
-            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
-            int lastParticipantNum = auctionHandler.SuggestedPrices.Count() - 1;
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_4Player_But_3Participants_And_InitialPlayerNumber_3_InitialPrice_100();
+            int lastParticipantNum = 2;
             int lastSuggestedPrice = 200;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 auctionHandler.SuggestNewPriceInTurn(lastSuggestedPrice);
             }
@@ -145,7 +157,7 @@ namespace Tests
         [TestMethod]
         public void Seggest_NewPriceInTurn_To_With_Prices_To_Close_Auction_And_Initla_Max_Price_Is_Final_Price()
         {
-            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_4Player_But_3Participants_And_InitialPlayerNumber_3_InitialPrice_100();
 
             for (int i = 0; i < 4; i++)
             {
@@ -158,7 +170,7 @@ namespace Tests
         [TestMethod]
         public void Seggest_NewPriceInTurn_With_Higher_Price_Than_Last_Price_To_Make_Several_Rounds()
         {
-            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_Size_4_And_InitialPrice_100();
+            AuctionHandler auctionHandler = this.Get_AuctionHandler_With_4Player_But_3Participants_And_InitialPlayerNumber_3_InitialPrice_100();
             int constantIncreaseOfSuggestedPrice = 10;
 
             for (int i = 0; i < 20; i++)

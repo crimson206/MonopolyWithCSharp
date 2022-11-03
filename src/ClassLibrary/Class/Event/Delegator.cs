@@ -1,4 +1,4 @@
-public class Delegator
+public class Delegator : IDelegator
 {
     private DelEvent? nextEvent;
 
