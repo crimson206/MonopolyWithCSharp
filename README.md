@@ -83,6 +83,7 @@ DataCenter --> "*" IBoardHandlerData
 ```
 
 The sequence diagram for the current Monopoly Demo version
+  - Other handlers like BankHandler in the diagram play similar rules at the same position.
 ```mermaid
 sequenceDiagram
 UI->>Game : Run
