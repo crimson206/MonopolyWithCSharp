@@ -84,6 +84,6 @@ Event --> Delegator
 Game *--> Delegator
 Event --> "*" BoardHandler
 BoardHandler ..|> IBoardHandlerData
-DataCenter --> [<font size=6>"*" IBoardHandlerData ] 
+DataCenter --> "*" IBoardHandlerData
 
 ```
