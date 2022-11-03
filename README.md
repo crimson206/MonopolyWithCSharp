@@ -1,9 +1,5 @@
 # MonopolyWithCSharp
 
-Learning how to manage the github page is also so difficult...
-I decided to open the Monopoly Demo version on this master branch instead of only those well refactored codes.
-
-
 1. For fun, please check the "prototpye.gif" file
 
 2. If you want to try the demo version,
