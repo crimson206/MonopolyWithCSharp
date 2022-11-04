@@ -6,7 +6,7 @@
 /// <summary>
 /// This class deals with the auction event of Monopoly
 /// </summary>
-public class AuctionHandler
+public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
 {
     private List<int> suggestedPrices = new List<int>();
     private int currentParticipantNumber;
@@ -14,7 +14,6 @@ public class AuctionHandler
     private int winningParticipantNumber;
     private bool isAuctionOn;
     private int maxPriceUnchangedTurnCount;
-
     /// <summary>
     /// Gets the isAuctionOn of an auction handler
     /// </summary>
@@ -45,9 +44,10 @@ public class AuctionHandler
     /// <summary>
     /// It sets conditions to start a new auction
     /// </summary>
-    /// <param name="participantCount"> a positive integer </param>
+    /// <param name="participants"> a list of bool, where playerNumbers, whose value is true, are participants </param>
+    /// <param name="iinitialAuctionerNumber"> a positive integer </param>
     /// <param name="initialPrice"> a positive integer </param>
-    public void SetAuctionCondition(int participantCount, int initialPrice)
+    public void SetAuctionCondition(List<bool> participants, int initialAuctionerNumber, int initialPrice)
     {
         if (initialPrice <= 0)
         {
@@ -58,10 +58,22 @@ public class AuctionHandler
 
         this.isAuctionOn = true;
 
-        this.participantCount = participantCount;
-        for (int i = 0; i < participantCount; i++)
+        this.participantCount = participants.Where(participate => participate == true).Count();
+        
+        for (int i = 0; i < participants.Count(); i++)
         {
-            this.suggestedPrices.Add(initialPrice);
+            if (i == initialAuctionerNumber)
+            {
+                this.suggestedPrices.Add(initialPrice);
+            }
+            else if (participants[i] is true)
+            {
+                this.suggestedPrices.Add(0);
+            }
+            else
+            {
+                this.suggestedPrices.Add(-1);
+            }
         }
     }
 
@@ -75,6 +87,11 @@ public class AuctionHandler
     /// <param name="newPrice">a positive integer</param>
     public void SuggestNewPriceInTurn(int newPrice)
     {
+        if (newPrice < 0)
+        {
+            throw new Exception();
+        }
+
         if (newPrice > this.MaxPrice)
         {
             this.winningParticipantNumber = this.currentParticipantNumber;
@@ -112,5 +129,19 @@ public class AuctionHandler
         this.WinnerNumber = this.winningParticipantNumber;
         this.FinalPrice = this.MaxPrice;
         this.isAuctionOn = false;
+    }
+
+    private void GoToNextParticipant()
+    {
+        while (true)
+        {
+            this.currentParticipantNumber = (this.currentParticipantNumber + 1) %
+                                            this.suggestedPrices.Count();
+
+            if (this.suggestedPrices[this.currentParticipantNumber] >= 0)
+            {
+                return;
+            }
+        }
     }
 }
