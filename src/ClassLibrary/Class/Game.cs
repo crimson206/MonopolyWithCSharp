@@ -15,6 +15,7 @@ public class Game
     private DoubleSideEffectHandler doubleSideEffectHandler;
     private JailHandler jailHandler;
     private BoardHandler boardHandler;
+    private InGameHandler inGameHandler;
     private EventFlow eventFlow;
     private DataCenter dataCenter;
     public BoolCopier boolCopier;
@@ -29,6 +30,7 @@ public class Game
         this.delegator = new Delegator();
         this.eventFlow = new EventFlow();
         this.jailHandler = new JailHandler();
+        this.inGameHandler = new InGameHandler(joinedPlayerNumber:4);
 
         int boardSize = this.tileManager.TileDatas.Count();
         int goPosition = (from tile in this.tileManager.Tiles where tile is Go select this.tileManager.Tiles.IndexOf(tile)).ToList()[0];
@@ -51,7 +53,7 @@ public class Game
     {
         EventFlowData eventFlowData = new EventFlowData(this.eventFlow);
 
-        return new DataCenter(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.jailHandler, this.tileManager, eventFlowData);
+        return new DataCenter(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.jailHandler, this.inGameHandler, this.tileManager, eventFlowData);
     }
 
     private void SetBoardInfo()

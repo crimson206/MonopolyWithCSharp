@@ -1,4 +1,4 @@
-public class InGameHandler
+public class InGameHandler : IInGameHandlerData
 {
     private List<bool> areInGame = new List<bool>();
 

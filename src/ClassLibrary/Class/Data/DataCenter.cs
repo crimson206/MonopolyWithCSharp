@@ -4,6 +4,7 @@ public class DataCenter : ICloneable
     private IBoardHandlerData board;
     private IDoubleSideEffectHandlerData doubleSideEffect;
     private IJailHandlerData jail;
+    private IInGameHandlerData inGame;
     private List<TileData> tileDatas;
     private EventFlowData eventFlowData;
 
@@ -12,14 +13,17 @@ public class DataCenter : ICloneable
         IBoardHandlerData boardData,
         IDoubleSideEffectHandlerData doubleSideEffectData,
         IJailHandlerData jailData,
+        IInGameHandlerData inGameData,
         TileManager tileManager,
-        EventFlowData eventFlowData)
+        EventFlowData eventFlowData
+        )
     {
         this.bank = bankData;
         this.board = boardData;
         this.doubleSideEffect = doubleSideEffectData;
         this.jail = jailData;
         this.tileDatas = tileManager.TileDatas;
+        this.inGame = inGameData;
         this.eventFlowData = eventFlowData;
     }
 
@@ -30,7 +34,7 @@ public class DataCenter : ICloneable
     public IDoubleSideEffectHandlerData DoubleSideEffect => this.doubleSideEffect;
 
     public IJailHandlerData Jail => this.jail;
-
+    public IInGameHandlerData InGame => this.inGame;
     public EventFlowData EventFlow => (EventFlowData)this.eventFlowData.Clone();
 
     public List<TileData> TileDatas => new List<TileData>(this.tileDatas);

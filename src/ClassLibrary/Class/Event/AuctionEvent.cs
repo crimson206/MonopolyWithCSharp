@@ -4,14 +4,14 @@ public class AuctionEvent
     private AuctionHandler auctionHandler = new AuctionHandler();
     private IAuctionHandlerFunction auctionHandlerFunction => this.auctionHandler;
     private IAuctionHandlerData auctionHandlerData => this.auctionHandler;
-    private IDataForAuctionEvent dataForAuctionEvent;
+    private DataCenter dataCenter;
 
     private int auctionRoundCount = 0;
 
-    private List<int> balances => dataForAuctionEvent.Balances;
-    private List<bool> areInGame => dataForAuctionEvent.AreInGame;
-    private int currentPlayerNumber => dataForAuctionEvent.CurrentPlayerNumber;
-    private IPropertyData currentPropertyData => dataForAuctionEvent.CurrentPropertyData;
+    private List<int> balances => dataCenter.Bank.Balances;
+    private List<bool> areInGame => dataCenter.InGame.AreInGame;
+    private int currentPlayerNumber => dataCenter.EventFlow.CurrentPlayerNumber;
+    private PropertyData currentPropertyData => this.GetCurrentPropertyData();
     private List<int> participantPlayerNumbers = new List<int>();
     private int participantCount = 0;
     private int currentRoundPlayerNumber => this.participantPlayerNumbers[auctionRoundCount%participantCount];
@@ -19,11 +19,11 @@ public class AuctionEvent
 
     public AuctionEvent
     (
-        IDataForAuctionEvent dataForAuctionEvent,
+        DataCenter dataCenter,
         IDelegator delegator
     )
     {
-        this.dataForAuctionEvent = dataForAuctionEvent;
+        this.dataCenter = dataCenter;
         this.delegator = delegator;
     }
 
@@ -39,7 +39,7 @@ public class AuctionEvent
     {
         int initialPrice = this.DecideInitialPrice();
         this.participantCount = this.areInGame.Where(isInGame => isInGame == true).Count();
-        this.auctionHandlerFunction.SetAuctionCondition(this.areInGame, this.currentPlayerNumber, initialPrice);
+        this.auctionHandlerFunction.SetAuctionCondition(this.participantPlayerNumbers, initialPrice);
         this.SetParticipantPlayerNumbers();
     }
 
@@ -69,5 +69,13 @@ public class AuctionEvent
             }
             index++;
         }
+    }
+
+    private PropertyData GetCurrentPropertyData()
+    {
+        int positionOfCurrentPlayer = this.dataCenter.Board.PlayerPositions[this.currentRoundPlayerNumber];
+        PropertyData currentPropertyData = (PropertyData)this.dataCenter.TileDatas[positionOfCurrentPlayer];
+
+        return currentPropertyData;
     }
 }
