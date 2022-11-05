@@ -17,7 +17,6 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
     private int maxPrice => this.SuggestedPrices.Values.Max();
     private int participantCount => this.participantNumbers.Count();
     private int winningParticipantNumber;
-    private bool isMaxPriceNotChangedForOneRound;
 
     /// <summary>
     /// Gets the isAuctionOn of an auction handler
@@ -65,6 +64,7 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
         this.suggestedPrices.Clear();
         this.isAuctionOn = true;
         this.participantNumbers = participantNumbers;
+        this.winningParticipantNumber = participantNumbers[0];
         this.nextParticipantNumber = participantNumbers[1];
 
         int participantCount = participantNumbers.Count();
@@ -72,7 +72,7 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
         {
             this.suggestedPrices.Add(participantNumber, 0);
         }
-        this.suggestedPrices[0] = initialPrice;
+        this.suggestedPrices[participantNumbers[0]] = initialPrice;
     }
 
     /// <summary>
@@ -90,8 +90,6 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
             throw new Exception();
         }
 
-        this.isMaxPriceNotChangedForOneRound = false;
-
         int currentParticipantNumber = this.nextParticipantNumber;
 
         if (newPrice > this.maxPrice)
@@ -104,11 +102,11 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
 
         if (this.nextParticipantNumber == this.winningParticipantNumber && newPrice <= this.maxPrice)
         {
-            this.isMaxPriceNotChangedForOneRound = true;
+            this.SetAuctionResultAndCloseAuction();
         }
     }
 
-    public void SetAuctionResultAndCloseAuction()
+    private void SetAuctionResultAndCloseAuction()
     {
         this.winnerNumber = this.nextParticipantNumber;
         this.finalPrice = this.maxPrice;
@@ -119,6 +117,7 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
     {
         int previousParticipantNumber = this.nextParticipantNumber;
         int index = this.participantNumbers.IndexOf(previousParticipantNumber);
-        index = (index++) % this.participantCount;
+        index = (index + 1) % this.participantCount;
+        this.nextParticipantNumber = this.participantNumbers[index];
     }
 }

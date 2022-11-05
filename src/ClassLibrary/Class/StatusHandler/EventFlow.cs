@@ -2,7 +2,9 @@ public class EventFlow
 {
     public int CurrentPlayerNumber { get; set; }
 
-    public string RecommentedString { get; set; } = string.Empty;
+    public string RecommendedFixedMsg { get; set; } = string.Empty;
+
+    public string RecommendedString { get; set; } = string.Empty;
 
     public bool BoolDecision { get; set; }
 

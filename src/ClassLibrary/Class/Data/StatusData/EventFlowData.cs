@@ -9,7 +9,7 @@ public class EventFlowData : ICloneable
 
     public int CurrentPlayerNumber => this.eventFlow.CurrentPlayerNumber;
 
-    public string RecommentedString => this.eventFlow.RecommentedString;
+    public string RecommentedString => this.eventFlow.RecommendedString;
 
     public bool BoolDecision => this.eventFlow.BoolDecision;
 

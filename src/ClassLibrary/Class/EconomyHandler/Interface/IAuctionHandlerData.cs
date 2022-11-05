@@ -7,4 +7,6 @@ public interface IAuctionHandlerData
     public int? FinalPrice { get; }
 
     public int? WinnerNumber { get; }
+
+    public int NextParticipantNumber { get; }
 }

@@ -19,7 +19,8 @@ public class Game
     private EventFlow eventFlow;
     private DataCenter dataCenter;
     public BoolCopier boolCopier;
-    private Event testEvent2;
+    private MainEvent mainEvent;
+    private AuctionEvent auctionEvent;
 
     public Game(bool isBoardSmall)
     {
@@ -39,7 +40,11 @@ public class Game
 
         this.dataCenter = this.GenerateDataCenter();
         this.SetBoardInfo();
-        this.testEvent2 = this.GetTestEvent2();
+        this.mainEvent = this.GetTestEvent2();
+        this.auctionEvent = new AuctionEvent(this.dataCenter, this.eventFlow, this.delegator);
+
+        this.delegator.Attach(mainEvent);
+        this.delegator.Attach(auctionEvent);
     }
 
     public DataCenter Data => (DataCenter)this.dataCenter.Clone();
@@ -61,8 +66,8 @@ public class Game
         this.boardHandler.SetInfo(this.dataCenter.TileDatas);
     }
 
-    public Event GetTestEvent2()
+    public MainEvent GetTestEvent2()
     {
-        return new Event(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
+        return new MainEvent(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
     }
 }
