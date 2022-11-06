@@ -1,7 +1,7 @@
 public class Delegator : IDelegator
 {
     private DelEvent? nextEvent;
-    private List<IResponseToSwitchEvent> events = new List<IResponseToSwitchEvent>();
+    private List<IVisitor> events = new List<IVisitor>();
 
     public delegate void DelEvent();
 
@@ -9,19 +9,6 @@ public class Delegator : IDelegator
     {
         DelEvent receivedEvent = new DelEvent(gameEvent);
         this.nextEvent = receivedEvent;
-    }
-
-    public void Attach(IResponseToSwitchEvent gameEvent)
-    {
-        this.events.Add(gameEvent);
-    }
-
-    public void SwitchEvent(EventType fromEvent, EventType toEvent)
-    {
-        foreach (var gameEvent in this.events)
-        {
-            gameEvent.ResponseToSwitchEvent(fromEvent, toEvent);
-        }
     }
 
     public void RunEvent()

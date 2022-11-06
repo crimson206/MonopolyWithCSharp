@@ -1,21 +1,13 @@
-public class AuctionEvent : IResponseToSwitchEvent
+public class AuctionEvent : IResponseToSwitchEvent, ISetAuctionEventData, IVisitor
 {
     private IDelegator delegator;
-    private AuctionHandler auctionHandler = new AuctionHandler();
-    private IAuctionHandlerFunction auctionHandlerFunction => this.auctionHandler;
-    private IAuctionHandlerData auctionHandlerData => this.auctionHandler;
-    private DataCenter dataCenter;
+    private IAuctionHandlerFunction auctionHandler;
     private EventFlow eventFlow;
-
+    private List<IResponseToSwitchEvent> eventGroup = new List<IResponseToSwitchEvent>();
     private int auctionRoundCount = 0;
 
-    private List<int> balances => dataCenter.Bank.Balances;
-    private List<bool> areInGame => dataCenter.InGame.AreInGame;
-    private int currentPlayerNumber => dataCenter.EventFlow.CurrentPlayerNumber;
-    private PropertyData currentPropertyData => this.GetCurrentPropertyData();
     private List<int> participantPlayerNumbers = new List<int>();
     private int participantCount = 0;
-    private IAuctionDecisionMaker auctionDecisionMaker = new AuctionDecisionMaker();
     private int initialPrice;
     private int currentRoundPlayerNumber => this.participantPlayerNumbers[auctionRoundCount%participantCount];
     private string stringCurrentRoundPlayer => string.Format("Player{0}", this.currentRoundPlayerNumber);
@@ -23,23 +15,41 @@ public class AuctionEvent : IResponseToSwitchEvent
 
     public AuctionEvent
     (
-        DataCenter dataCenter,
+        IAuctionHandlerFunction auctionHandler,
         EventFlow eventFlow,
         IDelegator delegator
     )
     {
-        this.dataCenter = dataCenter;
+        this.auctionHandler = auctionHandler;
         this.delegator = delegator;
         this.eventFlow = eventFlow;
     }
 
-    public IAuctionHandlerData AuctionHandlerData => this.auctionHandlerData;
+    public List<int> Balances { private get; set; } = new List<int>();
+
+    public List<bool> AreInGame { private get; set; } = new List<bool>();
+
+    public int CurrentPlayerNumber { private get; set; }
+    public PropertyData? CurrentPropertyData { private get; set; }
+
+    public int PlayerIntDecision { private get; set; }
+
+    public IAuctionHandlerData? AuctionHandlerData { private get; set; }
 
     public string RecommendedString { get; private set; } = string.Empty;
 
+    public void Visit(IElement element)
+    {
+        DataCenter dataCenter = (DataCenter)element;
+
+    }
+
     private void SwitchEvent(EventType fromEvent, EventType toEvent)
     {
-        this.delegator.SwitchEvent(fromEvent, toEvent);
+        foreach (var gameEvent in this.eventGroup)
+        {
+            gameEvent.ResponseToSwitchEvent(fromEvent, toEvent);
+        }
     }
 
     public void ResponseToSwitchEvent(EventType fromEvent, EventType toEvent)
@@ -52,14 +62,14 @@ public class AuctionEvent : IResponseToSwitchEvent
 
     private void StartAuction()
     {
-        this.eventFlow.RecommendedString = string.Format("An auction for {0} starts", this.currentPropertyData.Name);
+        this.eventFlow.RecommendedString = string.Format("An auction for {0} starts", this.CurrentPropertyData!.Name);
         this.CallNextEvent();
     }
 
     private void SetUpAuction()
     {
-        this.participantCount = this.areInGame.Where(isInGame => isInGame == true).Count();
-        this.auctionHandlerFunction.SetAuctionCondition(this.participantPlayerNumbers, initialPrice);
+        this.participantCount = this.AreInGame.Where(isInGame => isInGame == true).Count();
+        this.auctionHandler.SetAuctionCondition(this.participantPlayerNumbers, initialPrice);
         this.SetParticipantPlayerNumbers();
         
         this.eventFlow.RecommendedString = this.CreateParticipantsString() + " joined in the auction";
@@ -69,8 +79,8 @@ public class AuctionEvent : IResponseToSwitchEvent
 
     private void DecideInitialPrice()
     {
-        int currentPlayersBalance = this.balances[currentPlayerNumber];
-        int currentPropertysPrice = this.currentPropertyData.Price;
+        int currentPlayersBalance = this.Balances[CurrentPlayerNumber];
+        int currentPropertysPrice = this.CurrentPropertyData!.Price;
 
         if (currentPlayersBalance < currentPropertysPrice)
         {
@@ -80,7 +90,7 @@ public class AuctionEvent : IResponseToSwitchEvent
         else
         {
             this.initialPrice = currentPropertysPrice;
-            this.eventFlow.RecommendedString = string.Format("The initial price is {0} ", this.currentPropertyData.Price);
+            this.eventFlow.RecommendedString = string.Format("The initial price is {0} ", this.CurrentPropertyData.Price);
         }
 
         this.CallNextEvent();
@@ -88,8 +98,8 @@ public class AuctionEvent : IResponseToSwitchEvent
 
     private void SuggestPriceInTurn()
     {
-        int participantNumber = this.auctionHandlerData.NextParticipantNumber;
-        int suggestedPrice = this.auctionDecisionMaker.SuggestPrice(participantNumber);
+        int participantNumber = this.AuctionHandlerData!.NextParticipantNumber;
+        int suggestedPrice = this.PlayerIntDecision;
         this.auctionHandler.SuggestNewPriceInTurn(suggestedPrice);
 
         this.eventFlow.RecommendedString = string.Format("Player {0} suggested {1}", participantNumber, suggestedPrice);
@@ -100,28 +110,20 @@ public class AuctionEvent : IResponseToSwitchEvent
     private void EndAuction()
     {
         this.eventFlow.RecommendedString = string.Format("Player {0} won the auction at {1}", 
-                                            this.auctionHandlerData.WinnerNumber, this.auctionHandlerData.FinalPrice);
+                                            this.AuctionHandlerData!.WinnerNumber, this.AuctionHandlerData.FinalPrice);
     }
 
     private void SetParticipantPlayerNumbers()
     {
         int index = 0;
-        foreach (var participant in this.areInGame)
+        foreach (var participant in this.AreInGame)
         {
-            if(areInGame[index])
+            if(AreInGame[index])
             {
                 this.participantPlayerNumbers.Add(index);
             }
             index++;
         }
-    }
-
-    private PropertyData GetCurrentPropertyData()
-    {
-        int positionOfCurrentPlayer = this.dataCenter.Board.PlayerPositions[this.currentRoundPlayerNumber];
-        PropertyData currentPropertyData = (PropertyData)this.dataCenter.TileDatas[positionOfCurrentPlayer];
-
-        return currentPropertyData;
     }
 
     private string CreateParticipantsString()
@@ -154,7 +156,7 @@ public class AuctionEvent : IResponseToSwitchEvent
 
     private string CreateParticipantNumbersString()
     {
-        Dictionary<int, int> suggestedPrices = this.auctionHandlerData.SuggestedPrices;
+        Dictionary<int, int> suggestedPrices = this.AuctionHandlerData!.SuggestedPrices;
         return this.ConvertIntListToString(suggestedPrices.Values.ToList());
     }
 
@@ -176,7 +178,7 @@ public class AuctionEvent : IResponseToSwitchEvent
 
         if (this.lastEvent == this.SuggestPriceInTurn)
         {
-            if (this.auctionHandlerData.IsAuctionOn)
+            if (this.AuctionHandlerData!.IsAuctionOn)
             {
                 this.delegator.SetNextEvent(this.SuggestPriceInTurn);
 
@@ -198,5 +200,14 @@ public class AuctionEvent : IResponseToSwitchEvent
     {
         this.lastEvent = nextEvent;
         this.delegator.SetNextEvent(nextEvent);
+    }
+
+    public void UpdataData(IDataCenter dataCenter)
+    {
+        this.AuctionHandlerData = dataCenter.AuctionHandler;
+        this.Balances = dataCenter.Bank.Balances;
+        this.CurrentPlayerNumber = dataCenter.EventFlow.CurrentPlayerNumber;
+        this.AreInGame = dataCenter.InGame.AreInGame;
+        this.CurrentPropertyData = (PropertyData)dataCenter.CurrentTileData;
     }
 }

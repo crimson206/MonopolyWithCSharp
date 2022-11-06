@@ -15,6 +15,7 @@ public class MainEvent : IResponseToSwitchEvent
     private Tile currentTile => this.GetCurrentTile();
     private bool rolledDouble => this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
     private bool boughtProperty;
+    private List<IResponseToSwitchEvent> eventGroup = new List<IResponseToSwitchEvent>();
 
     public MainEvent
     (BankHandler bankHandler,
@@ -55,9 +56,12 @@ public class MainEvent : IResponseToSwitchEvent
         }
     }
 
-    protected void SwitchEvent(EventType fromEvent, EventType toEvent)
+    private void SwitchEvent(EventType fromEvent, EventType toEvent)
     {
-        this.delegator.SwitchEvent(fromEvent, toEvent);
+        foreach (var gameEvent in this.eventGroup)
+        {
+            gameEvent.ResponseToSwitchEvent(fromEvent, toEvent);
+        }
     }
 
     private void CallNextEvent()

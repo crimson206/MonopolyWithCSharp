@@ -17,8 +17,6 @@ public class EventFlowData : ICloneable
 
     public bool AskedEventManualBoolDecision => this.eventFlow.AskedManualBoolDecision;
 
-    public bool ChangedNoticeably => this.eventFlow.ChangedNoticeably;
-
     public object Clone()
     {
         EventFlowData clone = (EventFlowData)this.MemberwiseClone();

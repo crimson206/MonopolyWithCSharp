@@ -13,9 +13,8 @@ namespace Tests
         [TestMethod]
         public void RoughTestForWholeProcess()
         {
-            Delegator delegatorr = new Delegator();
+            Delegator delegator = new Delegator();
             EventFlow eventFlow = new EventFlow();
-
         }
     }
 }

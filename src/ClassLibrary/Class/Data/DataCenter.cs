@@ -1,4 +1,4 @@
-public class DataCenter : ICloneable
+public class DataCenter : ICloneable, IDataCenter
 {
     private IBankHandlerData bank;
     private IBoardHandlerData board;
@@ -6,6 +6,7 @@ public class DataCenter : ICloneable
     private IJailHandlerData jail;
     private IInGameHandlerData inGame;
     private List<TileData> tileDatas;
+    private IAuctionHandlerData auctionHandler;
     private EventFlowData eventFlowData;
 
     public DataCenter(
@@ -14,6 +15,7 @@ public class DataCenter : ICloneable
         IDoubleSideEffectHandlerData doubleSideEffectData,
         IJailHandlerData jailData,
         IInGameHandlerData inGameData,
+        IAuctionHandlerData auctionHandlerData,
         TileManager tileManager,
         EventFlowData eventFlowData
         )
@@ -24,6 +26,7 @@ public class DataCenter : ICloneable
         this.jail = jailData;
         this.tileDatas = tileManager.TileDatas;
         this.inGame = inGameData;
+        this.auctionHandler = auctionHandlerData;
         this.eventFlowData = eventFlowData;
     }
 
@@ -36,9 +39,16 @@ public class DataCenter : ICloneable
     public IJailHandlerData Jail => this.jail;
     public IInGameHandlerData InGame => this.inGame;
     public EventFlowData EventFlow => (EventFlowData)this.eventFlowData.Clone();
-
+    public IAuctionHandlerData AuctionHandler => this.auctionHandler;
     public List<TileData> TileDatas => new List<TileData>(this.tileDatas);
-
+    public TileData CurrentTileData => this.GetCurrentTileData();
+    private TileData GetCurrentTileData()
+    {
+        int currentPlayerNumber = this.eventFlowData.CurrentPlayerNumber;
+        int currentPlayerPosition = this.board.PlayerPositions[currentPlayerNumber];
+        TileData currentTile = this.tileDatas[currentPlayerPosition];
+        return currentTile;
+    }
     public object Clone()
     {
         /// without cast, the type of clone is ICloneable
