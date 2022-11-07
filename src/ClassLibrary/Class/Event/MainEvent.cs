@@ -1,4 +1,4 @@
-public class MainEvent : IResponseToSwitchEvent
+public class MainEvent
 {
     private BankHandler bankHandler;
     private BoardHandler boardHandler;
@@ -8,6 +8,7 @@ public class MainEvent : IResponseToSwitchEvent
     private EventFlow eventFlow;
     private Delegator delegator;
     private BoolCopier boolCopier = new BoolCopier();
+    private Events? events;
     private Random random = new Random();
     private DecisionMakerDummy decisionMaker = new DecisionMakerDummy();
     private bool isDoubleSideEffectOn = true;
@@ -15,7 +16,7 @@ public class MainEvent : IResponseToSwitchEvent
     private Tile currentTile => this.GetCurrentTile();
     private bool rolledDouble => this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
     private bool boughtProperty;
-    private List<IResponseToSwitchEvent> eventGroup = new List<IResponseToSwitchEvent>();
+
 
     public MainEvent
     (BankHandler bankHandler,
@@ -43,25 +44,11 @@ public class MainEvent : IResponseToSwitchEvent
 
     private Action lastEvent;
 
-    public void ResponseToSwitchEvent(EventType fromEvent, EventType toEvent)
-    {
-        if (toEvent != EventType.MainEvent)
-        {
-            return;
-        }
 
-        if (fromEvent != EventType.AuctionEvent)
-        {
-            this.CallNextEvent();
-        }
-    }
 
-    private void SwitchEvent(EventType fromEvent, EventType toEvent)
+    public void SetEvents(Events events)
     {
-        foreach (var gameEvent in this.eventGroup)
-        {
-            gameEvent.ResponseToSwitchEvent(fromEvent, toEvent);
-        }
+        this.events = events;
     }
 
     private void CallNextEvent()
@@ -265,7 +252,7 @@ public class MainEvent : IResponseToSwitchEvent
 
         if (this.lastEvent == this.DontPurchaseProperty)
         {
-            this.SwitchEvent(EventType.MainEvent, EventType.AuctionEvent);
+            this.AddNextEvent(this.events!.AuctionEvent.StartAuction);
             return;
         }
 

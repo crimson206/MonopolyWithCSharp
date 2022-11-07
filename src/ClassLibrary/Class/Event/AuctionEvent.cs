@@ -1,9 +1,10 @@
-public class AuctionEvent : IResponseToSwitchEvent, ISetAuctionEventData, IVisitor
+public class AuctionEvent
 {
-    private IDelegator delegator;
+    private Delegator delegator;
     private IAuctionHandlerFunction auctionHandler;
     private EventFlow eventFlow;
-    private List<IResponseToSwitchEvent> eventGroup = new List<IResponseToSwitchEvent>();
+    private Events? events;
+    private DataCenter dataCenter;
     private int auctionRoundCount = 0;
 
     private List<int> participantPlayerNumbers = new List<int>();
@@ -12,55 +13,39 @@ public class AuctionEvent : IResponseToSwitchEvent, ISetAuctionEventData, IVisit
     private int currentRoundPlayerNumber => this.participantPlayerNumbers[auctionRoundCount%participantCount];
     private string stringCurrentRoundPlayer => string.Format("Player{0}", this.currentRoundPlayerNumber);
     private Action? lastEvent;
+    private AuctionDecisionMaker auctionDecisionMaker;
 
     public AuctionEvent
     (
-        IAuctionHandlerFunction auctionHandler,
+        DataCenter dataCenter,
+        AuctionHandler auctionHandler,
         EventFlow eventFlow,
-        IDelegator delegator
+        Delegator delegator,
+        AuctionDecisionMaker auctionDecisionMaker
     )
     {
         this.auctionHandler = auctionHandler;
         this.delegator = delegator;
         this.eventFlow = eventFlow;
+        this.dataCenter = dataCenter;
+        this.auctionDecisionMaker = auctionDecisionMaker;
     }
 
-    public List<int> Balances { private get; set; } = new List<int>();
+    public List<int> Balances => this.dataCenter.Bank.Balances;
 
-    public List<bool> AreInGame { private get; set; } = new List<bool>();
+    public List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
 
-    public int CurrentPlayerNumber { private get; set; }
-    public PropertyData? CurrentPropertyData { private get; set; }
-
-    public int PlayerIntDecision { private get; set; }
-
-    public IAuctionHandlerData? AuctionHandlerData { private get; set; }
+    public int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
+    public PropertyData? CurrentPropertyData => (PropertyData)this.dataCenter.CurrentTileData;
 
     public string RecommendedString { get; private set; } = string.Empty;
 
-    public void Visit(IElement element)
+    public void SetEvents(Events events)
     {
-        DataCenter dataCenter = (DataCenter)element;
-
+        this.events = events;
     }
 
-    private void SwitchEvent(EventType fromEvent, EventType toEvent)
-    {
-        foreach (var gameEvent in this.eventGroup)
-        {
-            gameEvent.ResponseToSwitchEvent(fromEvent, toEvent);
-        }
-    }
-
-    public void ResponseToSwitchEvent(EventType fromEvent, EventType toEvent)
-    {
-        if (toEvent is EventType.AuctionEvent)
-        {
-            this.delegator.SetNextEvent(this.StartAuction);
-        }
-    }
-
-    private void StartAuction()
+    public void StartAuction()
     {
         this.eventFlow.RecommendedString = string.Format("An auction for {0} starts", this.CurrentPropertyData!.Name);
         this.CallNextEvent();
@@ -98,8 +83,8 @@ public class AuctionEvent : IResponseToSwitchEvent, ISetAuctionEventData, IVisit
 
     private void SuggestPriceInTurn()
     {
-        int participantNumber = this.AuctionHandlerData!.NextParticipantNumber;
-        int suggestedPrice = this.PlayerIntDecision;
+        int participantNumber = this.dataCenter.AuctionHandler.NextParticipantNumber;
+        int suggestedPrice = this.auctionDecisionMaker.SuggestPrice(participantNumber);
         this.auctionHandler.SuggestNewPriceInTurn(suggestedPrice);
 
         this.eventFlow.RecommendedString = string.Format("Player {0} suggested {1}", participantNumber, suggestedPrice);
@@ -109,8 +94,11 @@ public class AuctionEvent : IResponseToSwitchEvent, ISetAuctionEventData, IVisit
 
     private void EndAuction()
     {
+        int? winnerNumber = this.dataCenter.AuctionHandler.WinnerNumber;
+        int? finalPrice = this.dataCenter.AuctionHandler.FinalPrice;
+
         this.eventFlow.RecommendedString = string.Format("Player {0} won the auction at {1}", 
-                                            this.AuctionHandlerData!.WinnerNumber, this.AuctionHandlerData.FinalPrice);
+                                            winnerNumber, finalPrice);
     }
 
     private void SetParticipantPlayerNumbers()
@@ -156,7 +144,7 @@ public class AuctionEvent : IResponseToSwitchEvent, ISetAuctionEventData, IVisit
 
     private string CreateParticipantNumbersString()
     {
-        Dictionary<int, int> suggestedPrices = this.AuctionHandlerData!.SuggestedPrices;
+        Dictionary<int, int> suggestedPrices = this.dataCenter.AuctionHandler.SuggestedPrices;
         return this.ConvertIntListToString(suggestedPrices.Values.ToList());
     }
 
@@ -178,7 +166,7 @@ public class AuctionEvent : IResponseToSwitchEvent, ISetAuctionEventData, IVisit
 
         if (this.lastEvent == this.SuggestPriceInTurn)
         {
-            if (this.AuctionHandlerData!.IsAuctionOn)
+            if (this.dataCenter.AuctionHandler.IsAuctionOn)
             {
                 this.delegator.SetNextEvent(this.SuggestPriceInTurn);
 
@@ -192,7 +180,7 @@ public class AuctionEvent : IResponseToSwitchEvent, ISetAuctionEventData, IVisit
 
         if (this.lastEvent == this.EndAuction)
         {
-            this.SwitchEvent(EventType.AuctionEvent, EventType.MainEvent);
+            this.delegator.SetNextEvent(this.events!.MainEvent.CheckExtraTurn);
         }
     }
 
@@ -202,12 +190,4 @@ public class AuctionEvent : IResponseToSwitchEvent, ISetAuctionEventData, IVisit
         this.delegator.SetNextEvent(nextEvent);
     }
 
-    public void UpdataData(IDataCenter dataCenter)
-    {
-        this.AuctionHandlerData = dataCenter.AuctionHandler;
-        this.Balances = dataCenter.Bank.Balances;
-        this.CurrentPlayerNumber = dataCenter.EventFlow.CurrentPlayerNumber;
-        this.AreInGame = dataCenter.InGame.AreInGame;
-        this.CurrentPropertyData = (PropertyData)dataCenter.CurrentTileData;
-    }
 }

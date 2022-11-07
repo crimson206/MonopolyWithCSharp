@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 /// <summary>
-///
+/// Game
 /// </summary>
 public class Game
 {
@@ -21,6 +21,8 @@ public class Game
     public BoolCopier boolCopier;
     private MainEvent mainEvent;
     private AuctionEvent auctionEvent;
+    private AuctionHandler auctionHandler;
+    private AuctionDecisionMaker auctionDecisionMaker;
 
     public Game(bool isBoardSmall)
     {
@@ -31,20 +33,20 @@ public class Game
         this.delegator = new Delegator();
         this.eventFlow = new EventFlow();
         this.jailHandler = new JailHandler();
+        this.auctionHandler = new AuctionHandler();
         this.inGameHandler = new InGameHandler(joinedPlayerNumber:4);
-
+        this.auctionDecisionMaker = new AuctionDecisionMaker();
         int boardSize = this.tileManager.TileDatas.Count();
         int goPosition = (from tile in this.tileManager.Tiles where tile is Go select this.tileManager.Tiles.IndexOf(tile)).ToList()[0];
 
         this.boardHandler = new BoardHandler();
-
         this.dataCenter = this.GenerateDataCenter();
         this.SetBoardInfo();
-        this.mainEvent = this.GetTestEvent2();
-        this.auctionEvent = new AuctionEvent(this.dataCenter, this.eventFlow, this.delegator);
-
-        this.delegator.Attach(mainEvent);
-        this.delegator.Attach(auctionEvent);
+        this.mainEvent = this.GetMainEvent();
+        this.auctionEvent = new AuctionEvent(this.dataCenter, this.auctionHandler, this.eventFlow, this.delegator, this.auctionDecisionMaker);
+        Events events = new Events(this.mainEvent, this.auctionEvent);
+        this.mainEvent.SetEvents(events);
+        this.auctionEvent.SetEvents(events);
     }
 
     public DataCenter Data => (DataCenter)this.dataCenter.Clone();
@@ -57,8 +59,7 @@ public class Game
     private DataCenter GenerateDataCenter()
     {
         EventFlowData eventFlowData = new EventFlowData(this.eventFlow);
-
-        return new DataCenter(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.jailHandler, this.inGameHandler, this.tileManager, eventFlowData);
+        return new DataCenter(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.jailHandler, this.inGameHandler, this.auctionHandler, this.tileManager, eventFlowData);
     }
 
     private void SetBoardInfo()
@@ -66,7 +67,7 @@ public class Game
         this.boardHandler.SetInfo(this.dataCenter.TileDatas);
     }
 
-    public MainEvent GetTestEvent2()
+    public MainEvent GetMainEvent()
     {
         return new MainEvent(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
     }

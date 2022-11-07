@@ -1,4 +1,4 @@
-public class Delegator : IDelegator
+public class Delegator
 {
     private DelEvent? nextEvent;
     private List<IVisitor> events = new List<IVisitor>();
