@@ -5,14 +5,11 @@ public class AuctionEvent
     private EventFlow eventFlow;
     private Events? events;
     private DataCenter dataCenter;
-    private int auctionRoundCount = 0;
 
     private List<int> participantPlayerNumbers = new List<int>();
-    private int participantCount = 0;
+    private int participantCount => this.AreInGame.Where(isInGame => isInGame == true).Count();
     private int initialPrice;
-    private int currentRoundPlayerNumber => this.participantPlayerNumbers[auctionRoundCount%participantCount];
-    private string stringCurrentRoundPlayer => string.Format("Player{0}", this.currentRoundPlayerNumber);
-    private Action? lastEvent;
+    private Action lastEvent;
     private AuctionDecisionMaker auctionDecisionMaker;
 
     public AuctionEvent
@@ -29,6 +26,7 @@ public class AuctionEvent
         this.eventFlow = eventFlow;
         this.dataCenter = dataCenter;
         this.auctionDecisionMaker = auctionDecisionMaker;
+        this.lastEvent = this.StartAuction;
     }
 
     public List<int> Balances => this.dataCenter.Bank.Balances;
@@ -53,10 +51,9 @@ public class AuctionEvent
 
     private void SetUpAuction()
     {
-        this.participantCount = this.AreInGame.Where(isInGame => isInGame == true).Count();
-        this.auctionHandler.SetAuctionCondition(this.participantPlayerNumbers, initialPrice);
         this.SetParticipantPlayerNumbers();
-        
+        this.auctionHandler.SetAuctionCondition(this.participantPlayerNumbers, initialPrice);
+
         this.eventFlow.RecommendedString = this.CreateParticipantsString() + " joined in the auction";
 
         this.CallNextEvent();
@@ -99,19 +96,23 @@ public class AuctionEvent
 
         this.eventFlow.RecommendedString = string.Format("Player {0} won the auction at {1}", 
                                             winnerNumber, finalPrice);
+        this.CallNextEvent();
     }
 
     private void SetParticipantPlayerNumbers()
     {
-        int index = 0;
-        foreach (var participant in this.AreInGame)
+        this.participantPlayerNumbers.Clear();
+        int playerNumber = this.CurrentPlayerNumber;
+
+        for (int i = 0; i < this.AreInGame.Count(); i++)
         {
-            if(AreInGame[index])
+            if (AreInGame[playerNumber] is true)
             {
-                this.participantPlayerNumbers.Add(index);
+                this.participantPlayerNumbers.Add(playerNumber);
             }
-            index++;
+            playerNumber = (playerNumber + 1) % this.AreInGame.Count();
         }
+
     }
 
     private string CreateParticipantsString()
@@ -122,9 +123,6 @@ public class AuctionEvent
         {
             players += item.ToString() + ", ";
         }
-
-        players.Remove(-2, 2);
-
         return players;
     }
 
@@ -152,42 +150,46 @@ public class AuctionEvent
     {
         if (this.lastEvent == this.StartAuction)
         {
-            this.delegator.SetNextEvent(this.DecideInitialPrice);
+            this.AddNextEvent(this.DecideInitialPrice);
 
             return;
         }
 
         if (this.lastEvent == this.DecideInitialPrice)
         {
-            this.delegator.SetNextEvent(this.SetUpAuction);
+            this.AddNextEvent(this.SetUpAuction);
 
             return;
+        }
+
+        if (this.lastEvent == this.SetUpAuction)
+        {
+            this.AddNextEvent(this.SuggestPriceInTurn);
         }
 
         if (this.lastEvent == this.SuggestPriceInTurn)
         {
             if (this.dataCenter.AuctionHandler.IsAuctionOn)
             {
-                this.delegator.SetNextEvent(this.SuggestPriceInTurn);
+                this.AddNextEvent(this.SuggestPriceInTurn);
 
                 return;
             }
             else
             {
-                this.delegator.SetNextEvent(this.EndAuction);
+                this.AddNextEvent(this.EndAuction);
             }
         }
 
         if (this.lastEvent == this.EndAuction)
         {
-            this.delegator.SetNextEvent(this.events!.MainEvent.CheckExtraTurn);
+            this.events!.MainEvent.AddNextEvent(this.events!.MainEvent.CheckExtraTurn);
         }
     }
 
-    private void AddNextEvent(Action nextEvent)
+    public void AddNextEvent(Action nextEvent)
     {
         this.lastEvent = nextEvent;
         this.delegator.SetNextEvent(nextEvent);
     }
-
 }

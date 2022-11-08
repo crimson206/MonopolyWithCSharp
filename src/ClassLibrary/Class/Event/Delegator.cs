@@ -1,5 +1,6 @@
 public class Delegator
 {
+    private DelEvent? reservedEvent;
     private DelEvent? nextEvent;
     private List<IVisitor> events = new List<IVisitor>();
 
@@ -8,11 +9,13 @@ public class Delegator
     public void SetNextEvent(Action gameEvent)
     {
         DelEvent receivedEvent = new DelEvent(gameEvent);
-        this.nextEvent = receivedEvent;
+        this.reservedEvent = receivedEvent;
     }
 
     public void RunEvent()
     {
+        this.nextEvent = this.reservedEvent;
+        this.reservedEvent = null;
         this.nextEvent!();
     }
 }

@@ -252,7 +252,7 @@ public class MainEvent
 
         if (this.lastEvent == this.DontPurchaseProperty)
         {
-            this.AddNextEvent(this.events!.AuctionEvent.StartAuction);
+            this.events!.AuctionEvent.AddNextEvent(this.events!.AuctionEvent.StartAuction);
             return;
         }
 
@@ -546,7 +546,7 @@ public class MainEvent
         return this.tileManager.Tiles[playerPosition];
     }
 
-    private void AddNextEvent(Action nextEvent)
+    public void AddNextEvent(Action nextEvent)
     {
         this.lastEvent = nextEvent;
         this.delegator.SetNextEvent(nextEvent);
