@@ -14,9 +14,6 @@ namespace Tests
             /// board has the dependency on tile manager. it must be fixed later
             TileManager tileManager = new TileManager(isBoardSmall:false);
 
-            /// set info
-            board.SetInfo(tileManager.TileDatas);
-
             Assert.AreEqual(board.GoPosition, 0);
             Assert.AreEqual(board.Size, 40);
 
@@ -37,9 +34,9 @@ namespace Tests
             /// new board size is 32
             TileManager smallMapTileManager = new TileManager(isBoardSmall:true);
             BoardHandler smallBoard = new BoardHandler();
+            smallBoard.Size = smallMapTileManager.TileDatas.Count();
 
             /// give the board
-            smallBoard.SetInfo(smallMapTileManager.TileDatas);
             Assert.AreEqual(smallBoard.GoPosition, 0);
             Assert.AreEqual(smallBoard.Size, 32);
 

@@ -5,7 +5,7 @@ public class DataCenter : ICloneable, IDataCenter
     private IDoubleSideEffectHandlerData doubleSideEffect;
     private IJailHandlerData jail;
     private IInGameHandlerData inGame;
-    private List<TileData> tileDatas;
+    private List<ITileData> tileDatas;
     private IAuctionHandlerData auctionHandler;
     private EventFlowData eventFlowData;
 
@@ -40,13 +40,13 @@ public class DataCenter : ICloneable, IDataCenter
     public IInGameHandlerData InGame => this.inGame;
     public EventFlowData EventFlow => (EventFlowData)this.eventFlowData.Clone();
     public IAuctionHandlerData AuctionHandler => this.auctionHandler;
-    public List<TileData> TileDatas => new List<TileData>(this.tileDatas);
-    public TileData CurrentTileData => this.GetCurrentTileData();
-    private TileData GetCurrentTileData()
+    public List<ITileData> TileDatas => new List<ITileData>(this.tileDatas);
+    public ITileData CurrentTileData => this.GetCurrentTileData();
+    private ITileData GetCurrentTileData()
     {
         int currentPlayerNumber = this.eventFlowData.CurrentPlayerNumber;
         int currentPlayerPosition = this.board.PlayerPositions[currentPlayerNumber];
-        TileData currentTile = this.tileDatas[currentPlayerPosition];
+        ITileData currentTile = this.tileDatas[currentPlayerPosition];
         return currentTile;
     }
     public object Clone()

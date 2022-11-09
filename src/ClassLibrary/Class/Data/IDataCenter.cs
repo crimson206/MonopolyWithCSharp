@@ -10,7 +10,7 @@ public interface IDataCenter
     public IInGameHandlerData InGame { get; }
     public EventFlowData EventFlow { get; }
 
-    public List<TileData> TileDatas { get; }
+    public List<ITileData> TileDatas { get; }
     public IAuctionHandlerData AuctionHandler { get; }
-    public TileData CurrentTileData{ get; }
+    public ITileData CurrentTileData{ get; }
 }

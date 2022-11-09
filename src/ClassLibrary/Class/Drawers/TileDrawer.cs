@@ -19,7 +19,7 @@ public class TileDrawer
         }
     }
 
-    public void DrawTiles(List<TileData> tileDatas)
+    public void DrawTiles(List<ITileData> tileDatas)
     {
         int tileSize = tileDatas.Count();
 
@@ -27,7 +27,7 @@ public class TileDrawer
         {
             Console.CursorLeft = this.tileEdgeInfo[i][0];
             Console.CursorTop = this.tileEdgeInfo[i][1];
-    	    TileData currentTileData = tileDatas[i];
+    	    ITileData currentTileData = tileDatas[i];
             string tileName = currentTileData.Name;
             List<string> splitName = tileName.Split(" ").ToList();
             int spaceCount = tileName.ToList().Count(c => c == ' ');

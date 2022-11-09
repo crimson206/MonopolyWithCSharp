@@ -40,8 +40,10 @@ public class Game
         int goPosition = (from tile in this.tileManager.Tiles where tile is Go select this.tileManager.Tiles.IndexOf(tile)).ToList()[0];
 
         this.boardHandler = new BoardHandler();
+        this.boardHandler.Size = boardSize;
+        this.boardHandler.GoPosition = goPosition;
+
         this.dataCenter = this.GenerateDataCenter();
-        this.SetBoardInfo();
         this.mainEvent = this.GetMainEvent();
         this.auctionEvent = new AuctionEvent(this.dataCenter, this.auctionHandler, this.eventFlow, this.delegator, this.auctionDecisionMaker);
         Events events = new Events(this.mainEvent, this.auctionEvent);
@@ -61,12 +63,6 @@ public class Game
         EventFlowData eventFlowData = new EventFlowData(this.eventFlow);
         return new DataCenter(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.jailHandler, this.inGameHandler, this.auctionHandler, this.tileManager, eventFlowData);
     }
-
-    private void SetBoardInfo()
-    {
-        this.boardHandler.SetInfo(this.dataCenter.TileDatas);
-    }
-
     public MainEvent GetMainEvent()
     {
         return new MainEvent(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);

@@ -7,7 +7,7 @@ public class TileManager
     private MapTilesFactory mapTilesFactory = new MapTilesFactory();
     public Analyser Analyser;
     private PropertyManager propertyManager;
-    private List<TileData> tileDatas;
+    private List<ITileData> tileDatas;
 
     /// <summary>
     /// normal tiles size = 40, smaller tiles size = 32
@@ -35,7 +35,7 @@ public class TileManager
 
     public List<Property> Properties { get => new List<Property>(this.properties); }
     public List<RealEstate> RealEstates { get => new List<RealEstate>(this.realEstates); }
-    public List<TileData> TileDatas { get => new List<TileData>(this.tileDatas); }
+    public List<ITileData> TileDatas { get => new List<ITileData>(this.tileDatas); }
     public PropertyManager PropertyManager { get => this.propertyManager; }
     private List<Tile> CreateTiles()
     {
