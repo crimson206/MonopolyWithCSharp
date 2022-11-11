@@ -4,37 +4,43 @@ public class AuctionEvent
     private IAuctionHandlerFunction auctionHandler;
     private EventFlow eventFlow;
     private Events? events;
-    private DataCenter dataCenter;
+    private IDataCenter dataCenter;
 
     private List<int> participantPlayerNumbers = new List<int>();
     private int participantCount => this.AreInGame.Where(isInGame => isInGame == true).Count();
     private int initialPrice;
     private Action lastEvent;
-    private AuctionDecisionMaker auctionDecisionMaker;
+    private IAuctionDecisionMaker auctionDecisionMaker;
+    private BankHandler bankHandler;
+    private ITileManager tileManager;
 
     public AuctionEvent
     (
-        DataCenter dataCenter,
+        StatusHandlers statusHandlers,
+        ITileManager tileManager,
+        IDataCenter dataCenter,
         AuctionHandler auctionHandler,
-        EventFlow eventFlow,
         Delegator delegator,
-        AuctionDecisionMaker auctionDecisionMaker
+        DecisionMakers decisionMakers
     )
     {
+        this.bankHandler = statusHandlers.BankHandler;
+        this.tileManager = tileManager;
         this.auctionHandler = auctionHandler;
         this.delegator = delegator;
-        this.eventFlow = eventFlow;
+        this.eventFlow = statusHandlers.EventFlow;
         this.dataCenter = dataCenter;
-        this.auctionDecisionMaker = auctionDecisionMaker;
+        this.auctionDecisionMaker = decisionMakers.AuctionDecisionMaker;
         this.lastEvent = this.StartAuction;
     }
 
-    public List<int> Balances => this.dataCenter.Bank.Balances;
+    private List<int> Balances => this.dataCenter.Bank.Balances;
 
-    public List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
+    private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
 
-    public int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
-    public PropertyData? CurrentPropertyData => (PropertyData)this.dataCenter.CurrentTileData;
+    private int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
+    private IPropertyData? CurrentPropertyData => (IPropertyData)this.dataCenter.CurrentTileData;
+    private Property CurrentProperty => this.GetCurrentProperty();
 
     public string RecommendedString { get; private set; } = string.Empty;
 
@@ -91,11 +97,12 @@ public class AuctionEvent
 
     private void EndAuction()
     {
-        int? winnerNumber = this.dataCenter.AuctionHandler.WinnerNumber;
-        int? finalPrice = this.dataCenter.AuctionHandler.FinalPrice;
+        int winnerNumber = (int)this.dataCenter.AuctionHandler.WinnerNumber!;
+        int finalPrice = (int)this.dataCenter.AuctionHandler.FinalPrice!;
+        this.bankHandler.DecreaseBalance(winnerNumber, finalPrice);
+        this.tileManager.PropertyManager.ChangeOwner(this.CurrentProperty, winnerNumber);
 
-        this.eventFlow.RecommendedString = string.Format("Player {0} won the auction at {1}", 
-                                            winnerNumber, finalPrice);
+        this.eventFlow.RecommendedString = string.Format("Player {0} bought {1}", winnerNumber, this.CurrentPropertyData!.Name);
         this.CallNextEvent();
     }
 
@@ -158,13 +165,13 @@ public class AuctionEvent
         if (this.lastEvent == this.DecideInitialPrice)
         {
             this.AddNextEvent(this.SetUpAuction);
-
             return;
         }
 
         if (this.lastEvent == this.SetUpAuction)
         {
             this.AddNextEvent(this.SuggestPriceInTurn);
+            return;
         }
 
         if (this.lastEvent == this.SuggestPriceInTurn)
@@ -178,12 +185,14 @@ public class AuctionEvent
             else
             {
                 this.AddNextEvent(this.EndAuction);
+                return;
             }
         }
 
         if (this.lastEvent == this.EndAuction)
         {
             this.events!.MainEvent.AddNextEvent(this.events!.MainEvent.CheckExtraTurn);
+            return;
         }
     }
 
@@ -191,5 +200,11 @@ public class AuctionEvent
     {
         this.lastEvent = nextEvent;
         this.delegator.SetNextEvent(nextEvent);
+    }
+
+    public Property GetCurrentProperty()
+    {
+        int currentPosition = this.dataCenter.Board.PlayerPositions[this.CurrentPlayerNumber];
+        return (Property)this.tileManager.Tiles[currentPosition];
     }
 }

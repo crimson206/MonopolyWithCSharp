@@ -1,4 +1,4 @@
-public interface IPropertyData
+public interface IPropertyData : ITileData
 {
     public int? OwnerPlayerNumber { get; }
 

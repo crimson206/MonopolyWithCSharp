@@ -38,7 +38,7 @@ public class Visualizer
     }
 
     private List<int> PlayerPositions => this.data.Board.PlayerPositions;
-    private string RecommendedString => this.data.EventFlow.RecommentedString;
+    private string RecommendedString => this.data.EventFlow.RecommendedString;
 
     public void Visualize()
     {
@@ -81,9 +81,9 @@ public class Visualizer
         this.mapDrawer.DrawMap(this.mapWidth, this.mapHeight, this.tileWidth, this.tileHeight);
 
         List<ITileData> tileDatas = this.data.TileDatas;
-        List<RealEstateData> realEstateDatas = (from tileData in tileDatas where tileData is RealEstateData select tileData as RealEstateData).ToList();
-        List<RailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
-        List<UtilityData> utilityDatas = (from tileData in tileDatas where tileData is UtilityData select tileData as UtilityData).ToList();        
+        List<IRealEstateData> realEstateDatas = (from tileData in tileDatas where tileData is IRealEstateData select tileData as IRealEstateData).ToList();
+        List<IRailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is IRailRoadData select tileData as IRailRoadData).ToList();
+        List<IUtilityData> utilityDatas = (from tileData in tileDatas where tileData is IUtilityData select tileData as IUtilityData).ToList();        
 
         this.tileDrawer!.DrawPlayers(this.PlayerPositions);
         this.tileDrawer.DrawTiles(tileDatas);
@@ -110,9 +110,9 @@ public class Visualizer
         this.mapDrawer.DrawMap(this.mapWidth, this.mapHeight, this.tileWidth, this.tileHeight);
 
         List<ITileData> tileDatas = this.data.TileDatas;
-        List<RealEstateData> realEstateDatas = (from tileData in tileDatas where tileData is RealEstateData select tileData as RealEstateData).ToList();
-        List<RailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoadData select tileData as RailRoadData).ToList();
-        List<UtilityData> utilityDatas = (from tileData in tileDatas where tileData is UtilityData select tileData as UtilityData).ToList();
+        List<IRealEstateData> realEstateDatas = (from tileData in tileDatas where tileData is RealEstate select tileData as IRealEstateData).ToList();
+        List<IRailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoad select tileData as IRailRoadData).ToList();
+        List<IUtilityData> utilityDatas = (from tileData in tileDatas where tileData is Utility select tileData as IUtilityData).ToList();
 
         this.tileDrawer!.DrawPlayers(this.PlayerPositions);
         this.tileDrawer.DrawTiles(tileDatas);
@@ -129,5 +129,19 @@ public class Visualizer
         Console.WindowHeight = this.backupWindowHeight;
         Console.BufferHeight = this.backUpBufferHeight;
         Console.BufferWidth = this.backUpBufferWidth;
+    }
+
+    private List<IRealEstateData> FilterIRealEstateData(List<ITileData> tileDatas)
+    {
+        List<IRealEstateData> realEstateDatas = new List<IRealEstateData>();
+        foreach (var tileData in tileDatas)
+        {
+            if (tileData is RealEstate)
+            {
+                IRealEstateData realEstateData = (IRealEstateData)tileData;
+                realEstateDatas.Add(realEstateData);
+            }
+        }
+        return realEstateDatas;
     }
 }

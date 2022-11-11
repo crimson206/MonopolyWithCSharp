@@ -1,4 +1,4 @@
-public class TileManager
+public class TileManager : ITileManager
 {
     private List<Tile> tiles;
     private List<Property> properties;
@@ -6,7 +6,7 @@ public class TileManager
     private Random random = new Random();
     private MapTilesFactory mapTilesFactory = new MapTilesFactory();
     public Analyser Analyser;
-    private PropertyManager propertyManager;
+    private IPropertyManager propertyManager;
     private List<ITileData> tileDatas;
 
     /// <summary>
@@ -36,7 +36,7 @@ public class TileManager
     public List<Property> Properties { get => new List<Property>(this.properties); }
     public List<RealEstate> RealEstates { get => new List<RealEstate>(this.realEstates); }
     public List<ITileData> TileDatas { get => new List<ITileData>(this.tileDatas); }
-    public PropertyManager PropertyManager { get => this.propertyManager; }
+    public IPropertyManager PropertyManager { get => this.propertyManager; }
     private List<Tile> CreateTiles()
     {
         return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3, true, 0, 10, 20, 30);

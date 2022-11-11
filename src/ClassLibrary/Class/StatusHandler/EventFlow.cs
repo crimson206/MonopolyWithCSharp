@@ -1,5 +1,6 @@
-public class EventFlow
+public class EventFlow : IEventFlowData
 {
+
     public int CurrentPlayerNumber { get; set; }
 
     public string RecommendedString { get; set; } = string.Empty;

@@ -8,7 +8,7 @@ public interface IDataCenter
 
     public IJailHandlerData Jail { get; }
     public IInGameHandlerData InGame { get; }
-    public EventFlowData EventFlow { get; }
+    public IEventFlowData EventFlow { get; }
 
     public List<ITileData> TileDatas { get; }
     public IAuctionHandlerData AuctionHandler { get; }

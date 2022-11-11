@@ -10,48 +10,40 @@ public class Game
 {
 
     private Delegator delegator;
-    private BankHandler bankHandler;
     private TileManager tileManager;
-    private DoubleSideEffectHandler doubleSideEffectHandler;
-    private JailHandler jailHandler;
-    private BoardHandler boardHandler;
-    private InGameHandler inGameHandler;
-    private EventFlow eventFlow;
+    private StatusHandlers statusHandlers = new StatusHandlers();
     private DataCenter dataCenter;
     public BoolCopier boolCopier;
     private MainEvent mainEvent;
     private AuctionEvent auctionEvent;
     private AuctionHandler auctionHandler;
-    private AuctionDecisionMaker auctionDecisionMaker;
+    private DecisionMakers decisionMakers;
 
     public Game(bool isBoardSmall)
     {
-        this.bankHandler = new BankHandler();
         this.tileManager = new TileManager(isBoardSmall);
         this.boolCopier = new BoolCopier();
-        this.doubleSideEffectHandler = new DoubleSideEffectHandler();
         this.delegator = new Delegator();
-        this.eventFlow = new EventFlow();
-        this.jailHandler = new JailHandler();
         this.auctionHandler = new AuctionHandler();
-        this.inGameHandler = new InGameHandler(joinedPlayerNumber:4);
-        this.auctionDecisionMaker = new AuctionDecisionMaker();
+        this.decisionMakers = new DecisionMakers();
+
         int boardSize = this.tileManager.TileDatas.Count();
         int goPosition = (from tile in this.tileManager.Tiles where tile is Go select this.tileManager.Tiles.IndexOf(tile)).ToList()[0];
 
-        this.boardHandler = new BoardHandler();
-        this.boardHandler.Size = boardSize;
-        this.boardHandler.GoPosition = goPosition;
+        this.statusHandlers.BoardHandler.Size = boardSize;
+        this.statusHandlers.BoardHandler.GoPosition = goPosition;
 
         this.dataCenter = this.GenerateDataCenter();
         this.mainEvent = this.GetMainEvent();
-        this.auctionEvent = new AuctionEvent(this.dataCenter, this.auctionHandler, this.eventFlow, this.delegator, this.auctionDecisionMaker);
+
+        this.auctionEvent = new AuctionEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.auctionHandler, this.delegator, this.decisionMakers);
+
         Events events = new Events(this.mainEvent, this.auctionEvent);
         this.mainEvent.SetEvents(events);
         this.auctionEvent.SetEvents(events);
     }
 
-    public DataCenter Data => (DataCenter)this.dataCenter.Clone();
+    public DataCenter Data => this.dataCenter;
 
     public void Run()
     {
@@ -60,11 +52,10 @@ public class Game
 
     private DataCenter GenerateDataCenter()
     {
-        EventFlowData eventFlowData = new EventFlowData(this.eventFlow);
-        return new DataCenter(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.jailHandler, this.inGameHandler, this.auctionHandler, this.tileManager, eventFlowData);
+        return new DataCenter(this.statusHandlers, this.auctionHandler, this.tileManager);
     }
     public MainEvent GetMainEvent()
     {
-        return new MainEvent(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
+        return new MainEvent(this.statusHandlers, this.tileManager, this.decisionMakers, this.delegator, new Dice(), new Random());
     }
 }

@@ -170,6 +170,13 @@ public class MapDrawer
     /// </code>
     /// </example>
 
+    public int[] CreateRequiredWindowWidthAndHeight(int mapWidth, int mapHeight, int tileWidth, int tileHeight)
+    {
+        int requiredWindowWidth = mapWidth * (tileWidth + 1) + 1;
+        int requiredWindowHeight = mapHeight * (tileHeight + 1) + 1;
+        return new int[] { requiredWindowWidth, requiredWindowHeight };
+    }
+
     public void Test(int mapWidth, int mapHeight, int tileWidth, int tileHeight)
     {
         this.DrawMap(mapWidth, mapHeight, tileWidth, tileHeight);

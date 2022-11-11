@@ -6,9 +6,9 @@
 /// <summary>
 /// This class represents dice.
 /// </summary>
-public class Dice
+public class Dice : IDice
 {
-    public static int[] Roll(Random random)
+    public int[] Roll(Random random)
     {
         int[] rollResult = new int[] { random.Next(1, 7), random.Next(1, 7) };
         return rollResult;

@@ -34,9 +34,9 @@ public class TileDrawer
 
             for (int j = 0; j < spaceCount + 1; j++)
             {
-                if (currentTileData is RealEstateData)
+                if (currentTileData is IRealEstateData)
                 {
-                    RealEstateData realEstateData = (RealEstateData)currentTileData;
+                    IRealEstateData realEstateData = (IRealEstateData)currentTileData;
                     string color = realEstateData.Color;
                     this.stringConverter.WriteStringWithColorAtCenter(splitName[j], color, 13);
                 }

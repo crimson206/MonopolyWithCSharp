@@ -1,4 +1,4 @@
-public class PropertyPurchaseDecisionMaker
+public class PropertyPurchaseDecisionMaker : IPropertyPurchaseDecisionMaker
 {
     private Random random = new Random();
 

@@ -2,15 +2,16 @@ public class MainEvent
 {
     private BankHandler bankHandler;
     private BoardHandler boardHandler;
+    private IDice dice;
     private DoubleSideEffectHandler doubleSideEffectHandler;
-    private TileManager tileManager;
+    private ITileManager tileManager;
     private JailHandler jailHandler;
     private EventFlow eventFlow;
     private Delegator delegator;
     private BoolCopier boolCopier = new BoolCopier();
     private Events? events;
-    private Random random = new Random();
-    private DecisionMakerDummy decisionMaker = new DecisionMakerDummy();
+    private Random random;
+    private DecisionMakers decisionMakers;
     private bool isDoubleSideEffectOn = true;
     private bool isAbleToMove = true;
     private Tile currentTile => this.GetCurrentTile();
@@ -19,21 +20,25 @@ public class MainEvent
 
 
     public MainEvent
-    (BankHandler bankHandler,
-    BoardHandler boardHandler,
-    DoubleSideEffectHandler doubleSideEffectHandler,
-    TileManager tileManager,
-    JailHandler jailHandler,
-    EventFlow eventFlow,
-    Delegator delegator)
+    (
+    StatusHandlers statusHandlers,
+    ITileManager tileManager,
+    DecisionMakers decisionMakers,
+    Delegator delegator,
+    IDice dice,
+    Random random)
     {
-        this.bankHandler = bankHandler;
-        this.boardHandler = boardHandler;
+        this.bankHandler = statusHandlers.BankHandler;
+        this.boardHandler = statusHandlers.BoardHandler;
+        this.jailHandler = statusHandlers.JailHandler;
+        this.doubleSideEffectHandler = statusHandlers.DoubleSideEffectHandler;
+        this.eventFlow = statusHandlers.EventFlow;
         this.tileManager = tileManager;
-        this.jailHandler = jailHandler;
-        this.eventFlow = eventFlow;
+        this.decisionMakers = decisionMakers;
         this.delegator = delegator;
-        this.doubleSideEffectHandler = doubleSideEffectHandler;
+        this.dice = dice;
+        this.random = random;
+
         this.delegator.SetNextEvent(this.StartTurn);
         this.lastEvent = this.StartTurn;
     }
@@ -236,7 +241,6 @@ public class MainEvent
 
             return;
         }
-
         if (this.lastEvent == this.HasJailPenalty)
         {
             this.AddNextEvent(this.EndTurn);
@@ -282,7 +286,7 @@ public class MainEvent
         /// reset value before setting a new value
         this.doubleSideEffectHandler.SetExtraTurn(this.PlayerNumber, false);
 
-        this.eventFlow.RollDiceResult = Dice.Roll(random);
+        this.eventFlow.RollDiceResult = this.dice.Roll(random);
 
         if (this.isDoubleSideEffectOn)
         {
@@ -331,7 +335,7 @@ public class MainEvent
         if (this.jailHandler.JailFreeCardCounts[this.PlayerNumber] > 0)
         {
             this.isDoubleSideEffectOn = true;
-            this.eventFlow.BoolDecision = this.decisionMaker.MakeDecision();
+            this.eventFlow.BoolDecision = this.decisionMakers.JailFreeCardUsageDecisionMaker.MakeDecisionOnUsage(this.PlayerNumber);
         }
 
         this.CallNextEvent();
@@ -342,7 +346,9 @@ public class MainEvent
         if (this.bankHandler.Balances[this.PlayerNumber] >= 60)
         {
             this.isDoubleSideEffectOn = true;
-            this.eventFlow.BoolDecision = this.decisionMaker.MakeDecision();
+            this.eventFlow.BoolDecision = this.decisionMakers.
+            JailFinePaymentDecisionMaker.
+            MakeDecisionOnPayment(this.PlayerNumber);
         }
 
         this.CallNextEvent();
@@ -454,7 +460,8 @@ public class MainEvent
     {
         Property property = (Property)this.currentTile;
 
-        this.eventFlow.BoolDecision = this.decisionMaker.MakeDecision();
+        this.eventFlow.BoolDecision = this.decisionMakers.
+        PropertyPurchaseDecisionMaker.MakeDecisionOnPurchase(this.PlayerNumber);
 
         this.CallNextEvent();
     }

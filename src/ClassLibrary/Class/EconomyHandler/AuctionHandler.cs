@@ -54,7 +54,7 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
     /// <param name="initialPrice"> a positive integer </param>
     public void SetAuctionCondition(List<int> participantNumbers, int initialPrice)
     {
-        if (initialPrice <= 0)
+        if (initialPrice < 0)
         {
             throw new Exception();
         }

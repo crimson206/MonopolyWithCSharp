@@ -14,8 +14,6 @@ namespace Tests.TileManagersTests
             {
                 tileManager.PropertyManager.ChangeOwner(item, 0);
             }
-            tileManager.Analyser.Test();
-            List<int> a = (from aaaa in tileManager.Properties where aaaa.OwnerPlayerNumber == 0 select aaaa.Price).ToList();
 
             /// tileManager has 40 tiles
             Assert.AreEqual(tileManager.Tiles.Count(), 40);
@@ -33,7 +31,7 @@ namespace Tests.TileManagersTests
             RealEstate realEstate = (RealEstate) tileManager.Properties.Where(property => property is RealEstate).ToList()[0];
 
             /// get property manager
-            PropertyManager propertyManager = tileManager.PropertyManager;
+            IPropertyManager propertyManager = tileManager.PropertyManager;
             propertyManager.ChangeOwner(realEstate, 1);
 
             Assert.AreEqual(realEstate.OwnerPlayerNumber, 1);

@@ -7,7 +7,7 @@ public class DecisionFactorCalculator
         this.dataCenter = dataCenter;
     }
 
-    private List<PropertyData> PropertyDatas => (from tileData in this.dataCenter.TileDatas where tileData is PropertyData select (PropertyData)tileData).ToList();
+    private List<IPropertyData> PropertyDatas => (from tileData in this.dataCenter.TileDatas where tileData is IPropertyData select (IPropertyData)tileData).ToList();
     private List<int> Balances => this.dataCenter.Bank.Balances;
 
     public int GetDangerFactor(int playerNumber)
@@ -38,11 +38,11 @@ public class DecisionFactorCalculator
 
     private int CalculateMyTotalRent(int playerNumber)
     {
-        List<PropertyData> myProperties = this.FilterWithPlayerNumber(playerNumber);
+        List<IPropertyData> myProperties = this.FilterWithPlayerNumber(playerNumber);
         int myTotalRent = 0;
         foreach (var property in myProperties)
         {
-            if (property is UtilityData)
+            if (property is IUtilityData)
             {
                 myTotalRent += 6 * property.CurrentRent;
             }
@@ -56,11 +56,11 @@ public class DecisionFactorCalculator
 
     private int CalculateEnemiesTotalRent(int playerNumber)
     {
-        List<PropertyData> myProperties = this.ReverseFilterWithPlayerNumber(playerNumber);
+        List<IPropertyData> myProperties = this.ReverseFilterWithPlayerNumber(playerNumber);
         int enemiesTotalRent = 0;
         foreach (var property in myProperties)
         {
-            if (property is UtilityData)
+            if (property is IUtilityData)
             {
                 enemiesTotalRent += 6 * property.CurrentRent;
             }
@@ -72,16 +72,16 @@ public class DecisionFactorCalculator
         return enemiesTotalRent;  
     }
 
-    private List<PropertyData> FilterWithPlayerNumber(int playerNumber)
+    private List<IPropertyData> FilterWithPlayerNumber(int playerNumber)
     {
-        List<PropertyData> filteredPropertyDatas =
+        List<IPropertyData> filteredPropertyDatas =
         this.PropertyDatas.Where(property => property.OwnerPlayerNumber == playerNumber).ToList();
         return filteredPropertyDatas;
     }
 
-    private List<PropertyData> ReverseFilterWithPlayerNumber(int exceptPlayerNumber)
+    private List<IPropertyData> ReverseFilterWithPlayerNumber(int exceptPlayerNumber)
     {
-        List<PropertyData> filteredPropertyDatas =
+        List<IPropertyData> filteredPropertyDatas =
         this.PropertyDatas.Where(property => property.OwnerPlayerNumber != exceptPlayerNumber).ToList()
         .Where(property => property.OwnerPlayerNumber != null).ToList();
         return filteredPropertyDatas;

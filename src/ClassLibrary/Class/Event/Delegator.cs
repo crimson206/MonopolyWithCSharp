@@ -1,21 +1,25 @@
 public class Delegator
 {
-    private DelEvent? reservedEvent;
+    private DelEvent? currentEvent;
     private DelEvent? nextEvent;
-    private List<IVisitor> events = new List<IVisitor>();
+    private string nextEventName = string.Empty;
+
 
     public delegate void DelEvent();
+    public DelEvent? NextEvent => this.nextEvent;
+    public string NextEventName => this.nextEventName;
 
     public void SetNextEvent(Action gameEvent)
     {
-        DelEvent receivedEvent = new DelEvent(gameEvent);
-        this.reservedEvent = receivedEvent;
+        this.nextEvent = new DelEvent(gameEvent);
+        this.nextEventName = gameEvent.Method.Name;
     }
 
     public void RunEvent()
     {
-        this.nextEvent = this.reservedEvent;
-        this.reservedEvent = null;
-        this.nextEvent!();
+        this.currentEvent = this.nextEvent;
+        this.nextEvent = null;
+        this.nextEventName = string.Empty;
+        this.currentEvent!();
     }
 }
