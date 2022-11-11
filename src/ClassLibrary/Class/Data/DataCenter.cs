@@ -1,26 +1,29 @@
-public class DataCenter : ICloneable
+public class DataCenter : IDataCenter
 {
     private IBankHandlerData bank;
     private IBoardHandlerData board;
     private IDoubleSideEffectHandlerData doubleSideEffect;
     private IJailHandlerData jail;
-    private List<TileData> tileDatas;
-    private EventFlowData eventFlowData;
+    private IInGameHandlerData inGame;
+    private List<ITileData> tileDatas;
+    private IAuctionHandlerData auctionHandler;
+    private IEventFlowData eventFlow;
 
     public DataCenter(
-        IBankHandlerData bankData,
-        IBoardHandlerData boardData,
-        IDoubleSideEffectHandlerData doubleSideEffectData,
-        IJailHandlerData jailData,
-        TileManager tileManager,
-        EventFlowData eventFlowData)
+        StatusHandlers statusHandlers,
+        IAuctionHandlerData auctionHandlerData,
+        ITileManager tileManager
+        )
     {
-        this.bank = bankData;
-        this.board = boardData;
-        this.doubleSideEffect = doubleSideEffectData;
-        this.jail = jailData;
+        this.bank = statusHandlers.BankHandler;
+        this.board = statusHandlers.BoardHandler;
+        this.doubleSideEffect = statusHandlers.DoubleSideEffectHandler;
+        this.jail = statusHandlers.JailHandler;
+        this.inGame = statusHandlers.InGameHandler;
+        this.eventFlow = statusHandlers.EventFlow;
+
         this.tileDatas = tileManager.TileDatas;
-        this.eventFlowData = eventFlowData;
+        this.auctionHandler = auctionHandlerData;
     }
 
     public IBankHandlerData Bank => this.bank;
@@ -30,15 +33,16 @@ public class DataCenter : ICloneable
     public IDoubleSideEffectHandlerData DoubleSideEffect => this.doubleSideEffect;
 
     public IJailHandlerData Jail => this.jail;
-
-    public EventFlowData EventFlow => (EventFlowData)this.eventFlowData.Clone();
-
-    public List<TileData> TileDatas => new List<TileData>(this.tileDatas);
-
-    public object Clone()
+    public IInGameHandlerData InGame => this.inGame;
+    public IEventFlowData EventFlow => this.eventFlow;
+    public IAuctionHandlerData AuctionHandler => this.auctionHandler;
+    public List<ITileData> TileDatas => new List<ITileData>(this.tileDatas);
+    public ITileData CurrentTileData => this.GetCurrentTileData();
+    private ITileData GetCurrentTileData()
     {
-        /// without cast, the type of clone is ICloneable
-        DataCenter clone = (DataCenter)this.MemberwiseClone();
-        return clone;
+        int currentPlayerNumber = this.eventFlow.CurrentPlayerNumber;
+        int currentPlayerPosition = this.board.PlayerPositions[currentPlayerNumber];
+        ITileData currentTile = this.tileDatas[currentPlayerPosition];
+        return currentTile;
     }
 }

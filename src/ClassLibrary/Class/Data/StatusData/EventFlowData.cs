@@ -9,15 +9,13 @@ public class EventFlowData : ICloneable
 
     public int CurrentPlayerNumber => this.eventFlow.CurrentPlayerNumber;
 
-    public string RecommentedString => this.eventFlow.RecommentedString;
+    public string RecommentedString => this.eventFlow.RecommendedString;
 
     public bool BoolDecision => this.eventFlow.BoolDecision;
 
     public int[] RollDiceResult => new int[] { this.eventFlow.RollDiceResult[0], this.eventFlow.RollDiceResult[1] };
 
     public bool AskedEventManualBoolDecision => this.eventFlow.AskedManualBoolDecision;
-
-    public bool ChangedNoticeably => this.eventFlow.ChangedNoticeably;
 
     public object Clone()
     {

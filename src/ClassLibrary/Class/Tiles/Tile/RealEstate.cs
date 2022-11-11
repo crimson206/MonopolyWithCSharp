@@ -1,5 +1,5 @@
 
-public class RealEstate : Property
+public class RealEstate : Property, IRealEstateData
 {
     private string color;
     private int houseCount;

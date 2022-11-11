@@ -1,4 +1,4 @@
-public class Tile : ICloneable
+public class Tile : ICloneable, ITileData
 {
     protected string name = "Tile";
 

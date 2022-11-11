@@ -4,43 +4,46 @@
 // </copyright>
 //-----------------------------------------------------------------------
 /// <summary>
-///
+/// Game
 /// </summary>
 public class Game
 {
 
     private Delegator delegator;
-    private BankHandler bankHandler;
     private TileManager tileManager;
-    private DoubleSideEffectHandler doubleSideEffectHandler;
-    private JailHandler jailHandler;
-    private BoardHandler boardHandler;
-    private EventFlow eventFlow;
+    private StatusHandlers statusHandlers = new StatusHandlers();
     private DataCenter dataCenter;
     public BoolCopier boolCopier;
-    private Event testEvent2;
+    private MainEvent mainEvent;
+    private AuctionEvent auctionEvent;
+    private AuctionHandler auctionHandler;
+    private DecisionMakers decisionMakers;
 
     public Game(bool isBoardSmall)
     {
-        this.bankHandler = new BankHandler();
         this.tileManager = new TileManager(isBoardSmall);
         this.boolCopier = new BoolCopier();
-        this.doubleSideEffectHandler = new DoubleSideEffectHandler();
         this.delegator = new Delegator();
-        this.eventFlow = new EventFlow();
-        this.jailHandler = new JailHandler();
+        this.auctionHandler = new AuctionHandler();
+        this.decisionMakers = new DecisionMakers();
 
         int boardSize = this.tileManager.TileDatas.Count();
         int goPosition = (from tile in this.tileManager.Tiles where tile is Go select this.tileManager.Tiles.IndexOf(tile)).ToList()[0];
 
-        this.boardHandler = new BoardHandler();
+        this.statusHandlers.BoardHandler.Size = boardSize;
+        this.statusHandlers.BoardHandler.GoPosition = goPosition;
 
         this.dataCenter = this.GenerateDataCenter();
-        this.SetBoardInfo();
-        this.testEvent2 = this.GetTestEvent2();
+        this.mainEvent = this.GetMainEvent();
+
+        this.auctionEvent = new AuctionEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.auctionHandler, this.delegator, this.decisionMakers);
+
+        Events events = new Events(this.mainEvent, this.auctionEvent);
+        this.mainEvent.SetEvents(events);
+        this.auctionEvent.SetEvents(events);
     }
 
-    public DataCenter Data => (DataCenter)this.dataCenter.Clone();
+    public DataCenter Data => this.dataCenter;
 
     public void Run()
     {
@@ -49,18 +52,10 @@ public class Game
 
     private DataCenter GenerateDataCenter()
     {
-        EventFlowData eventFlowData = new EventFlowData(this.eventFlow);
-
-        return new DataCenter(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.jailHandler, this.tileManager, eventFlowData);
+        return new DataCenter(this.statusHandlers, this.auctionHandler, this.tileManager);
     }
-
-    private void SetBoardInfo()
+    public MainEvent GetMainEvent()
     {
-        this.boardHandler.SetInfo(this.dataCenter.TileDatas);
-    }
-
-    public Event GetTestEvent2()
-    {
-        return new Event(this.bankHandler, this.boardHandler, this.doubleSideEffectHandler, this.tileManager, this.jailHandler, this.eventFlow, this.delegator);
+        return new MainEvent(this.statusHandlers, this.tileManager, this.decisionMakers, this.delegator, new Dice(), new Random());
     }
 }

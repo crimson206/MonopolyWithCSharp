@@ -1,36 +1,44 @@
-public class Event
+public class MainEvent
 {
     private BankHandler bankHandler;
     private BoardHandler boardHandler;
+    private IDice dice;
     private DoubleSideEffectHandler doubleSideEffectHandler;
-    private TileManager tileManager;
+    private ITileManager tileManager;
     private JailHandler jailHandler;
     private EventFlow eventFlow;
     private Delegator delegator;
     private BoolCopier boolCopier = new BoolCopier();
-    private Random random = new Random();
-    private DecisionMakerDummy decisionMaker = new DecisionMakerDummy();
+    private Events? events;
+    private Random random;
+    private DecisionMakers decisionMakers;
     private bool isDoubleSideEffectOn = true;
     private bool isAbleToMove = true;
     private Tile currentTile => this.GetCurrentTile();
     private bool rolledDouble => this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
+    private bool boughtProperty;
 
-    public Event
-    (BankHandler bankHandler,
-    BoardHandler boardHandler,
-    DoubleSideEffectHandler doubleSideEffectHandler,
-    TileManager tileManager,
-    JailHandler jailHandler,
-    EventFlow eventFlow,
-    Delegator delegator)
+
+    public MainEvent
+    (
+    StatusHandlers statusHandlers,
+    ITileManager tileManager,
+    DecisionMakers decisionMakers,
+    Delegator delegator,
+    IDice dice,
+    Random random)
     {
-        this.bankHandler = bankHandler;
-        this.boardHandler = boardHandler;
+        this.bankHandler = statusHandlers.BankHandler;
+        this.boardHandler = statusHandlers.BoardHandler;
+        this.jailHandler = statusHandlers.JailHandler;
+        this.doubleSideEffectHandler = statusHandlers.DoubleSideEffectHandler;
+        this.eventFlow = statusHandlers.EventFlow;
         this.tileManager = tileManager;
-        this.jailHandler = jailHandler;
-        this.eventFlow = eventFlow;
+        this.decisionMakers = decisionMakers;
         this.delegator = delegator;
-        this.doubleSideEffectHandler = doubleSideEffectHandler;
+        this.dice = dice;
+        this.random = random;
+
         this.delegator.SetNextEvent(this.StartTurn);
         this.lastEvent = this.StartTurn;
     }
@@ -40,6 +48,13 @@ public class Event
     private string stringPlayer => String.Format("Player {0}", this.PlayerNumber);
 
     private Action lastEvent;
+
+
+
+    public void SetEvents(Events events)
+    {
+        this.events = events;
+    }
 
     private void CallNextEvent()
     {
@@ -66,7 +81,6 @@ public class Event
             {
                 this.AddNextEvent(this.MakeDecisionOnPaymentOfJailFine);
             }
-
             return;
         }
 
@@ -227,7 +241,6 @@ public class Event
 
             return;
         }
-
         if (this.lastEvent == this.HasJailPenalty)
         {
             this.AddNextEvent(this.EndTurn);
@@ -243,7 +256,7 @@ public class Event
 
         if (this.lastEvent == this.DontPurchaseProperty)
         {
-            this.AddNextEvent(this.CheckExtraTurn);
+            this.events!.AuctionEvent.AddNextEvent(this.events!.AuctionEvent.StartAuction);
             return;
         }
 
@@ -273,14 +286,14 @@ public class Event
         /// reset value before setting a new value
         this.doubleSideEffectHandler.SetExtraTurn(this.PlayerNumber, false);
 
-        this.eventFlow.RollDiceResult = Dice.Roll(random);
+        this.eventFlow.RollDiceResult = this.dice.Roll(random);
 
         if (this.isDoubleSideEffectOn)
         {
             this.UpdateNextDoubleSideEffect();
         }
 
-        this.eventFlow.RecommentedString = this.stringPlayer + " rolled " + this.ConvertRollDiceResultToString();
+        this.eventFlow.RecommendedString = this.stringPlayer + " rolled " + this.ConvertRollDiceResultToString();
 
         this.CallNextEvent();
     }
@@ -289,7 +302,7 @@ public class Event
     {
         this.bankHandler.DecreaseBalance(this.PlayerNumber, 60);
         this.jailHandler.ResetTurnInJail(this.PlayerNumber);
-        this.eventFlow.RecommentedString = this.stringPlayer + " paid the jail fine";
+        this.eventFlow.RecommendedString = this.stringPlayer + " paid the jail fine";
 
         this.CallNextEvent();
     }
@@ -298,7 +311,7 @@ public class Event
     {
         this.jailHandler.RemoveAJailFreeCard(this.PlayerNumber);
         this.jailHandler.ResetTurnInJail(this.PlayerNumber);
-        this.eventFlow.RecommentedString = this.stringPlayer + " paid the jail fine";
+        this.eventFlow.RecommendedString = this.stringPlayer + " paid the jail fine";
 
         this.CallNextEvent();
     }
@@ -306,13 +319,13 @@ public class Event
     public void EscapeJail()
     {
         this.jailHandler.ResetTurnInJail(this.PlayerNumber);
-        this.eventFlow.RecommentedString = this.stringPlayer + " escaped the jail";
+        this.eventFlow.RecommendedString = this.stringPlayer + " escaped the jail";
         this.CallNextEvent();
     }
 
     public void StartTurn()
     {
-        this.eventFlow.RecommentedString = this.stringPlayer + " start a turn";
+        this.eventFlow.RecommendedString = this.stringPlayer + " start a turn";
 
         this.CallNextEvent();
     }
@@ -322,7 +335,7 @@ public class Event
         if (this.jailHandler.JailFreeCardCounts[this.PlayerNumber] > 0)
         {
             this.isDoubleSideEffectOn = true;
-            this.eventFlow.BoolDecision = this.decisionMaker.MakeDecision();
+            this.eventFlow.BoolDecision = this.decisionMakers.JailFreeCardUsageDecisionMaker.MakeDecisionOnUsage(this.PlayerNumber);
         }
 
         this.CallNextEvent();
@@ -333,7 +346,9 @@ public class Event
         if (this.bankHandler.Balances[this.PlayerNumber] >= 60)
         {
             this.isDoubleSideEffectOn = true;
-            this.eventFlow.BoolDecision = this.decisionMaker.MakeDecision();
+            this.eventFlow.BoolDecision = this.decisionMakers.
+            JailFinePaymentDecisionMaker.
+            MakeDecisionOnPayment(this.PlayerNumber);
         }
 
         this.CallNextEvent();
@@ -346,7 +361,7 @@ public class Event
             this.jailHandler.ResetTurnInJail(this.PlayerNumber);
             this.bankHandler.DecreaseBalance(this.PlayerNumber, 60);
 
-            this.eventFlow.RecommentedString = this.stringPlayer + " is released after staying 3 turns in jail";
+            this.eventFlow.RecommendedString = this.stringPlayer + " is released after staying 3 turns in jail";
 
             this.delegator.SetNextEvent(this.MoveByRollDiceResultTotal);
         }
@@ -355,7 +370,7 @@ public class Event
     public void StayInJail()
     {
         this.jailHandler.CountTurnInJail(this.PlayerNumber);
-        this.eventFlow.RecommentedString = this.stringPlayer + " stays one more turn in jail";
+        this.eventFlow.RecommendedString = this.stringPlayer + " stays one more turn in jail";
 
         this.CallNextEvent();
     }
@@ -367,12 +382,12 @@ public class Event
 
         if (this.lastEvent == this.RollDice)
         {
-            this.eventFlow.RecommentedString = this.stringPlayer + " is released from jail becasue he/she rolled double";
+            this.eventFlow.RecommendedString = this.stringPlayer + " is released from jail becasue he/she rolled double";
         }
 
         if (this.lastEvent == this.PayJailFine)
         {
-            this.eventFlow.RecommentedString = this.stringPlayer + " is released from jail";
+            this.eventFlow.RecommendedString = this.stringPlayer + " is released from jail";
         }
     }
 
@@ -380,13 +395,13 @@ public class Event
     {
         if (this.lastEvent == this.RollDice)
         {
-            this.eventFlow.RecommentedString = this.stringPlayer + " rolled double 3 times in a row. It is so suspicious. "
+            this.eventFlow.RecommendedString = this.stringPlayer + " rolled double 3 times in a row. It is so suspicious. "
                                             + this.stringPlayer + " is moved to the jail";
         }
 
         if (this.lastEvent == this.LandOnTile)
         {
-            this.eventFlow.RecommentedString = this.stringPlayer + " is moved to the jail";
+            this.eventFlow.RecommendedString = this.stringPlayer + " is moved to the jail";
         }
 
         this.boardHandler.Teleport(this.PlayerNumber, this.GetJailPosition());
@@ -395,14 +410,14 @@ public class Event
 
     public void LandOnTile()
     {
-        this.eventFlow.RecommentedString = this.stringPlayer + string.Format(" landed on {0}", this.currentTile.Name);
+        this.eventFlow.RecommendedString = this.stringPlayer + string.Format(" landed on {0}", this.currentTile.Name);
         this.CallNextEvent();
     }
 
     public void MoveByRollDiceResultTotal()
     {
         int rollDiceResultTotal = this.eventFlow.RollDiceResult.Sum();
-        this.eventFlow.RecommentedString = this.stringPlayer + string.Format(" moved {0} steps", rollDiceResultTotal);
+        this.eventFlow.RecommendedString = this.stringPlayer + string.Format(" moved {0} steps", rollDiceResultTotal);
 
         this.boardHandler.MovePlayerAroundBoard(this.PlayerNumber, rollDiceResultTotal);
         this.CallNextEvent();
@@ -415,7 +430,7 @@ public class Event
 
         int rentOfProperty = property.CurrentRent;
         this.bankHandler.TransferBalanceFromTo(this.PlayerNumber, propertyOwner, rentOfProperty);
-        this.eventFlow.RecommentedString = this.stringPlayer + " paid a rent to the owner of the property";
+        this.eventFlow.RecommendedString = this.stringPlayer + " paid a rent to the owner of the property";
 
         this.CallNextEvent();
     }
@@ -424,7 +439,7 @@ public class Event
     {
         if (this.isDoubleSideEffectOn && this.doubleSideEffectHandler.ExtraTurns[this.PlayerNumber])
         {
-            this.eventFlow.RecommentedString = this.stringPlayer + " has an extra turn due to rolling double";
+            this.eventFlow.RecommendedString = this.stringPlayer + " has an extra turn due to rolling double";
         }
 
         this.CallNextEvent();
@@ -436,7 +451,7 @@ public class Event
         int tax = taxTile.Tax;
 
         this.bankHandler.DecreaseBalance(this.PlayerNumber, tax);
-        this.eventFlow.RecommentedString = this.stringPlayer + " paid the tax";
+        this.eventFlow.RecommendedString = this.stringPlayer + " paid the tax";
 
         this.CallNextEvent();
     }
@@ -445,7 +460,8 @@ public class Event
     {
         Property property = (Property)this.currentTile;
 
-        this.eventFlow.BoolDecision = this.decisionMaker.MakeDecision();
+        this.eventFlow.BoolDecision = this.decisionMakers.
+        PropertyPurchaseDecisionMaker.MakeDecisionOnPurchase(this.PlayerNumber);
 
         this.CallNextEvent();
     }
@@ -456,14 +472,14 @@ public class Event
 
         this.tileManager.PropertyManager.ChangeOwner(property, this.PlayerNumber);
         this.bankHandler.DecreaseBalance(this.PlayerNumber, property.Price);
-        this.eventFlow.RecommentedString = this.stringPlayer + " bought the property";
+        this.eventFlow.RecommendedString = this.stringPlayer + " bought the property";
 
         this.CallNextEvent();
     }
 
     public void DontPurchaseProperty()
     {
-        this.eventFlow.RecommentedString = this.stringPlayer + " didn't buy the property";
+        this.eventFlow.RecommendedString = this.stringPlayer + " didn't buy the property";
 
         this.CallNextEvent();
     }
@@ -476,7 +492,7 @@ public class Event
 
         if (playerCountInGame == 1)
         {
-            this.eventFlow.RecommentedString = "Congratulations!! " + this.stringPlayer + " won the game!";
+            this.eventFlow.RecommendedString = "Congratulations!! " + this.stringPlayer + " won the game!";
         }
         else if (playerCountInGame < 1)
         {
@@ -484,7 +500,7 @@ public class Event
         }
         else
         {
-            this.eventFlow.RecommentedString = this.stringPlayer + " ended this turn";
+            this.eventFlow.RecommendedString = this.stringPlayer + " ended this turn";
             this.eventFlow.CurrentPlayerNumber = this.CalculateNextPlayer();
         }
 
@@ -493,7 +509,7 @@ public class Event
 
     public void ReceiveSalary()
     {
-        this.eventFlow.RecommentedString = this.stringPlayer + " passed go and received the salary";
+        this.eventFlow.RecommendedString = this.stringPlayer + " passed go and received the salary";
         this.bankHandler.IncreaseBalance(this.PlayerNumber, 200);
 
         this.CallNextEvent();
@@ -537,7 +553,7 @@ public class Event
         return this.tileManager.Tiles[playerPosition];
     }
 
-    private void AddNextEvent(Action nextEvent)
+    public void AddNextEvent(Action nextEvent)
     {
         this.lastEvent = nextEvent;
         this.delegator.SetNextEvent(nextEvent);

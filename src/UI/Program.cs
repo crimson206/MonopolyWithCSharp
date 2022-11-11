@@ -18,10 +18,10 @@ internal class Program
 
         while (true)
         {
-            if (oldRecommendedString != game.Data.EventFlow.RecommentedString)
+            if (oldRecommendedString != game.Data.EventFlow.RecommendedString)
             {
                 visualizer.UpdateLogging();
-                oldRecommendedString = game.Data.EventFlow.RecommentedString;
+                oldRecommendedString = game.Data.EventFlow.RecommendedString;
                 Console.ReadKey();
             }
 

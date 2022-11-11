@@ -1,4 +1,4 @@
-public class PropertyManager
+public class PropertyManager : IPropertyManager
 {
     public void ChangeOwner(Property property, int? playerNumber)
     {

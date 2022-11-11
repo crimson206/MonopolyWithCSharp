@@ -1,4 +1,4 @@
-public class Property : Tile, IPurchasable
+public class Property : Tile, IPurchasable, IPropertyData
 {
     protected int? ownerPlayerNumber = null;
     protected int price;

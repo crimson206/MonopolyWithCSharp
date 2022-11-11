@@ -37,46 +37,46 @@ public class MapTilesFactory
         return randomlyAssembledTiles;
     }
 
-    public List<TileData> ExtractTileDataSet(List<Tile> tiles)
+    public List<ITileData> ExtractTileDataSet(List<Tile> tiles)
     {
-        List<TileData> tileDataSet = new List<TileData>();
+        List<ITileData> tileDataSet = new List<ITileData>();
 
         foreach (var tile in tiles)
         {
             if (tile is Go)
             {
-                tileDataSet.Add(new GoData(tile));
+                tileDataSet.Add(tile);
             }
             else if (tile is Jail)
             {
-                tileDataSet.Add(new JailData(tile));
+                tileDataSet.Add(tile);
             }
             else if (tile is RealEstate)
             {
                 var realEstate = (RealEstate)tile;
-                tileDataSet.Add(new RealEstateData(realEstate));
+                tileDataSet.Add(realEstate);
             }
             else if (tile is Utility)
             {
                 var utility = (Utility)tile;
-                tileDataSet.Add(new UtilityData(utility));
+                tileDataSet.Add(utility);
             }
             else if (tile is RailRoad)
             {
                 var railRoad = (RailRoad)tile;
-                tileDataSet.Add(new RailRoadData(railRoad));
+                tileDataSet.Add(railRoad);
             }
             else if (tile is IncomeTax)
             {
-                tileDataSet.Add(new IncomeTaxData(tile));
+                tileDataSet.Add(tile);
             }
             else if (tile is LuxuryTax)
             {
-                tileDataSet.Add(new LuxuryTaxData(tile));
+                tileDataSet.Add(tile);
             }
             else
             {
-                tileDataSet.Add(new TileData(tile));
+                tileDataSet.Add(tile);
             }
         }
 

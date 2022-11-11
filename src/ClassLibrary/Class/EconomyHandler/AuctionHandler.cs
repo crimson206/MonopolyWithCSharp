@@ -6,14 +6,17 @@
 /// <summary>
 /// This class deals with the auction event of Monopoly
 /// </summary>
-public class AuctionHandler
+public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
 {
-    private List<int> suggestedPrices = new List<int>();
-    private int currentParticipantNumber;
-    private int participantCount;
-    private int winningParticipantNumber;
+    private Dictionary<int, int> suggestedPrices = new Dictionary<int, int>();
+    private List<int> participantNumbers = new List<int>();
+    private int? finalPrice;
+    private int? winnerNumber;
+    private int nextParticipantNumber;
     private bool isAuctionOn;
-    private int maxPriceUnchangedTurnCount;
+    private int maxPrice => this.SuggestedPrices.Values.Max();
+    private int participantCount => this.participantNumbers.Count();
+    private int winningParticipantNumber;
 
     /// <summary>
     /// Gets the isAuctionOn of an auction handler
@@ -26,43 +29,50 @@ public class AuctionHandler
     /// Gets the readonly suggestedPrices of an auction handler
     /// </summary>
     /// <value> It is the list of ints which are prices the auction participants suggested last time </value>
-    public List<int> SuggestedPrices { get => new List<int>(this.suggestedPrices); }
+    public Dictionary<int, int> SuggestedPrices { get => new Dictionary<int, int>(this.suggestedPrices); }
 
     /// <summary>
     /// Gets the final price of an auction handler
     /// </summary>
     /// <value> It is the final price of an auctioned item </value>
-    public int? FinalPrice { get; private set; }
+    public int? FinalPrice { get => this.finalPrice; }
 
     /// <summary>
     /// Gets the winner number of an auction handler
     /// </summary>
     /// <value> It is the participant number who won the auction. It it actually an index of SuggestedPrice of this class. </value>
-    public int? WinnerNumber { get; private set; }
+    public int? WinnerNumber { get=> this.winnerNumber; }
 
-    private int MaxPrice => this.suggestedPrices.Max();
+    public int NextParticipantNumber { get=> this.nextParticipantNumber; }
+
+    private int MaxPrice => this.SuggestedPrices.Values.Max();
 
     /// <summary>
     /// It sets conditions to start a new auction
     /// </summary>
-    /// <param name="participantCount"> a positive integer </param>
+    /// <param name="participantNumbers"> a list of playerNumbers participating in the auction in the auction order </param>
     /// <param name="initialPrice"> a positive integer </param>
-    public void SetAuctionCondition(int participantCount, int initialPrice)
+    public void SetAuctionCondition(List<int> participantNumbers, int initialPrice)
     {
-        if (initialPrice <= 0)
+        if (initialPrice < 0)
         {
             throw new Exception();
         }
 
-        this.ResetAuctionConditions();
-
+        this.finalPrice = null;
+        this.winnerNumber = null;
+        this.suggestedPrices.Clear();
         this.isAuctionOn = true;
+        this.participantNumbers = participantNumbers;
+        this.winningParticipantNumber = participantNumbers[0];
+        this.nextParticipantNumber = participantNumbers[1];
 
-        this.participantCount = participantCount;
-        for (int i = 0; i < participantCount; i++)
+        int participantCount = participantNumbers.Count();
+        foreach (var participantNumber in participantNumbers)
         {
-            this.suggestedPrices.Add(initialPrice);
+            this.suggestedPrices.Add(participantNumber, 0);
         }
+        this.suggestedPrices[participantNumbers[0]] = initialPrice;
     }
 
     /// <summary>
@@ -75,42 +85,39 @@ public class AuctionHandler
     /// <param name="newPrice">a positive integer</param>
     public void SuggestNewPriceInTurn(int newPrice)
     {
-        if (newPrice > this.MaxPrice)
+        if (newPrice < 0)
         {
-            this.winningParticipantNumber = this.currentParticipantNumber;
-            this.maxPriceUnchangedTurnCount = 0;
-        }
-        else
-        {
-            this.maxPriceUnchangedTurnCount++;
+            throw new Exception();
         }
 
-        if (this.maxPriceUnchangedTurnCount == this.participantCount - 1)
+        int currentParticipantNumber = this.nextParticipantNumber;
+
+        if (newPrice > this.maxPrice)
         {
-            this.suggestedPrices[this.currentParticipantNumber] = newPrice;
+            this.winningParticipantNumber = currentParticipantNumber;
+        }
+
+        this.suggestedPrices[currentParticipantNumber] = newPrice;
+        this.GoToNextParticipant();
+
+        if (this.nextParticipantNumber == this.winningParticipantNumber && newPrice <= this.maxPrice)
+        {
             this.SetAuctionResultAndCloseAuction();
         }
-
-        if (this.isAuctionOn)
-        {
-            this.suggestedPrices[this.currentParticipantNumber] = newPrice;
-            this.currentParticipantNumber = (this.currentParticipantNumber + 1) % this.participantCount;
-        }
-    }
-
-    private void ResetAuctionConditions()
-    {
-        this.FinalPrice = null;
-        this.WinnerNumber = null;
-        this.suggestedPrices.Clear();
-        this.currentParticipantNumber = 0;
-        this.isAuctionOn = true;
     }
 
     private void SetAuctionResultAndCloseAuction()
     {
-        this.WinnerNumber = this.winningParticipantNumber;
-        this.FinalPrice = this.MaxPrice;
+        this.winnerNumber = this.nextParticipantNumber;
+        this.finalPrice = this.maxPrice;
         this.isAuctionOn = false;
+    }
+
+    private void GoToNextParticipant()
+    {
+        int previousParticipantNumber = this.nextParticipantNumber;
+        int index = this.participantNumbers.IndexOf(previousParticipantNumber);
+        index = (index + 1) % this.participantCount;
+        this.nextParticipantNumber = this.participantNumbers[index];
     }
 }

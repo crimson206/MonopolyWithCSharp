@@ -4,14 +4,14 @@ public class BoardHandler : IBoardHandlerData
     private int goPosition = 0;
     private List<int> playerPositions = new List<int>() { 0, 0, 0, 0 };
     private List<bool> playerPassedGo = new List<bool>() { false, false, false, false };
-    private List<TileData>? tileDatas;
+    private List<ITileData>? tileDatas;
 
     public List<int> PlayerPositions { get => new List<int>(this.playerPositions); }
 
     public List<bool> PlayerPassedGo { get => new List<bool>(this.playerPassedGo); }
 
-    public int Size => this.size;
-    public int GoPosition => this.goPosition; 
+    public int Size { get => this.size; set => this.size = value; }
+    public int GoPosition { get => this.goPosition; set => this.goPosition = value; }
 
     public void MovePlayerAroundBoard(int playerNumber, int amount)
     {
@@ -35,23 +35,6 @@ public class BoardHandler : IBoardHandlerData
         }
 
         this.playerPositions[playerNumber] = point;
-    }
-
-    public void SetInfo(List<TileData> tileDatas)
-    {
-        this.tileDatas = tileDatas;
-
-        this.size = this.tileDatas.Count();
-
-        List<TileData> goTiles = (from tile in this.tileDatas where tile is GoData select tile).ToList();
-        if (goTiles.Count() == 1)
-        {
-            this.goPosition = this.tileDatas.IndexOf(goTiles[0]);
-        }
-        else
-        {
-            throw new Exception("This board supports TileMaps only with one Go tile");
-        }
     }
 
     private bool PassedGo(int oldPosition, int newPosition)

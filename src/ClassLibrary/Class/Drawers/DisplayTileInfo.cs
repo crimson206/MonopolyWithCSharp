@@ -1,6 +1,6 @@
 public class DisplayTileInfo
 {
-    public void DisplayRealEstates(int cursorLeft, int cursorTop, List<RealEstateData> realEstates, int buffer)
+    public void DisplayRealEstates(int cursorLeft, int cursorTop, List<IRealEstateData> realEstates, int buffer)
     {
         int maxNameLength = realEstates.Max(t => t.Name.Count());
         int maxPriceLength = realEstates.Max(t => t.Price.ToString().Count());
@@ -28,7 +28,7 @@ public class DisplayTileInfo
         }
     }
 
-    public void DisplayRailRoad(int cursorLeft, int cursorTop, List<RailRoadData> railRoads, int buffer)
+    public void DisplayRailRoad(int cursorLeft, int cursorTop, List<IRailRoadData> railRoads, int buffer)
     {
         int maxNameLength = railRoads.Max(t => t.Name.Count());
         int maxPriceLength = railRoads.Max(t => t.Price.ToString().Count());
@@ -56,7 +56,7 @@ public class DisplayTileInfo
         }
     }
 
-    public void DisplayUtility(int cursorLeft, int cursorTop, List<UtilityData> utilityDatas, int buffer)
+    public void DisplayUtility(int cursorLeft, int cursorTop, List<IUtilityData> utilityDatas, int buffer)
     {
         int maxNameLength = utilityDatas.Max(t => t.Name.Count());
         int maxPriceLength = utilityDatas.Max(t => t.Price.ToString().Count());
@@ -108,7 +108,7 @@ public class DisplayTileInfo
         return realestateBanner;
     }
 
-    private void WriteRailRoad(RailRoadData railRoadData, int nameL, int priceL, int rentL, int ownerL)
+    private void WriteRailRoad(IRailRoadData railRoadData, int nameL, int priceL, int rentL, int ownerL)
     {
         string ownerIDToStr = "Player" + railRoadData.OwnerPlayerNumber.ToString();
         string stringRents = railRoadData.Rents[0].ToString();
@@ -126,7 +126,7 @@ public class DisplayTileInfo
         }
     }
 
-    private void WriteUtility(UtilityData utilityData, int nameL, int priceL, int rentL, int ownerL)
+    private void WriteUtility(IUtilityData utilityData, int nameL, int priceL, int rentL, int ownerL)
     {
         string ownerIDToStr = "Player" + utilityData.OwnerPlayerNumber.ToString();
         string stringRents = utilityData.Rents[0].ToString();
@@ -144,7 +144,7 @@ public class DisplayTileInfo
         }
     }
 
-    private void WriteRealEstateWithColor(RealEstateData realEstate, int nameL, int priceL, int rentL, int numHouseL, int ownerL)
+    private void WriteRealEstateWithColor(IRealEstateData realEstate, int nameL, int priceL, int rentL, int numHouseL, int ownerL)
     {
         string ownerIDToStr = "Player" + realEstate.OwnerPlayerNumber.ToString();
         string stringRents = realEstate.Rents[0].ToString();
@@ -164,7 +164,7 @@ public class DisplayTileInfo
         }
     }
 
-    private string ConvertRealEstateToStr(RealEstateData realEstate, int nameL, int colorL, int priceL, int rentL, int numHouseL, int ownerL)
+    private string ConvertRealEstateToStr(IRealEstateData realEstate, int nameL, int colorL, int priceL, int rentL, int numHouseL, int ownerL)
     {
         string ownerIDToStr = "Player" + realEstate.OwnerPlayerNumber.ToString();
         string stringRents = this.ConvertListIntToString(realEstate.Rents);
