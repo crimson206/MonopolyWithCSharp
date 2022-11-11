@@ -95,7 +95,7 @@ public class AuctionEvent
         this.CallNextEvent();
     }
 
-    private void EndAuction()
+    private void BuyWinnerProperty()
     {
         int winnerNumber = (int)this.dataCenter.AuctionHandler.WinnerNumber!;
         int finalPrice = (int)this.dataCenter.AuctionHandler.FinalPrice!;
@@ -184,12 +184,12 @@ public class AuctionEvent
             }
             else
             {
-                this.AddNextEvent(this.EndAuction);
+                this.AddNextEvent(this.BuyWinnerProperty);
                 return;
             }
         }
 
-        if (this.lastEvent == this.EndAuction)
+        if (this.lastEvent == this.BuyWinnerProperty)
         {
             this.events!.MainEvent.AddNextEvent(this.events!.MainEvent.CheckExtraTurn);
             return;
