@@ -1,4 +1,4 @@
-public class Events
+public class Events : IEvents
 {
     private MainEvent mainEvent;
     private AuctionEvent auctionEvent;

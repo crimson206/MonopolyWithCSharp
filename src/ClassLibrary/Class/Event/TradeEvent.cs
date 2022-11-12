@@ -10,7 +10,7 @@ public class TradeEvent
     private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
     private int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
     private Action lastEvent;
-    private List<int>? participantPlayerNumbers;
+    private List<int>? participantPlayerNumbers = new List<int>();
     private TradeDecisionMaker tradeDecisionMaker = new TradeDecisionMaker();
     private PropertyManager propertyManager = new PropertyManager();
     private TileFilter tileFilter = new TileFilter();
@@ -18,12 +18,12 @@ public class TradeEvent
 
     public TradeEvent
     (
-        StatusHandlers statusHandlers,
+        IStatusHandlers statusHandlers,
         ITileManager tileManager,
         IDataCenter dataCenter,
-        EconomyHandlers economyHandlers,
+        IEconomyHandlers economyHandlers,
         Delegator delegator,
-        DecisionMakers decisionMakers
+        IDecisionMakers decisionMakers
     )
     {
         this.dataCenter = dataCenter;
@@ -91,7 +91,7 @@ public class TradeEvent
                 (this.currentTradeOwner);
 
         this.tradeHandler
-            .SuggestTradeOwnerTradeCondition
+            .SuggestTradeConditions
             (propertyToGet,
             propertyToGive,
             addtionalMoney);
@@ -113,7 +113,7 @@ public class TradeEvent
                         (this.currentTradeTarget);
         
         this.tradeHandler
-            .MakeTradeTargetDecionOnTradeAgreement
+            .SetIsTradeAgreed
             (agreedTradeTargetWithTradeCondition);
 
         if (agreedTradeTargetWithTradeCondition)
@@ -176,7 +176,7 @@ public class TradeEvent
     private void ChangeTradeOwner()
     {
         this.tradeHandler
-            .ChangeTradeOwner(this.properties);
+            .ChangeTradeOwner();
 
         this.eventFlow
             .RecommendedString =
@@ -282,7 +282,7 @@ public class TradeEvent
             }
             else
             {
-                if (this.tradeHandlerData.HadAllParticipantsTheirTurn)
+                if (this.tradeHandlerData.IsTradeCountEqualToParticipantCount)
                 {
                     this.AddNextEvent(this.EndTrade);
 

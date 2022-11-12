@@ -8,5 +8,5 @@ public interface ITradeHandlerData
     public bool? IsTradeAgreed { get; }
     public int CurrentTradeOwner { get; }
     public int CurrentTradeTarget { get; }
-    public bool HadAllParticipantsTheirTurn { get; }
+    public bool IsTradeCountEqualToParticipantCount { get; }
 }

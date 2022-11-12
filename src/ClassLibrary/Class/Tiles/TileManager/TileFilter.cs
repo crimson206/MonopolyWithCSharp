@@ -56,22 +56,20 @@ public class TileFilter
         return property;
     }
 
-    public Dictionary<int, List<IPropertyData>> ConvertPropertiesToOwnedPropertyDatasDictionary(List<Property> properties)
+    public Dictionary<int, List<IPropertyData>> ConvertPropertiesToOwnedPropertyDatasDictionary(List<int> ownerNumbers, List<Property> properties)
     {
         Dictionary<int, List<IPropertyData>> ownedProperties = new Dictionary<int, List<IPropertyData>>();
-        foreach (var property in properties)
+        
+        foreach (var ownerNumber in ownerNumbers)
         {
-            if (property.OwnerPlayerNumber is not null)
-            {
-                int playerNumber = (int)property.OwnerPlayerNumber;
-                IPropertyData propertyData = (IPropertyData)property;
+            ownedProperties.Add(ownerNumber, new List<IPropertyData>());
 
-                if (ownedProperties.Keys.Contains(playerNumber) is false)
+            foreach (var property in properties)
+            {
+                if (property.OwnerPlayerNumber == ownerNumber)
                 {
-                    ownedProperties.Add(playerNumber, new List<IPropertyData>());
+                    ownedProperties[ownerNumber].Add(property);
                 }
- 
-                ownedProperties[playerNumber].Add(propertyData);
             }
         }
 

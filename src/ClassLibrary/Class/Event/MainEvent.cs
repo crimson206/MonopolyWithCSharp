@@ -208,7 +208,7 @@ public class MainEvent
             }
             else
             {
-                this.AddNextEvent(this.EndTurn);
+                this.AddNextEvent(this.events!.TradeEvent.StartTrade);
             }
 
             return;

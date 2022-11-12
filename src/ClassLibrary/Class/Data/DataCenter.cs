@@ -11,8 +11,8 @@ public class DataCenter : IDataCenter
     private IEventFlowData eventFlow;
 
     public DataCenter(
-        StatusHandlers statusHandlers,
-        EconomyHandlers economyHandlers,
+        IStatusHandlers statusHandlers,
+        IEconomyHandlers economyHandlers,
         ITileManager tileManager
         )
     {

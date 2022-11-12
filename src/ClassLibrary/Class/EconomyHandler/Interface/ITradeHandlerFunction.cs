@@ -4,12 +4,12 @@ public interface ITradeHandlerFunction
 
     public void SetTradeTarget(int tradeTarget);
 
-    public void SuggestTradeOwnerTradeCondition(
+    public void SuggestTradeConditions(
         IPropertyData? propertyOwnerWantsFromTarget,
         IPropertyData? propertyOwnerIsWillingToExchange,
         int moneyOwnerWillingToAddOnTrade);
 
-    public void MakeTradeTargetDecionOnTradeAgreement(bool agreed);
+    public void SetIsTradeAgreed(bool agreed);
 
-    public void ChangeTradeOwner(List<Property> properties);
+    public void ChangeTradeOwner();
 }

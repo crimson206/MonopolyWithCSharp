@@ -1,4 +1,4 @@
-public class EconomyHandlers
+public class EconomyHandlers : IEconomyHandlers
 {
     private AuctionHandler auctionHandler = new AuctionHandler();
     private TradeHandler tradeHandler = new TradeHandler();
