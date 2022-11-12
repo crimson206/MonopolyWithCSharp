@@ -7,11 +7,12 @@ public class DataCenter : IDataCenter
     private IInGameHandlerData inGame;
     private List<ITileData> tileDatas;
     private IAuctionHandlerData auctionHandler;
+    private ITradeHandlerData tradeHandler;
     private IEventFlowData eventFlow;
 
     public DataCenter(
         StatusHandlers statusHandlers,
-        IAuctionHandlerData auctionHandlerData,
+        EconomyHandlers economyHandlers,
         ITileManager tileManager
         )
     {
@@ -23,7 +24,8 @@ public class DataCenter : IDataCenter
         this.eventFlow = statusHandlers.EventFlow;
 
         this.tileDatas = tileManager.TileDatas;
-        this.auctionHandler = auctionHandlerData;
+        this.auctionHandler = economyHandlers.AuctionHandler;
+        this.tradeHandler = economyHandlers.TradeHandler;
     }
 
     public IBankHandlerData Bank => this.bank;
@@ -36,6 +38,7 @@ public class DataCenter : IDataCenter
     public IInGameHandlerData InGame => this.inGame;
     public IEventFlowData EventFlow => this.eventFlow;
     public IAuctionHandlerData AuctionHandler => this.auctionHandler;
+    public ITradeHandlerData TradeHandler => this.tradeHandler;
     public List<ITileData> TileDatas => new List<ITileData>(this.tileDatas);
     public ITileData CurrentTileData => this.GetCurrentTileData();
     private ITileData GetCurrentTileData()

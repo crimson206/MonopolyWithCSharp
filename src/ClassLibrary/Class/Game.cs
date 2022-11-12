@@ -16,7 +16,9 @@ public class Game
     public BoolCopier boolCopier;
     private MainEvent mainEvent;
     private AuctionEvent auctionEvent;
-    private AuctionHandler auctionHandler;
+    private HouseBuildEvent houseBuildEvent;
+    private TradeEvent tradeEvent;
+    private EconomyHandlers economyHandlers;
     private DecisionMakers decisionMakers;
 
     public Game(bool isBoardSmall)
@@ -24,7 +26,7 @@ public class Game
         this.tileManager = new TileManager(isBoardSmall);
         this.boolCopier = new BoolCopier();
         this.delegator = new Delegator();
-        this.auctionHandler = new AuctionHandler();
+        this.economyHandlers = new EconomyHandlers();
         this.decisionMakers = new DecisionMakers();
 
         int boardSize = this.tileManager.TileDatas.Count();
@@ -36,9 +38,11 @@ public class Game
         this.dataCenter = this.GenerateDataCenter();
         this.mainEvent = this.GetMainEvent();
 
-        this.auctionEvent = new AuctionEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.auctionHandler, this.delegator, this.decisionMakers);
+        this.auctionEvent = new AuctionEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.economyHandlers.AuctionHandler, this.delegator, this.decisionMakers);
+        this.houseBuildEvent = new HouseBuildEvent();
+        this.tradeEvent = new TradeEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.economyHandlers, this.delegator, this.decisionMakers);
 
-        Events events = new Events(this.mainEvent, this.auctionEvent);
+        Events events = new Events(this.mainEvent, this.auctionEvent, this.houseBuildEvent, this.tradeEvent);
         this.mainEvent.SetEvents(events);
         this.auctionEvent.SetEvents(events);
     }
@@ -52,7 +56,7 @@ public class Game
 
     private DataCenter GenerateDataCenter()
     {
-        return new DataCenter(this.statusHandlers, this.auctionHandler, this.tileManager);
+        return new DataCenter(this.statusHandlers, this.economyHandlers, this.tileManager);
     }
     public MainEvent GetMainEvent()
     {
