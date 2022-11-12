@@ -2,8 +2,8 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
 {
     private List<int> participantNumbers = new List<int>();
     private int tradeCount = 0;
-    private int currentTradeOwner;
-    private int currentTradeTarget;
+    private int? currentTradeOwner;
+    private int? currentTradeTarget;
     private IPropertyData? propertyTradeOwnerToGet;
     private IPropertyData? propertyTradeOwnerToGive;
     private int moneyOwnerWillingToAddOnTrade;
@@ -14,24 +14,33 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
     private List<Property> backUpProperties = new List<Property>();
 
     public List<IPropertyData> TradablePropertiesOfTradeOwner =>
-        this.ownedTradablePropertyDatas![this.currentTradeOwner];
-    public List<IPropertyData> TradablePropertiesOfTradeTarget =>
-        this.ownedTradablePropertyDatas![this.currentTradeTarget];
-    public IPropertyData? PropertyTradeOwnerToGet => this.propertyTradeOwnerToGet;
-    public IPropertyData? PropertyTradeOwnerToGive => this.propertyTradeOwnerToGive;
-    public int MoneyOwnerWillingToAddOnTrade => this.moneyOwnerWillingToAddOnTrade;
-    public bool? IsTradeAgreed => this.isTradeAgreed;
-    public int CurrentTradeOwner => this.currentTradeOwner;
-    public int CurrentTradeTarget => this.currentTradeTarget;
-    public bool IsTradeCountEqualToParticipantCount => this.isTimeToCloseTrade;
+        this.CreateTradablePropertiesOfTradeOwner();
 
-    public List<int> SelectableTargetNumbers => this.CreateSelectableTargetNumbers(this.currentTradeOwner);
+    public List<IPropertyData> TradablePropertiesOfTradeTarget =>
+        this.CreateTradablePropertiesOfTradeTarget();
+
+    public IPropertyData? PropertyTradeOwnerToGet => this.propertyTradeOwnerToGet;
+
+    public IPropertyData? PropertyTradeOwnerToGive => this.propertyTradeOwnerToGive;
+
+    public int MoneyOwnerWillingToAddOnTrade => this.moneyOwnerWillingToAddOnTrade;
+
+    public bool? IsTradeAgreed => this.isTradeAgreed;
+
+    public int? CurrentTradeOwner => this.currentTradeOwner;
+
+    public int? CurrentTradeTarget => this.currentTradeTarget;
+
+    public bool IsTimeToCloseTrade => this.isTimeToCloseTrade;
+
+    public List<int> SelectableTargetNumbers => this.CreateSelectableTargetNumbers();
 
     public void SetTrade(
         List<int> participantNumbers,
         List<Property> properties)
     {
         this.ResetInitialTradeConditions();
+        this.ResetTradeConditionMeanwhile();
 
         this.participantNumbers = participantNumbers;
         this.backUpProperties = properties;
@@ -107,7 +116,6 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
         {
             this.isTimeToCloseTrade = true;
         }
-
     }
 
     private void ResetInitialTradeConditions()
@@ -120,11 +128,13 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
     {
         this.propertyTradeOwnerToGive = null;
         this.propertyTradeOwnerToGet = null;
+        this.moneyOwnerWillingToAddOnTrade = 0;
         this.isTradeAgreed = null;
-        this.ownedTradablePropertyDatas = null;      
+        this.ownedTradablePropertyDatas = null;    
+        this.currentTradeTarget = null;
     }
 
-    private List<int> CreateSelectableTargetNumbers(int tradeOwner)
+    private List<int> CreateSelectableTargetNumbers()
     {
         List<int> selectableTargetNumbers = new List<int>();
 
@@ -150,26 +160,6 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
         return isThereTradableProperties;
     }
 
-    private bool CheckIfTradeOwnerIsChangible()
-    {
-        int participantCount =
-            this.participantNumbers
-                .Count();
-
-        if (this.tradeCount < participantCount)
-        {
-            /// i is the remaind participants indeces
-            for (int i = tradeCount; i < participantCount; i++)
-            {
-                if( this.CreateSelectableTargetNumbers(i).Count() != 0)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
 
     private void SetTradablePropertyDatas()
     {
@@ -181,5 +171,31 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
         this.ownedTradablePropertyDatas =
             this.tileFilter.
             ConvertPropertiesToOwnedPropertyDatasDictionary(this.participantNumbers, tradableProperties);
+    }
+
+    private List<IPropertyData> CreateTradablePropertiesOfTradeOwner()
+    {
+        if (this.currentTradeOwner is not null)
+        {
+            int tradeOwner = (int)this.currentTradeOwner;
+            return this.ownedTradablePropertyDatas![tradeOwner];
+        }
+        else
+        {
+            return new List<IPropertyData>();
+        }
+    }
+
+    private List<IPropertyData> CreateTradablePropertiesOfTradeTarget()
+    {
+        if (this.currentTradeTarget is not null)
+        {
+            int tradeTarget = (int)this.currentTradeTarget;
+            return this.ownedTradablePropertyDatas![tradeTarget];
+        }
+        else
+        {
+            return new List<IPropertyData>();
+        }
     }
 }

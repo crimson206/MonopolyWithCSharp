@@ -58,14 +58,30 @@ namespace Tests
             return properties;
         }
 
+        public TradeHandler CreateTradeHandlerWithTradeConditions()
+        {
+            TradeHandler tradeHandler = new TradeHandler();
+            List<int> participantNumbers = new List<int> {1, 2, 3, 0};
+            List<Property> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
+            List<int> expectedTradeOwners = new List<int> {1, 2, 3, 0};
+            tradeHandler.SetTrade(participantNumbers, properties);
+            tradeHandler.SetTradeTarget(2);
+            Property propertyToGet = properties.Where(property => property.OwnerPlayerNumber == 2).ToList()[0];
+            Property propertyToGive = properties.Where(property => property.OwnerPlayerNumber == 1).ToList()[0];
+            int additionalMoney = 100;
+            tradeHandler.SuggestTradeConditions(propertyToGet, propertyToGive, additionalMoney);
+            tradeHandler.SetIsTradeAgreed(true);
+
+            return tradeHandler;
+        }
+
         [TestMethod]
         public void SetTrade_Where_Only_Player1_Owns_Some_Properties_And_Player2_3_0_Can_Trade()
         {
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {1, 2, 3, 0};
-            List<Property> properties = this.CreateNotOwnedProperties();
+            List<Property> properties = this.CreatePropertiesPartialyOwnedByPlayer1();
             List<int> expectedCurrentTradeOwners = new List<int> {2, 3, 0};
-
 
             for (int i = 0; i < 3; i++)
             {
@@ -218,6 +234,46 @@ namespace Tests
             tradeHandler.SetTradeTarget(2);
 
             Assert.ThrowsException<Exception>(() => tradeHandler.SetIsTradeAgreed(true));
+        }
+        [TestMethod]
+        public void Check_If_CreatedTradeHandlers_Conditions_Were_Set()
+        {
+            TradeHandler tradeHandler = this.CreateTradeHandlerWithTradeConditions();
+
+            Assert.AreNotEqual(tradeHandler.PropertyTradeOwnerToGet, null);
+            Assert.AreNotEqual(tradeHandler.PropertyTradeOwnerToGive, null);
+            Assert.AreNotEqual(tradeHandler.IsTradeAgreed, null);
+            Assert.AreNotEqual(tradeHandler.TradablePropertiesOfTradeTarget, null);
+            Assert.AreNotEqual(tradeHandler.MoneyOwnerWillingToAddOnTrade, 0);
+        }
+        [TestMethod]
+        public void ChangeTradeOwner_Reset_Conditions()
+        {
+            TradeHandler tradeHandler = this.CreateTradeHandlerWithTradeConditions();
+
+            tradeHandler.ChangeTradeOwner();
+
+            Assert.AreEqual(tradeHandler.PropertyTradeOwnerToGet, null);
+            Assert.AreEqual(tradeHandler.PropertyTradeOwnerToGive, null);
+            Assert.AreEqual(tradeHandler.IsTradeAgreed, null);
+            Assert.AreEqual(tradeHandler.TradablePropertiesOfTradeTarget.Count(), 0);
+            Assert.AreEqual(tradeHandler.MoneyOwnerWillingToAddOnTrade, 0);
+        }
+
+        [TestMethod]
+        public void SetTrade_And_Reset_Conditions()
+        {
+            TradeHandler tradeHandler = this.CreateTradeHandlerWithTradeConditions();
+            List<Property> properties = this.CreateNotOwnedProperties();
+            List<int> participantNumbers = new List<int> {1, 2, 3, 0};
+
+            tradeHandler.SetTrade(participantNumbers, properties);
+
+            Assert.AreEqual(tradeHandler.PropertyTradeOwnerToGet, null);
+            Assert.AreEqual(tradeHandler.PropertyTradeOwnerToGive, null);
+            Assert.AreEqual(tradeHandler.IsTradeAgreed, null);
+            Assert.AreEqual(tradeHandler.TradablePropertiesOfTradeTarget.Count(), 0);
+            Assert.AreEqual(tradeHandler.MoneyOwnerWillingToAddOnTrade, 0);
         }
     }
 }

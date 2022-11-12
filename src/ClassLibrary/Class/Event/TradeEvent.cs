@@ -36,8 +36,8 @@ public class TradeEvent
         this.lastEvent = this.StartTrade;
     }
 
-    private int currentTradeOwner => this.tradeHandlerData.CurrentTradeOwner;
-    private int currentTradeTarget => this.tradeHandlerData.CurrentTradeTarget;
+    private int currentTradeOwner => (int)this.tradeHandlerData.CurrentTradeOwner!;
+    private int currentTradeTarget => (int)this.tradeHandlerData.CurrentTradeTarget!;
     private int additionalMoneyFromTradeOwner => this.tradeHandlerData.MoneyOwnerWillingToAddOnTrade;
     private List<Property> properties => this.tileManager.Properties;
 
@@ -62,7 +62,8 @@ public class TradeEvent
     }
 
     public void SelectTradeTarget()
-    {        
+    {
+
         int tradeTarget = this.tradeDecisionMaker.SelectTradeTarget(this.currentTradeOwner);
 
         this.eventFlow.RecommendedString =
@@ -282,7 +283,7 @@ public class TradeEvent
             }
             else
             {
-                if (this.tradeHandlerData.IsTradeCountEqualToParticipantCount)
+                if (this.tradeHandlerData.IsTimeToCloseTrade)
                 {
                     this.AddNextEvent(this.EndTrade);
 
