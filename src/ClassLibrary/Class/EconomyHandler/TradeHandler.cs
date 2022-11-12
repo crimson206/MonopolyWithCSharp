@@ -1,25 +1,28 @@
-public class TradeHandler
+public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
 {
     private List<int> participantNumbers = new List<int>();
     private int tradeCount = 0;
     private int currentTradeOwner;
     private int currentTradeTarget;
-    private IPropertyData? propertyOwnerWantsFromTarget;
-    private IPropertyData? propertyOwnerIsWillingToExchange;
+    private IPropertyData? propertyTradeOwnerToGet;
+    private IPropertyData? propertyTradeOwnerToGive;
     private int moneyOwnerWillingToAddOnTrade;
     private TileFilter tileFilter = new TileFilter();
     private Dictionary<int, List<IPropertyData>>? ownedTradablePropertyDatas;
     private bool? isTradeAgreed;
-    private bool didAllParticipantsTry = false;
+    private bool hadAllParticipantsTheirTurn = false;
 
-    public List<IPropertyData> TradeOwnersTradableProperties =>
+    public List<IPropertyData> TradablePropertiesOfTradeOwner =>
         this.ownedTradablePropertyDatas![this.currentTradeOwner];
-    public List<IPropertyData> TradeTargetsTradableProperties =>
+    public List<IPropertyData> TradablePropertiesOfTradeTarget =>
         this.ownedTradablePropertyDatas![this.currentTradeTarget];
-    public IPropertyData? PropertyOwnerWantsFromTarget => this.propertyOwnerWantsFromTarget;
-    public IPropertyData? PropertyOwnerIsWillingToExchange => this.propertyOwnerIsWillingToExchange;
+    public IPropertyData? PropertyTradeOwnerToGet => this.propertyTradeOwnerToGet;
+    public IPropertyData? PropertyTradeOwnerToGive => this.propertyTradeOwnerToGive;
     public int MoneyOwnerWillingToAddOnTrade => this.moneyOwnerWillingToAddOnTrade;
     public bool? IsTradeAgreed => this.isTradeAgreed;
+    public int CurrentTradeOwner => this.currentTradeOwner;
+    public int CurrentTradeTarget => this.currentTradeTarget;
+    public bool HadAllParticipantsTheirTurn => this.hadAllParticipantsTheirTurn;
 
     public void SetTrade(List<int> participantNumbers, List<Property> properties)
     {
@@ -38,36 +41,36 @@ public class TradeHandler
     }
 
     public void SetTradeTarget(
-        int currentTradeTarget
+        int tradeTarget
     )
     {
-        this.currentTradeTarget = currentTradeTarget;
+        this.currentTradeTarget = tradeTarget;
     }
 
-    public void SetTradeCondition(
+    public void SuggestTradeOwnerTradeCondition(
         IPropertyData? propertyOwnerWantsFromTarget,
         IPropertyData? propertyOwnerIsWillingToExchange,
         int moneyOwnerWillingToAddOnTrade)
     {
-        this.propertyOwnerWantsFromTarget = propertyOwnerWantsFromTarget;
-        this.propertyOwnerIsWillingToExchange = propertyOwnerIsWillingToExchange;
+        this.propertyTradeOwnerToGet = propertyOwnerWantsFromTarget;
+        this.propertyTradeOwnerToGive = propertyOwnerIsWillingToExchange;
         this.moneyOwnerWillingToAddOnTrade = moneyOwnerWillingToAddOnTrade;
     }
 
-    public void SetTradeTargetIsTradeAgreed(bool agreed)
+    public void MakeTradeTargetDecionOnTradeAgreement(bool agreed)
     {
         this.isTradeAgreed = agreed;
         this.tradeCount++;
 
         if (this.tradeCount == this.participantNumbers.Count())
         {
-            this.didAllParticipantsTry = true;
+            this.hadAllParticipantsTheirTurn = true;
         }
     }
 
     public void ChangeTradeOwner(List<Property> properties)
     {
-        if (this.didAllParticipantsTry)
+        if (this.hadAllParticipantsTheirTurn)
         {
             throw new Exception();
         }
@@ -89,17 +92,17 @@ public class TradeHandler
     private void ResetTradeConditionsHard()
     {
         this.tradeCount = 0;
-        this.didAllParticipantsTry = false;
-        this.propertyOwnerIsWillingToExchange = null;
-        this.propertyOwnerWantsFromTarget = null;
+        this.hadAllParticipantsTheirTurn = false;
+        this.propertyTradeOwnerToGive = null;
+        this.propertyTradeOwnerToGet = null;
         this.isTradeAgreed = null;
         this.ownedTradablePropertyDatas = null;
     }
 
     private void ResetTradeConditionSoft()
     {
-        this.propertyOwnerIsWillingToExchange = null;
-        this.propertyOwnerWantsFromTarget = null;
+        this.propertyTradeOwnerToGive = null;
+        this.propertyTradeOwnerToGet = null;
         this.isTradeAgreed = null;
         this.ownedTradablePropertyDatas = null;      
     }
