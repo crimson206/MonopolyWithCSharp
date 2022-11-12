@@ -25,21 +25,25 @@ namespace Tests
 
             Assert.AreEqual(realEstate1.CurrentRent, 10);
             Assert.AreEqual(realEstate1.IsHouseBuildable, false);
+            Assert.AreEqual(realEstate1.IsTradable, false);
 
             /// sell realEstate
             realEstate1.SetOnwerPlayerNumber(1);
             Assert.AreEqual(realEstate1.OwnerPlayerNumber, 1);
             Assert.ThrowsException<Exception>(() => realEstate1.BuildHouse());
+            Assert.AreEqual(realEstate1.IsTradable, true);
 
             /// make is mortgaged
             realEstate1.SetIsMortgaged(true);
             Assert.AreEqual(realEstate1.IsMortgaged, true);
             Assert.AreEqual(realEstate1.CurrentRent, 0);
+            Assert.AreEqual(realEstate1.IsTradable, false);
 
             /// recoverty from mortgaged
             realEstate1.SetIsMortgaged(false);
             Assert.AreEqual(realEstate1.IsMortgaged, false);
             Assert.AreEqual(realEstate1.CurrentRent, 10);
+            Assert.AreEqual(realEstate1.IsTradable, true);
  
             /// make monopoly
             realEstate2.SetOnwerPlayerNumber(1);
@@ -51,6 +55,12 @@ namespace Tests
             realEstate1.BuildHouse();
             Assert.AreEqual(realEstate1.CurrentRent, 40);
             Assert.AreEqual(realEstate1.HouseCount, 1);
+            
+            foreach (var realEstate in colorGroup)
+            {
+                Assert.AreEqual(realEstate.IsTradable, false);
+            }
+
             Assert.ThrowsException<Exception>(() => realEstate1.BuildHouse());
             Assert.AreEqual(realEstate1.IsHouseDistructable, true);
             Assert.AreEqual(realEstate2.IsHouseDistructable, false);

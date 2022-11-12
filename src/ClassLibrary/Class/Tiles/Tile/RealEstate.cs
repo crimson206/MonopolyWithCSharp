@@ -89,4 +89,16 @@ public class RealEstate : Property, IRealEstateData
             return Rents[0];
         }
     }
+
+    protected override bool CheckTradable()
+    {
+        if (this.colorGroup.Any(member => member.HouseCount > 0) || this.isMortgaged || this.ownerPlayerNumber is null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 }

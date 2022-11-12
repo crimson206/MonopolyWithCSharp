@@ -27,6 +27,8 @@ public class Property : Tile, IPurchasable, IPropertyData
 
     public bool IsMortgagible => this.CheckMortgagible();
 
+    public bool IsTradable => this.CheckTradable();
+
     public void SetOnwerPlayerNumber(int? playerNumber)
     {
 
@@ -73,6 +75,18 @@ public class Property : Tile, IPurchasable, IPropertyData
         else
         {
             return false;
+        }
+    }
+
+    protected virtual bool CheckTradable()
+    {
+        if (this.ownerPlayerNumber is null || this.isMortgaged)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 }
