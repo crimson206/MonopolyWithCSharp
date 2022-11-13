@@ -27,7 +27,6 @@ public class Game
         this.boolCopier = new BoolCopier();
         this.delegator = new Delegator();
         this.economyHandlers = new EconomyHandlers();
-        this.decisionMakers = new DecisionMakers();
 
         int boardSize = this.tileManager.TileDatas.Count();
         int goPosition = (from tile in this.tileManager.Tiles where tile is Go select this.tileManager.Tiles.IndexOf(tile)).ToList()[0];
@@ -36,15 +35,17 @@ public class Game
         this.statusHandlers.BoardHandler.GoPosition = goPosition;
 
         this.dataCenter = this.GenerateDataCenter();
-        this.mainEvent = this.GetMainEvent();
 
+
+        /// make events
+        this.decisionMakers = new DecisionMakers(this.dataCenter);
         this.auctionEvent = new AuctionEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.economyHandlers.AuctionHandler, this.delegator, this.decisionMakers);
-        this.houseBuildEvent = new HouseBuildEvent();
+        this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.statusHandlers);
         this.tradeEvent = new TradeEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.economyHandlers, this.delegator, this.decisionMakers);
+        this.mainEvent = new MainEvent(this.statusHandlers, this.tileManager, this.decisionMakers, this.delegator, new Dice(), new Random());
 
+        /// set events
         Events events = new Events(this.mainEvent, this.auctionEvent, this.houseBuildEvent, this.tradeEvent);
-        this.mainEvent.SetEvents(events);
-        this.auctionEvent.SetEvents(events);
     }
 
     public DataCenter Data => this.dataCenter;
@@ -57,9 +58,5 @@ public class Game
     private DataCenter GenerateDataCenter()
     {
         return new DataCenter(this.statusHandlers, this.economyHandlers, this.tileManager);
-    }
-    public MainEvent GetMainEvent()
-    {
-        return new MainEvent(this.statusHandlers, this.tileManager, this.decisionMakers, this.delegator, new Dice(), new Random());
     }
 }

@@ -9,4 +9,5 @@ public interface IAuctionHandlerData
     public int? WinnerNumber { get; }
 
     public int NextParticipantNumber { get; }
+
 }

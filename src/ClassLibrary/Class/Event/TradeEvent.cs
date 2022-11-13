@@ -2,7 +2,7 @@ public class TradeEvent
 {
     private Delegator delegator;
     private EventFlow eventFlow;
-    private Events? events;
+    private IEvents? events;
     private IDataCenter dataCenter;
     private BankHandler bankHandler;
     private ITileManager tileManager;
@@ -11,7 +11,7 @@ public class TradeEvent
     private int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
     private Action lastEvent;
     private List<int>? participantPlayerNumbers = new List<int>();
-    private TradeDecisionMaker tradeDecisionMaker = new TradeDecisionMaker();
+    private ITradeDecisionMaker tradeDecisionMaker;
     private PropertyManager propertyManager = new PropertyManager();
     private TileFilter tileFilter = new TileFilter();
     private ITradeHandlerData tradeHandlerData;
@@ -34,6 +34,7 @@ public class TradeEvent
         this.tradeHandler = economyHandlers.TradeHandler;
         this.tradeHandlerData = dataCenter.TradeHandler;
         this.lastEvent = this.StartTrade;
+        this.tradeDecisionMaker = decisionMakers.TradeDecisionMaker;
     }
 
     private int currentTradeOwner => (int)this.tradeHandlerData.CurrentTradeOwner!;
@@ -41,7 +42,7 @@ public class TradeEvent
     private int additionalMoneyFromTradeOwner => this.tradeHandlerData.MoneyOwnerWillingToAddOnTrade;
     private List<Property> properties => this.tileManager.Properties;
 
-    public void SetEvents(Events events)
+    public void SetEvents(IEvents events)
     {
         this.events = events;
     }
@@ -53,11 +54,14 @@ public class TradeEvent
             .SetTrade(this.participantPlayerNumbers!,
                     this.properties);
 
-        this.eventFlow
-            .RecommendedString =
-                CreateParticipantsString() +
-                " will have trade chances in turn";
-            
+        if ( this.tradeHandlerData.IsTimeToCloseTrade is false)
+        {
+            this.eventFlow
+                .RecommendedString =
+                    CreateParticipantsString() +
+                    " will have trade chances in turn";
+        }
+
         this.CallNextEvent();
     }
 
@@ -65,6 +69,7 @@ public class TradeEvent
     {
 
         int tradeTarget = this.tradeDecisionMaker.SelectTradeTarget(this.currentTradeOwner);
+        this.tradeHandler.SetTradeTarget(tradeTarget);
 
         this.eventFlow.RecommendedString =
             string.Format("Player{0} choose Player{1} as the trade target",
@@ -76,15 +81,32 @@ public class TradeEvent
 
     private void SuggestTradeOwnerTradeCondition()
     {
-        IPropertyData propertyToGet =
-            this.tradeDecisionMaker
-                .SelectPropertyToGet
-                (this.currentTradeOwner);
+        IPropertyData? propertyToGet;
+        IPropertyData? propertyToGive;
 
-        IPropertyData propertyToGive =
-            this.tradeDecisionMaker
-                .SelectPropertyToGive
-                (this.currentTradeOwner);
+        if (this.tradeHandlerData.TradablePropertiesOfTradeTarget.Count() != 0)
+        {
+            propertyToGet =
+                this.tradeDecisionMaker
+                    .SelectPropertyToGet
+                    (this.currentTradeOwner);
+        }
+        else
+        {
+            propertyToGet = null;
+        }
+
+        if (this.tradeHandlerData.TradablePropertiesOfTradeOwner.Count() != 0)
+        {
+            propertyToGive =
+                this.tradeDecisionMaker
+                    .SelectPropertyToGive
+                    (this.currentTradeOwner);
+        }
+        else
+        {
+            propertyToGive = null;
+        }
 
         int addtionalMoney =
             this.tradeDecisionMaker
@@ -97,17 +119,20 @@ public class TradeEvent
             propertyToGive,
             addtionalMoney);
 
+        string stringPropertyToGet = (propertyToGet is null? "null" :propertyToGet.Name);
+        string stringPropertyToGive = (propertyToGive is null? "null" :propertyToGive.Name);
+
         this.eventFlow
             .RecommendedString =
                 string.Format("Conditions : {0}, {1}, {2}",
-                            propertyToGet.Name,
-                            propertyToGive.Name,
+                            stringPropertyToGet,
+                            stringPropertyToGive,
                             addtionalMoney);
 
         this.CallNextEvent();
     }
 
-    private void MakeTradeTargetDecionOnTradeAgreement()
+    private void MakeTradeTargetDecisionOnTradeAgreement()
     {
         bool agreedTradeTargetWithTradeCondition = this.tradeDecisionMaker
                         .MakeTradeTargetDecisionOnTradeAgreement
@@ -156,7 +181,7 @@ public class TradeEvent
 
             this.propertyManager
                 .ChangeOwner(propertyTradeOwnerToGive,
-                            this.currentTradeOwner);
+                            this.currentTradeTarget);
         }
 
         int addtionalMoney = this.tradeHandlerData
@@ -179,11 +204,14 @@ public class TradeEvent
         this.tradeHandler
             .ChangeTradeOwner();
 
+        if (this.tradeHandlerData.SelectableTargetNumbers.Count() != 0)
+        {
         this.eventFlow
             .RecommendedString =
                 string.Format(
                             "Player{0} can select a trade target",
                             this.currentTradeOwner);
+        }
 
         this.CallNextEvent();
     }
@@ -254,9 +282,19 @@ public class TradeEvent
     {
         if (this.lastEvent == this.StartTrade)
         {
-            this.AddNextEvent(this.SelectTradeTarget);
-
-            return;
+            if (this.tradeHandlerData.IsTimeToCloseTrade is false)
+            {
+                this.AddNextEvent(this.SelectTradeTarget);
+            
+                return;
+            }
+            else
+            {
+                this.events!.HouseBuildEvent.AddNextEvent(this.events!
+                                .HouseBuildEvent
+                                .StartBuildingHouse);
+                return;
+            }
         }
 
         if (this.lastEvent == this.SelectTradeTarget)
@@ -268,12 +306,12 @@ public class TradeEvent
 
         if (this.lastEvent == this.SuggestTradeOwnerTradeCondition)
         {
-            this.AddNextEvent(this.MakeTradeTargetDecionOnTradeAgreement);
+            this.AddNextEvent(this.MakeTradeTargetDecisionOnTradeAgreement);
 
             return;
         }
 
-        if (this.lastEvent == this.MakeTradeTargetDecionOnTradeAgreement)
+        if (this.lastEvent == this.MakeTradeTargetDecisionOnTradeAgreement)
         {
             if (this.tradeHandlerData.IsTradeAgreed is true)
             {
@@ -296,15 +334,43 @@ public class TradeEvent
                     return;
                 }
             }
+        }
 
+        if (this.lastEvent == this.DoTrade)
+        {
+            if (this.tradeHandlerData.IsTimeToCloseTrade)
+            {
+                this.AddNextEvent(this.EndTrade);
+                return;
+            }
+            else
+            {
+                this.AddNextEvent(this.ChangeTradeOwner);
+                return;
+            }
+        }
 
+        if (this.lastEvent == this.ChangeTradeOwner)
+        {
+            if (this.tradeHandlerData.SelectableTargetNumbers.Count() != 0)
+            {
+                this.AddNextEvent(this.SelectTradeTarget);
+
+                return;
+            }
+            else
+            {
+                this.AddNextEvent(this.EndTrade);
+
+                return;
+            }
         }
 
         if (this.lastEvent == this.EndTrade)
         {
             this.AddNextEvent(this.events!
                             .HouseBuildEvent
-                            .StartBuidlingHouse);
+                            .StartBuildingHouse);
 
             return;
         }

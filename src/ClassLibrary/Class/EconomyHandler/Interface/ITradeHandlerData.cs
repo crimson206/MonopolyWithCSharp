@@ -9,4 +9,5 @@ public interface ITradeHandlerData
     public int? CurrentTradeOwner { get; }
     public int? CurrentTradeTarget { get; }
     public bool IsTimeToCloseTrade { get; }
+    public List<int> SelectableTargetNumbers { get; }
 }

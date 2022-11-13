@@ -208,7 +208,7 @@ public class MainEvent
             }
             else
             {
-                this.AddNextEvent(this.events!.TradeEvent.StartTrade);
+                this.events!.TradeEvent.AddNextEvent(this.events.TradeEvent.StartTrade);
             }
 
             return;
@@ -243,7 +243,7 @@ public class MainEvent
         }
         if (this.lastEvent == this.HasJailPenalty)
         {
-            this.AddNextEvent(this.EndTurn);
+            this.events!.TradeEvent.AddNextEvent(this.events.TradeEvent.StartTrade);
 
             return;
         }

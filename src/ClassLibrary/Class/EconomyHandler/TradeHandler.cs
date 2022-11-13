@@ -110,12 +110,13 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
             this.tradeCount++;
             this.currentTradeOwner = this.participantNumbers[this.tradeCount];
             this.SetTradablePropertyDatas();
-        } while (this.SelectableTargetNumbers.Count() == 0);
 
-        if (this.tradeCount == this.participantNumbers.Count() - 1)
-        {
-            this.isTimeToCloseTrade = true;
-        }
+            if (this.tradeCount == this.participantNumbers.Count() - 1)
+            {
+                this.isTimeToCloseTrade = true;
+            }
+
+        } while (this.SelectableTargetNumbers.Count() == 0 && this.isTimeToCloseTrade is false);
     }
 
     private void ResetInitialTradeConditions()
