@@ -31,7 +31,7 @@ namespace Tests
 
         public TestSettingWithMockedClasses()
         {
-            this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.mockedDataCenter.Object, this.mockedStatusHandlers.Object);
+            this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.mockedDataCenter.Object, this.mockedStatusHandlers.Object, this.mockedTileManager.Object, mockedEconomyHandlers.Object);
             this.SetProperties();
             this.SetupMocks();
         }
@@ -197,7 +197,7 @@ namespace Tests
                             delegator,
                             decisionMakers);
 
-            HouseBuildEvent houseBuildEvent = new HouseBuildEvent(delegator, dataCenter, statusHandlers);
+            HouseBuildEvent houseBuildEvent = new HouseBuildEvent(delegator, dataCenter, statusHandlers, tilemanager, economyHandlers);
 
             Mock<IEvents> mockedEvents = new Mock<IEvents>();
             mockedEvents.Setup(t => t.HouseBuildEvent).Returns(houseBuildEvent);

@@ -13,5 +13,6 @@ public interface IDataCenter
     public List<ITileData> TileDatas { get; }
     public IAuctionHandlerData AuctionHandler { get; }
     public ITradeHandlerData TradeHandler { get; }
-    public ITileData CurrentTileData{ get; }
+    public ITileData CurrentTileData { get; }
+    public IHouseBuildHandlerData HouseBuildHandler { get; }
 }

@@ -9,6 +9,7 @@ public class DataCenter : IDataCenter
     private IAuctionHandlerData auctionHandler;
     private ITradeHandlerData tradeHandler;
     private IEventFlowData eventFlow;
+    private IHouseBuildHandlerData houseBuildHandlerData;
 
     public DataCenter(
         IStatusHandlers statusHandlers,
@@ -39,6 +40,7 @@ public class DataCenter : IDataCenter
     public IEventFlowData EventFlow => this.eventFlow;
     public IAuctionHandlerData AuctionHandler => this.auctionHandler;
     public ITradeHandlerData TradeHandler => this.tradeHandler;
+    public IHouseBuildHandlerData HouseBuildHandler => this.HouseBuildHandler;
     public List<ITileData> TileDatas => new List<ITileData>(this.tileDatas);
     public ITileData CurrentTileData => this.GetCurrentTileData();
     private ITileData GetCurrentTileData()
