@@ -63,7 +63,10 @@ namespace Tests
 
             AuctionEvent auctionEvent = new AuctionEvent(statusHandlers, tileManager, dataCenter, economyHandlers.AuctionHandler, delegator, decisionMakers);
 
-            Events events = new Events(mainEvent, auctionEvent, new HouseBuildEvent(delegator, dataCenter, statusHandlers), new TradeEvent(statusHandlers, tileManager, dataCenter, economyHandlers, delegator, decisionMakers));
+            Events events = new Events(mainEvent,
+                                    auctionEvent,
+                                    new HouseBuildEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers),
+                                    new TradeEvent(statusHandlers, tileManager, dataCenter, economyHandlers, delegator, decisionMakers));
 
             mainEvent.SetEvents(events);
             auctionEvent.SetEvents(events);

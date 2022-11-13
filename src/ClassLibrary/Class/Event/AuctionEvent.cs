@@ -19,7 +19,8 @@ public class AuctionEvent : Event
     DecisionMakers decisionMakers)
         :base
         (delegator,
-        dataCenter)
+        dataCenter,
+        tileManager)
     {
         this.bankHandler = statusHandlers.BankHandler;
         this.tileManager = tileManager;

@@ -2,10 +2,8 @@ public class TradeEvent : Event
 {
     private EventFlow eventFlow;
     private BankHandler bankHandler;
-    private ITileManager tileManager;
     private ITradeHandlerFunction tradeHandler;
     private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
-    private int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
     private List<int>? participantPlayerNumbers = new List<int>();
     private ITradeDecisionMaker tradeDecisionMaker;
     private PropertyManager propertyManager = new PropertyManager();
@@ -22,7 +20,8 @@ public class TradeEvent : Event
         IDecisionMakers decisionMakers
     )
         : base(delegator,
-            dataCenter)
+            dataCenter,
+            tileManager)
     {
         this.bankHandler = statusHandlers.BankHandler;
         this.eventFlow = statusHandlers.EventFlow;

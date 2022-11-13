@@ -4,7 +4,6 @@ public class MainEvent : Event
     private BoardHandler boardHandler;
     private IDice dice;
     private DoubleSideEffectHandler doubleSideEffectHandler;
-    private ITileManager tileManager;
     private JailHandler jailHandler;
     private EventFlow eventFlow;
     private Random random;
@@ -23,7 +22,8 @@ public class MainEvent : Event
     Random random)
         :base
         (delegator,
-        dataCenter)
+        dataCenter,
+        tileManager)
     {
         this.bankHandler = statusHandlers.BankHandler;
         this.boardHandler = statusHandlers.BoardHandler;
