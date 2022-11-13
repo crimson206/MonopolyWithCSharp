@@ -1,15 +1,11 @@
-public class TradeEvent
+public class TradeEvent : Event
 {
-    private Delegator delegator;
     private EventFlow eventFlow;
-    private IEvents? events;
-    private IDataCenter dataCenter;
     private BankHandler bankHandler;
     private ITileManager tileManager;
     private ITradeHandlerFunction tradeHandler;
     private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
     private int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
-    private Action lastEvent;
     private List<int>? participantPlayerNumbers = new List<int>();
     private ITradeDecisionMaker tradeDecisionMaker;
     private PropertyManager propertyManager = new PropertyManager();
@@ -25,15 +21,14 @@ public class TradeEvent
         Delegator delegator,
         IDecisionMakers decisionMakers
     )
+        : base(delegator,
+            dataCenter)
     {
-        this.dataCenter = dataCenter;
         this.bankHandler = statusHandlers.BankHandler;
         this.eventFlow = statusHandlers.EventFlow;
         this.tileManager = tileManager;
-        this.delegator = delegator;
         this.tradeHandler = economyHandlers.TradeHandler;
         this.tradeHandlerData = dataCenter.TradeHandler;
-        this.lastEvent = this.StartTrade;
         this.tradeDecisionMaker = decisionMakers.TradeDecisionMaker;
     }
 
@@ -46,7 +41,7 @@ public class TradeEvent
     {
         this.events = events;
     }
-    public void StartTrade()
+    public override void StartEvent()
     {
         this.SetParticipantPlayerNumbers();
 
@@ -278,9 +273,9 @@ public class TradeEvent
         return this.ConvertIntListToString(suggestedPrices.Values.ToList());
     }
 
-    private void CallNextEvent()
+    protected override void CallNextEvent()
     {
-        if (this.lastEvent == this.StartTrade)
+        if (this.lastEvent == this.StartEvent)
         {
             if (this.tradeHandlerData.IsTimeToCloseTrade is false)
             {
@@ -292,7 +287,7 @@ public class TradeEvent
             {
                 this.events!.HouseBuildEvent.AddNextEvent(this.events!
                                 .HouseBuildEvent
-                                .StartBuildingHouse);
+                                .StartEvent);
                 return;
             }
         }
@@ -370,17 +365,9 @@ public class TradeEvent
         {
             this.AddNextEvent(this.events!
                             .HouseBuildEvent
-                            .StartBuildingHouse);
+                            .StartEvent);
 
             return;
         }
-    }
-
-    public void AddNextEvent(Action nextEvent)
-    {
-        this.lastEvent = nextEvent;
-
-        this.delegator
-            .SetNextEvent(nextEvent);
     }
 }

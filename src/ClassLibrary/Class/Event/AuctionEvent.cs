@@ -1,37 +1,31 @@
-public class AuctionEvent
+public class AuctionEvent : Event
 {
-    private Delegator delegator;
+
     private IAuctionHandlerFunction auctionHandler;
     private EventFlow eventFlow;
-    private Events? events;
-    private IDataCenter dataCenter;
-
     private List<int> participantPlayerNumbers = new List<int>();
     private int participantCount => this.AreInGame.Where(isInGame => isInGame == true).Count();
     private int initialPrice;
-    private Action lastEvent;
     private IAuctionDecisionMaker auctionDecisionMaker;
     private BankHandler bankHandler;
     private ITileManager tileManager;
 
     public AuctionEvent
-    (
-        StatusHandlers statusHandlers,
-        ITileManager tileManager,
-        IDataCenter dataCenter,
-        AuctionHandler auctionHandler,
-        Delegator delegator,
-        DecisionMakers decisionMakers
-    )
+    (StatusHandlers statusHandlers,
+    ITileManager tileManager,
+    IDataCenter dataCenter,
+    AuctionHandler auctionHandler,
+    Delegator delegator,
+    DecisionMakers decisionMakers)
+        :base
+        (delegator,
+        dataCenter)
     {
         this.bankHandler = statusHandlers.BankHandler;
         this.tileManager = tileManager;
         this.auctionHandler = auctionHandler;
-        this.delegator = delegator;
         this.eventFlow = statusHandlers.EventFlow;
-        this.dataCenter = dataCenter;
         this.auctionDecisionMaker = decisionMakers.AuctionDecisionMaker;
-        this.lastEvent = this.StartAuction;
     }
 
     private List<int> Balances => this.dataCenter.Bank.Balances;
@@ -44,12 +38,7 @@ public class AuctionEvent
 
     public string RecommendedString { get; private set; } = string.Empty;
 
-    public void SetEvents(Events events)
-    {
-        this.events = events;
-    }
-
-    public void StartAuction()
+    public override void StartEvent()
     {
         this.eventFlow.RecommendedString = string.Format("An auction for {0} starts", this.CurrentPropertyData!.Name);
         this.CallNextEvent();
@@ -153,9 +142,9 @@ public class AuctionEvent
         return this.ConvertIntListToString(suggestedPrices.Values.ToList());
     }
 
-    private void CallNextEvent()
+    protected override void CallNextEvent()
     {
-        if (this.lastEvent == this.StartAuction)
+        if (this.lastEvent == this.StartEvent)
         {
             this.AddNextEvent(this.DecideInitialPrice);
 
@@ -194,12 +183,6 @@ public class AuctionEvent
             this.events!.MainEvent.AddNextEvent(this.events!.MainEvent.CheckExtraTurn);
             return;
         }
-    }
-
-    public void AddNextEvent(Action nextEvent)
-    {
-        this.lastEvent = nextEvent;
-        this.delegator.SetNextEvent(nextEvent);
     }
 
     private Property GetCurrentProperty()

@@ -13,7 +13,6 @@ public class Game
     private TileManager tileManager;
     private StatusHandlers statusHandlers = new StatusHandlers();
     private DataCenter dataCenter;
-    public BoolCopier boolCopier;
     private MainEvent mainEvent;
     private AuctionEvent auctionEvent;
     private HouseBuildEvent houseBuildEvent;
@@ -24,7 +23,6 @@ public class Game
     public Game(bool isBoardSmall)
     {
         this.tileManager = new TileManager(isBoardSmall);
-        this.boolCopier = new BoolCopier();
         this.delegator = new Delegator();
         this.economyHandlers = new EconomyHandlers();
 
@@ -40,9 +38,9 @@ public class Game
         /// make events
         this.decisionMakers = new DecisionMakers(this.dataCenter);
         this.auctionEvent = new AuctionEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.economyHandlers.AuctionHandler, this.delegator, this.decisionMakers);
-        this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.statusHandlers);
+        this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.dataCenter, this.statusHandlers);
         this.tradeEvent = new TradeEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.economyHandlers, this.delegator, this.decisionMakers);
-        this.mainEvent = new MainEvent(this.statusHandlers, this.tileManager, this.decisionMakers, this.delegator, new Dice(), new Random());
+        this.mainEvent = new MainEvent(this.statusHandlers, this.tileManager, this.decisionMakers, this.dataCenter, this.delegator, new Dice(), new Random());
 
         /// set events
         Events events = new Events(this.mainEvent, this.auctionEvent, this.houseBuildEvent, this.tradeEvent);

@@ -1,4 +1,4 @@
-public class MainEvent
+public class MainEvent : Event
 {
     private BankHandler bankHandler;
     private BoardHandler boardHandler;
@@ -7,26 +7,23 @@ public class MainEvent
     private ITileManager tileManager;
     private JailHandler jailHandler;
     private EventFlow eventFlow;
-    private Delegator delegator;
-    private BoolCopier boolCopier = new BoolCopier();
-    private Events? events;
     private Random random;
-    private DecisionMakers decisionMakers;
+    private IDecisionMakers decisionMakers;
     private bool isDoubleSideEffectOn = true;
-    private bool isAbleToMove = true;
     private Tile currentTile => this.GetCurrentTile();
     private bool rolledDouble => this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
-    private bool boughtProperty;
-
 
     public MainEvent
-    (
-    StatusHandlers statusHandlers,
+    (StatusHandlers statusHandlers,
     ITileManager tileManager,
-    DecisionMakers decisionMakers,
+    IDecisionMakers decisionMakers,
+    IDataCenter dataCenter,
     Delegator delegator,
     IDice dice,
     Random random)
+        :base
+        (delegator,
+        dataCenter)
     {
         this.bankHandler = statusHandlers.BankHandler;
         this.boardHandler = statusHandlers.BoardHandler;
@@ -36,29 +33,21 @@ public class MainEvent
         this.tileManager = tileManager;
         this.decisionMakers = decisionMakers;
         this.delegator = delegator;
+
+        this.delegator.SetNextEvent(this.StartEvent);
+        this.lastEvent = this.StartEvent;
+
         this.dice = dice;
         this.random = random;
-
-        this.delegator.SetNextEvent(this.StartTurn);
-        this.lastEvent = this.StartTurn;
     }
 
     private int PlayerNumber => this.eventFlow.CurrentPlayerNumber;
 
-    private string stringPlayer => String.Format("Player {0}", this.PlayerNumber);
+    private string stringPlayer => String.Format("Player{0}", this.PlayerNumber);
 
-    private Action lastEvent;
-
-
-
-    public void SetEvents(Events events)
+    protected override void CallNextEvent()
     {
-        this.events = events;
-    }
-
-    private void CallNextEvent()
-    {
-        if (this.lastEvent == this.StartTurn)
+        if (this.lastEvent == this.StartEvent)
         {
             if (this.jailHandler.TurnsInJailCounts[this.PlayerNumber] > 0)
             {
@@ -105,11 +94,10 @@ public class MainEvent
 
         if (this.lastEvent == this.RollDice)
         {
-            bool rolledDouble = this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
 
             if (this.lastEvent == this.MakeDecisionOnPaymentOfJailFine || this.lastEvent == this.MakeDecisionOnUsageOfJailFreeCard)
             {
-                if (rolledDouble)
+                if (this.rolledDouble)
                 {
                     this.AddNextEvent(this.IsReleasedFromJail);
                 }
@@ -208,7 +196,7 @@ public class MainEvent
             }
             else
             {
-                this.events!.TradeEvent.AddNextEvent(this.events.TradeEvent.StartTrade);
+                this.events!.TradeEvent.AddNextEvent(this.events.TradeEvent.StartEvent);
             }
 
             return;
@@ -243,7 +231,7 @@ public class MainEvent
         }
         if (this.lastEvent == this.HasJailPenalty)
         {
-            this.events!.TradeEvent.AddNextEvent(this.events.TradeEvent.StartTrade);
+            this.events!.TradeEvent.AddNextEvent(this.events.TradeEvent.StartEvent);
 
             return;
         }
@@ -256,13 +244,13 @@ public class MainEvent
 
         if (this.lastEvent == this.DontPurchaseProperty)
         {
-            this.events!.AuctionEvent.AddNextEvent(this.events!.AuctionEvent.StartAuction);
+            this.events!.AuctionEvent.AddNextEvent(this.events!.AuctionEvent.StartEvent);
             return;
         }
 
         if (this.lastEvent == this.EndTurn)
         {
-            this.AddNextEvent(this.StartTurn);
+            this.AddNextEvent(this.StartEvent);
             return;
         }
 
@@ -323,7 +311,7 @@ public class MainEvent
         this.CallNextEvent();
     }
 
-    public void StartTurn()
+    public override void StartEvent()
     {
         this.eventFlow.RecommendedString = this.stringPlayer + " start a turn";
 
@@ -553,16 +541,9 @@ public class MainEvent
         return this.tileManager.Tiles[playerPosition];
     }
 
-    public void AddNextEvent(Action nextEvent)
-    {
-        this.lastEvent = nextEvent;
-        this.delegator.SetNextEvent(nextEvent);
-    }
-
     private void UpdateNextDoubleSideEffect()
     {
-        bool rolledDouble = this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
-        if (rolledDouble)
+        if (this.rolledDouble)
         {
             this.doubleSideEffectHandler.CountDouble(this.PlayerNumber);
             this.doubleSideEffectHandler.SetExtraTurn(this.PlayerNumber, true);

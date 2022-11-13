@@ -9,7 +9,7 @@ namespace Tests
 {
     public class TestSettingWithMockedClasses
     {
-        public TradeEvent tradeEvent;
+        public TradeEvent? tradeEvent;
         public List<Tile> tiles = new List<Tile>();
         public List<ITileData> tileDatas = new List<ITileData>();
         public List<Property> properties = new List<Property>();
@@ -30,10 +30,9 @@ namespace Tests
 
         public TestSettingWithMockedClasses()
         {
-            this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.mockedStatusHandlers.Object);
+            this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.mockedDataCenter.Object, this.mockedStatusHandlers.Object);
             this.SetProperties();
             this.SetupMocks();
-            this.tradeEvent = this.CreateTradeEvent();
         }
 
         public void SetProperties()
@@ -78,7 +77,7 @@ namespace Tests
             mockedEvents.Setup(t => t.HouseBuildEvent).Returns(houseBuildEvent);
         }
 
-        public TradeEvent CreateTradeEvent()
+        public void SetTradeEvent()
         {
 
             ITileManager tilemanager = mockedTileManager.Object;
@@ -99,7 +98,7 @@ namespace Tests
             mockedEvents.Setup(t => t.HouseBuildEvent).Returns(houseBuildEvent);
             tradeEvent.SetEvents(mockedEvents.Object);
 
-            return tradeEvent;
+            this.tradeEvent = tradeEvent;
         }
     }
 
@@ -197,42 +196,50 @@ namespace Tests
                             delegator,
                             decisionMakers);
 
-            HouseBuildEvent houseBuildEvent = new HouseBuildEvent(delegator, statusHandlers);
+            HouseBuildEvent houseBuildEvent = new HouseBuildEvent(delegator, dataCenter, statusHandlers);
 
             Mock<IEvents> mockedEvents = new Mock<IEvents>();
             mockedEvents.Setup(t => t.HouseBuildEvent).Returns(houseBuildEvent);
             
             tradeEvent.SetEvents(mockedEvents.Object);
             
-            delegator.SetNextEvent(tradeEvent.StartTrade);
-            Assert.AreEqual(delegator.NextEventName, "StartTrade");
+            delegator.SetNextEvent(tradeEvent.StartEvent);
+            Assert.AreEqual(delegator.NextEventName, "StartEvent");
 
             delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "StartBuildingHouse");
+            Assert.AreEqual(delegator.NextEventName, "StartEvent");
         }
         [TestMethod]
         public void StartTrade_Without_TradableProperties_And_End_VerySoon()
         {
             TestSettingWithMockedClasses testSet = new TestSettingWithMockedClasses();
-            TradeEvent tradeEvent = testSet.tradeEvent;
+            testSet.SetTradeEvent();
+            TradeEvent tradeEvent = testSet.tradeEvent!;
             Delegator delegator = testSet.delegator;
 
-            delegator.SetNextEvent(tradeEvent.StartTrade);
-            Assert.AreEqual(delegator.NextEventName, "StartTrade");
+            delegator.SetNextEvent(tradeEvent.StartEvent);
+            Assert.AreEqual(delegator.NextEventName, "StartEvent");
 
             delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "StartBuildingHouse");
+            Assert.AreEqual(delegator.NextEventName, "StartEvent");
         }
         [TestMethod]
         public void StartTrade_With_TradableProperties_And_Follow_TradeEventFlow()
         {
             TestSettingWithMockedClasses testSet = new TestSettingWithMockedClasses();
-            TradeEvent tradeEvent = testSet.tradeEvent;
             Delegator delegator = testSet.delegator;
+
+            /// use real decisionmaker
+            TradeDecisionMaker tradeDecisionMaker = new TradeDecisionMaker(testSet.mockedDataCenter.Object);
+            testSet.mockedDecisionMakers.Setup(t => t.TradeDecisionMaker).Returns(tradeDecisionMaker);
+
+            testSet.SetTradeEvent();
+            TradeEvent tradeEvent = testSet.tradeEvent!;
+
             this.SetOnwerNumbersOfProperties(testSet.properties);
 
-            delegator.SetNextEvent(tradeEvent.StartTrade);
-            Assert.AreEqual(delegator.NextEventName, "StartTrade");
+            delegator.SetNextEvent(tradeEvent.StartEvent);
+            Assert.AreEqual(delegator.NextEventName, "StartEvent");
 
             delegator.RunEvent();
             Assert.AreEqual(delegator.NextEventName, "SelectTradeTarget");
