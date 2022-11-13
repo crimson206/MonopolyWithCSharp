@@ -10,7 +10,7 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
     private TileFilter tileFilter = new TileFilter();
     private Dictionary<int, List<IPropertyData>>? ownedTradablePropertyDatas;
     private bool? isTradeAgreed;
-    private bool isTimeToCloseTrade = false;
+    private bool isLastParticipant = false;
     private List<Property> backUpProperties = new List<Property>();
 
     public List<IPropertyData> TradablePropertiesOfTradeOwner =>
@@ -31,9 +31,11 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
 
     public int? CurrentTradeTarget => this.currentTradeTarget;
 
-    public bool IsTimeToCloseTrade => this.isTimeToCloseTrade;
+    public bool IsLastParticipant => this.isLastParticipant;
 
     public List<int> SelectableTargetNumbers => this.CreateSelectableTargetNumbers();
+
+    public bool IsThereTradableProperties => this.CheckIfThereIsAnyTradableProperty();
 
     public void SetTrade(
         List<int> participantNumbers,
@@ -46,19 +48,6 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
         this.backUpProperties = properties;
         this.currentTradeOwner = participantNumbers[0];
         this.SetTradablePropertyDatas();
-
-        if (this.CheckIfThereIsAnyTradableProperty(properties) is false)
-        {
-            this.isTimeToCloseTrade = true;
-        }
-        else if (this.SelectableTargetNumbers.Count() != 0)
-        {
-            return;
-        }
-        else
-        {
-            this.ChangeTradeOwner();
-        }
     }
 
     public void SetTradeTarget(
@@ -98,31 +87,27 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
 
     public void ChangeTradeOwner()
     {
-        if (this.isTimeToCloseTrade)
+        if (this.isLastParticipant)
         {
             throw new Exception();
         }
 
         this.ResetTradeConditionMeanwhile();
 
-        do
+        this.tradeCount++;
+        this.currentTradeOwner = this.participantNumbers[this.tradeCount];
+        this.SetTradablePropertyDatas();
+
+        if (this.tradeCount == this.participantNumbers.Count() - 1)
         {
-            this.tradeCount++;
-            this.currentTradeOwner = this.participantNumbers[this.tradeCount];
-            this.SetTradablePropertyDatas();
-
-            if (this.tradeCount == this.participantNumbers.Count() - 1)
-            {
-                this.isTimeToCloseTrade = true;
-            }
-
-        } while (this.SelectableTargetNumbers.Count() == 0 && this.isTimeToCloseTrade is false);
+            this.isLastParticipant = true;
+        }
     }
 
     private void ResetInitialTradeConditions()
     {
         this.tradeCount = 0;
-        this.isTimeToCloseTrade = false;
+        this.isLastParticipant = false;
     }
 
     private void ResetTradeConditionMeanwhile()
@@ -151,11 +136,10 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
         return selectableTargetNumbers;
     }
 
-    private bool CheckIfThereIsAnyTradableProperty(
-        List<Property> properties)
+    private bool CheckIfThereIsAnyTradableProperty()
     {
         bool isThereTradableProperties =
-            properties
+            this.backUpProperties
             .Any(property => property.IsTradable is true);
 
         return isThereTradableProperties;

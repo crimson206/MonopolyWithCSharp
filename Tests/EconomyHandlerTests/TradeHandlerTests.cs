@@ -81,7 +81,7 @@ namespace Tests
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {1, 2, 3, 0};
             List<Property> properties = this.CreatePropertiesPartialyOwnedByPlayer1();
-            List<int> expectedCurrentTradeOwners = new List<int> {2, 3, 0};
+            List<int> expectedSelectableTradeTargetCount = new List<int> {0, 1, 1, 1};
 
             for (int i = 0; i < 3; i++)
             {
@@ -94,14 +94,14 @@ namespace Tests
                     tradeHandler.ChangeTradeOwner();
                 }
 
-                Assert.AreEqual(tradeHandler.CurrentTradeOwner, expectedCurrentTradeOwners[i]);
+                Assert.AreEqual(tradeHandler.SelectableTargetNumbers.Count(), expectedSelectableTradeTargetCount[i]);
             }
         }
         [TestMethod]
-        public void Get_SelectableTargetNumbers_And_The_Only_Target_Is_Player1_Who_Has_Tradable_Propeerties()
+        public void Get_SelectableTargetNumbers_And_The_Only_Target_Is_Player1_Who_Has_Tradable_Properties()
         {
             TradeHandler tradeHandler = new TradeHandler();
-            List<int> participantNumbers = new List<int> {1, 2, 3, 0};
+            List<int> participantNumbers = new List<int> {0, 1, 2, 3};
             List<Property> properties = this.CreatePropertiesPartialyOwnedByPlayer1();
             tradeHandler.SetTrade(participantNumbers, properties);
 
@@ -113,7 +113,7 @@ namespace Tests
         public void SetTradeTarget_Who_Is_Selectable()
         {
             TradeHandler tradeHandler = new TradeHandler();
-            List<int> participantNumbers = new List<int> {1, 2, 3, 0};
+            List<int> participantNumbers = new List<int> {0, 1, 2, 3};
             List<Property> properties = this.CreatePropertiesPartialyOwnedByPlayer1();
             tradeHandler.SetTrade(participantNumbers, properties);
 
@@ -134,10 +134,10 @@ namespace Tests
             Assert.ThrowsException<Exception>(() => tradeHandler.SetTradeTarget(2));
         }
         [TestMethod]
-        public void SetTradeTarget_And_Get_TradablePropertiesOfTradeTarge()
+        public void SetTradeTarget_And_Get_TradablePropertiesOfTradeTarget()
         {
             TradeHandler tradeHandler = new TradeHandler();
-            List<int> participantNumbers = new List<int> {1, 2, 3, 0};
+            List<int> participantNumbers = new List<int> {0, 1, 2, 3};
             List<Property> properties = this.CreateNotOwnedProperties();
             for (int i = 0; i < 3; i++)
             {
