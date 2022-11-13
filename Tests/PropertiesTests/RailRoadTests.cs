@@ -22,10 +22,14 @@ namespace Tests
             /// check current rent
             Assert.AreEqual(railRoad1.CurrentRent, 20);
 
+            /// check it is not tradable
+            Assert.AreEqual(railRoad1.IsTradable, false);
+
             /// buy a railroad, rent is still the same
             railRoad1.SetOnwerPlayerNumber(1);
             Assert.AreEqual(railRoad1.CurrentRent, 20);
             Assert.AreEqual(railRoad2.CurrentRent, 20);
+            Assert.AreEqual(railRoad1.IsTradable, true);
 
             /// same owner increases the rent
             railRoad2.SetOnwerPlayerNumber(1);
@@ -38,6 +42,7 @@ namespace Tests
             Assert.AreEqual(railRoad1.IsMortgaged, false);
             railRoad1.SetIsMortgaged(true);
             Assert.AreEqual(railRoad1.IsMortgaged, true);
+            Assert.AreEqual(railRoad1.IsTradable, false);
             
         }
     }

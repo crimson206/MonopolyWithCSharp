@@ -55,4 +55,32 @@ public class TileFilter
     {
         return property;
     }
+
+    public Dictionary<int, List<IPropertyData>> ConvertPropertiesToOwnedPropertyDatasDictionary(List<int> ownerNumbers, List<Property> properties)
+    {
+        Dictionary<int, List<IPropertyData>> ownedProperties = new Dictionary<int, List<IPropertyData>>();
+        
+        foreach (var ownerNumber in ownerNumbers)
+        {
+            ownedProperties.Add(ownerNumber, new List<IPropertyData>());
+
+            foreach (var property in properties)
+            {
+                if (property.OwnerPlayerNumber == ownerNumber)
+                {
+                    ownedProperties[ownerNumber].Add(property);
+                }
+            }
+        }
+
+        return ownedProperties;
+    }
+
+    public List<IPropertyData> FilterTradablePropertyDatas (List<IPropertyData> propertyDatas)
+    {
+        List<IPropertyData> tradablePropertyDatas = propertyDatas.
+                                                    Where(propertyData => propertyData.IsTradable is true).
+                                                    ToList();
+        return tradablePropertyDatas;
+    }
 }

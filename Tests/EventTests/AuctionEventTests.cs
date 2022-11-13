@@ -49,20 +49,22 @@ namespace Tests
 
             StatusHandlers statusHandlers = new StatusHandlers();
 
-            AuctionHandler auctionHandler = new AuctionHandler();
+            EconomyHandlers economyHandlers = new EconomyHandlers();
 
-            DecisionMakers decisionMakers = new DecisionMakers();
-            decisionMakers.PropertyPurchaseDecisionMaker = mockedPropertyPurchaseDecisionMaker.Object;
 
-            IDataCenter dataCenter = new DataCenter(statusHandlers, auctionHandler, tileManager);
+
+            IDataCenter dataCenter = new DataCenter(statusHandlers, economyHandlers, tileManager);
+            DecisionMakers decisionMakers = new DecisionMakers(dataCenter);
             Delegator delegator = new Delegator();
             MainEvent mainEvent = new MainEvent(statusHandlers, tileManager, decisionMakers, delegator, dice, random);
 
+            decisionMakers.PropertyPurchaseDecisionMaker = mockedPropertyPurchaseDecisionMaker.Object;
+
             IAuctionDecisionMaker auctionDecisionMaker = mockedAuctionDecisionMaker.Object;
 
-            AuctionEvent auctionEvent = new AuctionEvent(statusHandlers, tileManager, dataCenter, auctionHandler, delegator, decisionMakers);
+            AuctionEvent auctionEvent = new AuctionEvent(statusHandlers, tileManager, dataCenter, economyHandlers.AuctionHandler, delegator, decisionMakers);
 
-            Events events = new Events(mainEvent, auctionEvent);
+            Events events = new Events(mainEvent, auctionEvent, new HouseBuildEvent(delegator, statusHandlers), new TradeEvent(statusHandlers, tileManager, dataCenter, economyHandlers, delegator, decisionMakers));
 
             mainEvent.SetEvents(events);
             auctionEvent.SetEvents(events);

@@ -1,4 +1,4 @@
-public class StatusHandlers
+public class StatusHandlers : IStatusHandlers
 {
     private BankHandler bankHandler = new BankHandler();
     private BoardHandler boardHandler = new BoardHandler();

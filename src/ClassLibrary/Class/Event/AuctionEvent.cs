@@ -202,7 +202,7 @@ public class AuctionEvent
         this.delegator.SetNextEvent(nextEvent);
     }
 
-    public Property GetCurrentProperty()
+    private Property GetCurrentProperty()
     {
         int currentPosition = this.dataCenter.Board.PlayerPositions[this.CurrentPlayerNumber];
         return (Property)this.tileManager.Tiles[currentPosition];

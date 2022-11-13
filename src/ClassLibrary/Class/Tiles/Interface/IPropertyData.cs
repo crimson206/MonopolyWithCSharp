@@ -13,4 +13,6 @@ public interface IPropertyData : ITileData
     public bool IsMortgaged { get; }
 
     public bool IsMortgagible { get; }
+
+    public bool IsTradable { get; }
 }
