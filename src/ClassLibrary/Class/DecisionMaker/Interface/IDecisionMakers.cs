@@ -5,4 +5,5 @@ public interface IDecisionMakers
     public IJailFreeCardUsageDecisionMaker JailFreeCardUsageDecisionMaker { get; }
     public IJailFinePaymentDecisionMaker JailFinePaymentDecisionMaker { get; }
     public ITradeDecisionMaker TradeDecisionMaker{ get; }
+    public IHouseBuildDecisionMaker HouseBuildDecisionMaker { get; }
 }
