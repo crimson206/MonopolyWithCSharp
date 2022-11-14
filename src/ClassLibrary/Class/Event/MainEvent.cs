@@ -1,6 +1,6 @@
-public class MainEvent : Event
+public class MainEvent : Event, IMainEvent
 {
-    private BankHandler bankHandler;
+    private IBankHandler bankHandler;
     private BoardHandler boardHandler;
     private IDice dice;
     private DoubleSideEffectHandler doubleSideEffectHandler;
@@ -51,11 +51,11 @@ public class MainEvent : Event
         {
             if (this.jailHandler.TurnsInJailCounts[this.PlayerNumber] > 0)
             {
-                this.AddNextEvent(this.MakeDecisionOnUsageOfJailFreeCard);
+                this.AddNextAction(this.MakeDecisionOnUsageOfJailFreeCard);
             }
             else
             {
-                this.AddNextEvent(this.RollDice);
+                this.AddNextAction(this.RollDice);
             }
             return;
         }
@@ -64,11 +64,11 @@ public class MainEvent : Event
         {
             if (this.eventFlow.BoolDecision is true)
             {
-                this.AddNextEvent(this.UseJailFreeCard);
+                this.AddNextAction(this.UseJailFreeCard);
             }
             else
             {
-                this.AddNextEvent(this.MakeDecisionOnPaymentOfJailFine);
+                this.AddNextAction(this.MakeDecisionOnPaymentOfJailFine);
             }
             return;
         }
@@ -77,18 +77,18 @@ public class MainEvent : Event
         {
             if (this.eventFlow.BoolDecision is true)
             {
-                this.AddNextEvent(this.PayJailFine);
+                this.AddNextAction(this.PayJailFine);
             }
             else
             {
-                this.AddNextEvent(this.RollDice);
+                this.AddNextAction(this.RollDice);
             }
             return;
         }
 
         if (this.lastEvent == this.EscapeJail)
         {
-            this.AddNextEvent(this.RollDice);
+            this.AddNextAction(this.RollDice);
             return;
         }
 
@@ -99,17 +99,17 @@ public class MainEvent : Event
             {
                 if (this.rolledDouble)
                 {
-                    this.AddNextEvent(this.IsReleasedFromJail);
+                    this.AddNextAction(this.IsReleasedFromJail);
                 }
                 else
                 {
                     if (this.jailHandler.TurnsInJailCounts[this.PlayerNumber] == 3)
                     {
-                        this.AddNextEvent(this.PayJailFine);
+                        this.AddNextAction(this.PayJailFine);
                     }
                     else
                     {
-                        this.AddNextEvent(this.StayInJail);
+                        this.AddNextAction(this.StayInJail);
                     }
                 }
             }
@@ -117,11 +117,11 @@ public class MainEvent : Event
             {
                 if (this.isDoubleSideEffectOn && this.doubleSideEffectHandler.DoubleCounts[this.PlayerNumber] == 3)
                 {
-                    this.AddNextEvent(this.HasJailPenalty);
+                    this.AddNextAction(this.HasJailPenalty);
                 }
                 else
                 {
-                this.AddNextEvent(this.MoveByRollDiceResultTotal);
+                this.AddNextAction(this.MoveByRollDiceResultTotal);
                 }
             }
 
@@ -132,11 +132,11 @@ public class MainEvent : Event
         {
             if (this.boardHandler.PlayerPassedGo[this.PlayerNumber])
             {
-                this.AddNextEvent(this.ReceiveSalary);
+                this.AddNextAction(this.ReceiveSalary);
             }
             else
             {
-                this.AddNextEvent(this.LandOnTile);
+                this.AddNextAction(this.LandOnTile);
             }
 
             return;
@@ -144,7 +144,7 @@ public class MainEvent : Event
 
         if (this.lastEvent == this.ReceiveSalary)
         {
-            this.AddNextEvent(this.LandOnTile);
+            this.AddNextAction(this.LandOnTile);
             return;
         }
 
@@ -156,7 +156,7 @@ public class MainEvent : Event
 
                 if (currentProperty.OwnerPlayerNumber == this.PlayerNumber)
                 {
-                    this.AddNextEvent(this.CheckExtraTurn);
+                    this.AddNextAction(this.CheckExtraTurn);
                 }
                 else if (currentProperty.OwnerPlayerNumber == null)
                 {
@@ -164,25 +164,25 @@ public class MainEvent : Event
 
                     if (canBuyProperty)
                     {
-                        this.AddNextEvent(this.MakeDecisionOnPurchaseOfProperty);
+                        this.AddNextAction(this.MakeDecisionOnPurchaseOfProperty);
                     }
                 }
                 else
                 {
-                    this.AddNextEvent(this.PayRent);
+                    this.AddNextAction(this.PayRent);
                 }
             }
             else if (this.currentTile is TaxTile)
             {
-                this.AddNextEvent(this.PayTax);
+                this.AddNextAction(this.PayTax);
             }
             else if (this.currentTile is GoToJail)
             {
-                this.AddNextEvent(this.HasJailPenalty);
+                this.AddNextAction(this.HasJailPenalty);
             }
             else
             {
-                this.AddNextEvent(this.CheckExtraTurn);
+                this.AddNextAction(this.CheckExtraTurn);
             }
 
             return;
@@ -192,11 +192,11 @@ public class MainEvent : Event
         {
             if ( this.doubleSideEffectHandler.ExtraTurns[this.PlayerNumber])
             {
-                this.AddNextEvent(this.RollDice);
+                this.AddNextAction(this.RollDice);
             }
             else
             {
-                this.events!.TradeEvent.AddNextEvent(this.events.TradeEvent.StartEvent);
+                this.events!.TradeEvent.AddNextAction(this.events.TradeEvent.StartEvent);
             }
 
             return;
@@ -206,11 +206,11 @@ public class MainEvent : Event
         {
             if (this.isDoubleSideEffectOn)
             {
-                this.AddNextEvent(this.EscapeJail);
+                this.AddNextAction(this.EscapeJail);
             }
             else
             {
-                this.AddNextEvent(this.IsReleasedFromJail);
+                this.AddNextAction(this.IsReleasedFromJail);
             }
 
             return;
@@ -220,49 +220,49 @@ public class MainEvent : Event
         {
             if (this.eventFlow.BoolDecision)
             {
-                this.AddNextEvent(this.PurchaseProperty);
+                this.AddNextAction(this.PurchaseProperty);
             }
             else
             {
-                this.AddNextEvent(this.DontPurchaseProperty);
+                this.AddNextAction(this.DontPurchaseProperty);
             }
 
             return;
         }
         if (this.lastEvent == this.HasJailPenalty)
         {
-            this.events!.TradeEvent.AddNextEvent(this.events.TradeEvent.StartEvent);
+            this.events!.TradeEvent.AddNextAction(this.events.TradeEvent.StartEvent);
 
             return;
         }
 
         if (this.lastEvent == this.PurchaseProperty)
         {
-            this.AddNextEvent(this.CheckExtraTurn);
+            this.AddNextAction(this.CheckExtraTurn);
             return;
         }
 
         if (this.lastEvent == this.DontPurchaseProperty)
         {
-            this.events!.AuctionEvent.AddNextEvent(this.events!.AuctionEvent.StartEvent);
+            this.events!.AuctionEvent.AddNextAction(this.events!.AuctionEvent.StartEvent);
             return;
         }
 
         if (this.lastEvent == this.EndTurn)
         {
-            this.AddNextEvent(this.StartEvent);
+            this.AddNextAction(this.StartEvent);
             return;
         }
 
         if (this.lastEvent == this.PayTax)
         {
-            this.AddNextEvent(this.CheckExtraTurn);
+            this.AddNextAction(this.CheckExtraTurn);
             return;
         }
 
         if (this.lastEvent == this.PayRent)
         {
-            this.AddNextEvent(this.CheckExtraTurn);
+            this.AddNextAction(this.CheckExtraTurn);
             return;
         }
 

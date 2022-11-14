@@ -1,6 +1,6 @@
 public class Events : IEvents
 {
-    private MainEvent mainEvent;
+    private IMainEvent mainEvent;
     private AuctionEvent auctionEvent;
     private HouseBuildEvent houseBuildEvent;
     private TradeEvent tradeEvent;
@@ -18,7 +18,7 @@ public class Events : IEvents
         this.SetEvents();
     }
 
-    public MainEvent MainEvent => this.mainEvent;
+    public IMainEvent MainEvent => this.mainEvent;
     public AuctionEvent AuctionEvent => this.auctionEvent;
     public HouseBuildEvent HouseBuildEvent => this.houseBuildEvent;
     public TradeEvent TradeEvent => this.tradeEvent;

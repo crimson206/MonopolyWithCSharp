@@ -7,7 +7,7 @@ public class AuctionEvent : Event
     private int participantCount => this.AreInGame.Where(isInGame => isInGame == true).Count();
     private int initialPrice;
     private IAuctionDecisionMaker auctionDecisionMaker;
-    private BankHandler bankHandler;
+    private IBankHandler bankHandler;
 
     public AuctionEvent
     (StatusHandlers statusHandlers,
@@ -130,20 +130,20 @@ public class AuctionEvent : Event
     {
         if (this.lastEvent == this.StartEvent)
         {
-            this.AddNextEvent(this.DecideInitialPrice);
+            this.AddNextAction(this.DecideInitialPrice);
 
             return;
         }
 
         if (this.lastEvent == this.DecideInitialPrice)
         {
-            this.AddNextEvent(this.SetUpAuction);
+            this.AddNextAction(this.SetUpAuction);
             return;
         }
 
         if (this.lastEvent == this.SetUpAuction)
         {
-            this.AddNextEvent(this.SuggestPriceInTurn);
+            this.AddNextAction(this.SuggestPriceInTurn);
             return;
         }
 
@@ -151,20 +151,20 @@ public class AuctionEvent : Event
         {
             if (this.dataCenter.AuctionHandler.IsAuctionOn)
             {
-                this.AddNextEvent(this.SuggestPriceInTurn);
+                this.AddNextAction(this.SuggestPriceInTurn);
 
                 return;
             }
             else
             {
-                this.AddNextEvent(this.BuyWinnerProperty);
+                this.AddNextAction(this.BuyWinnerProperty);
                 return;
             }
         }
 
         if (this.lastEvent == this.BuyWinnerProperty)
         {
-            this.events!.MainEvent.AddNextEvent(this.events!.MainEvent.CheckExtraTurn);
+            this.events!.MainEvent.AddNextAction(this.events!.MainEvent.CheckExtraTurn);
             return;
         }
     }
