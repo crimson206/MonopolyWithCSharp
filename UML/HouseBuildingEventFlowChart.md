@@ -1,20 +1,25 @@
 ```mermaid
 flowchart TB
-    A[EndTrade] --> B{there are \n house-buildable \n realEstates}
+    A[EndTrade] --> B{are there \n house-buildable \n realEstates?}
 
-    B -- Yes --> C[StartHouseBuilding : \n build house from the current player in turn]
+    B -- Yes --> C[StartHouseBuilding : \n players having house-buildable realEstates \n are participants]
 
-    C --> D{has buildable realEstates}
+    B -- No --> H
 
-    D -- Yes --> E[BuildHouse]
+    C--> J[MakeCurrentBuilderDecision]
 
-    E --> G{It was \n the last \n player}
+    J --> I{did the current builder \n choose a realEstate? }
 
-    D -- No --> F[ChangePlayer]
+    I -- Yes --> E[BuildHouse]
 
-    G -- Yes --> H(MainEvent:EndTurn)
+    I -- No --> G
 
-    G -- No --> F
+    E --> G{was it \n the last \n player}
 
-    F --> D
+    G -- Yes --> K
+
+    K[EndEvent] --> H(MainEvent:EndTurn)
+
+    G -- No --> J
+
 ```
