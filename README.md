@@ -11,15 +11,26 @@
   - press f5
   - It is checked that some lines are not working in Visual Studio, therefore Visual Studio Code is only checked if it is executable for now.
 
-3. Currently two different sized maps are serviced. The bigger map won't work with normal sized monitors.
+3. Current features
+  - auto game play
+  - repeating turns
+  - purchasing property
+  - paying rent
+  - auction event
+  - trade event
+
+5. Planned features
+  - house build event
+  - mortgage event
+  - force a poor's property auction event
+  - user interface
+  - AI
+  - Monopoly with WPF
+
+6. Currently two different sized maps are serviced. The bigger map won't work with normal sized monitors.
    The default size is the smaller map. To change the size,
   - go to src/UI/Program.cs
   - change the value "isBoardSmall" to false
-  
-4. About developing...
-  - added Class and Sequence diagrams for the current Monopoly Demo version. See Below.
-  - Game provides not only the Run() method, but a DataCenter object to UI. It is to run the game in different UIs later(WPF, Window Forms...)
-  - A planned refactoring for the architecture is now at one of pull requests. --> (WIP) Refactor : prepared EventStateMachine design
 
 
 The class diagram for the current Monopoly Demo version
