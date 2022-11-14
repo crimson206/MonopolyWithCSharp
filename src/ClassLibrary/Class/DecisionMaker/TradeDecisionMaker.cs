@@ -1,6 +1,5 @@
 public class TradeDecisionMaker : ITradeDecisionMaker
 {
-    private List<IPropertyData> propertyDatas = new List<IPropertyData>();
     private IDataCenter dataCenter;
     public TradeDecisionMaker(IDataCenter dataCenter)
     {
