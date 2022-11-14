@@ -19,7 +19,7 @@
   - auction event
   - trade event
 
-5. Planned features
+4. Planned features
   - house build event
   - mortgage event
   - force a poor's property auction event
@@ -27,7 +27,7 @@
   - AI
   - Monopoly with WPF
 
-6. Currently two different sized maps are serviced. The bigger map won't work with normal sized monitors.
+5. Currently two different sized maps are serviced. The bigger map won't work with normal sized monitors.
    The default size is the smaller map. To change the size,
   - go to src/UI/Program.cs
   - change the value "isBoardSmall" to false
