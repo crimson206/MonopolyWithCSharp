@@ -18,9 +18,9 @@
   - paying rent
   - auction event
   - trade event
+  - house build event
 
 4. Planned features
-  - house build event
   - mortgage event
   - force a poor's property auction event
   - user interface
