@@ -49,7 +49,7 @@ public class TradeEvent : Event
             .SetTrade(this.participantPlayerNumbers!,
                     this.properties);
 
-        if ( this.tradeHandlerData.IsTimeToCloseTrade is false)
+        if (this.tradeHandlerData.IsThereTradableProperties)
         {
             this.eventFlow
                 .RecommendedString =
@@ -60,10 +60,23 @@ public class TradeEvent : Event
         this.CallNextEvent();
     }
 
+    public void HasNoTradeTarget()
+    {
+        this.eventFlow.RecommendedString =
+            string.Format("Player{0} has no selectable trade target",
+                        this.currentTradeOwner);
+        
+        this.CallNextEvent();
+    }
+
     public void SelectTradeTarget()
     {
 
-        int tradeTarget = this.tradeDecisionMaker.SelectTradeTarget(this.currentTradeOwner);
+        int tradeTarget = this.tradeHandlerData
+                        .SelectableTargetNumbers
+                            [this.tradeDecisionMaker
+                            .SelectTradeTarget()];
+
         this.tradeHandler.SetTradeTarget(tradeTarget);
 
         this.eventFlow.RecommendedString =
@@ -79,24 +92,23 @@ public class TradeEvent : Event
         IPropertyData? propertyToGet;
         IPropertyData? propertyToGive;
 
-        if (this.tradeHandlerData.TradablePropertiesOfTradeTarget.Count() != 0)
+        List<IPropertyData> tradablePropertiesOfTradeTarget = this.tradeHandlerData.TradablePropertiesOfTradeTarget;
+        List<IPropertyData> tradablePropertiesOfTradeOwner = this.tradeHandlerData.TradablePropertiesOfTradeOwner;
+
+        if (tradablePropertiesOfTradeTarget.Count() != 0)
         {
-            propertyToGet =
-                this.tradeDecisionMaker
-                    .SelectPropertyToGet
-                    (this.currentTradeOwner);
+            int? decision = this.tradeDecisionMaker.SelectPropertyToGet();
+            propertyToGet = (decision is null? null : tradablePropertiesOfTradeTarget[(int)decision]);
         }
         else
         {
             propertyToGet = null;
         }
 
-        if (this.tradeHandlerData.TradablePropertiesOfTradeOwner.Count() != 0)
+        if (tradablePropertiesOfTradeOwner.Count() != 0)
         {
-            propertyToGive =
-                this.tradeDecisionMaker
-                    .SelectPropertyToGive
-                    (this.currentTradeOwner);
+            int? decision = this.tradeDecisionMaker.SelectPropertyToGive();
+            propertyToGive = (decision is null? null : tradablePropertiesOfTradeOwner[(int)decision]);
         }
         else
         {
@@ -105,8 +117,7 @@ public class TradeEvent : Event
 
         int addtionalMoney =
             this.tradeDecisionMaker
-                .DecideAdditionalMoney
-                (this.currentTradeOwner);
+                .DecideAdditionalMoney();
 
         this.tradeHandler
             .SuggestTradeConditions
@@ -130,8 +141,7 @@ public class TradeEvent : Event
     private void MakeTradeTargetDecisionOnTradeAgreement()
     {
         bool agreedTradeTargetWithTradeCondition = this.tradeDecisionMaker
-                        .MakeTradeTargetDecisionOnTradeAgreement
-                        (this.currentTradeTarget);
+                        .MakeTradeTargetDecisionOnTradeAgreement();
         
         this.tradeHandler
             .SetIsTradeAgreed
@@ -277,19 +287,38 @@ public class TradeEvent : Event
     {
         if (this.lastEvent == this.StartEvent)
         {
-            if (this.tradeHandlerData.IsTimeToCloseTrade is false)
+            if (this.tradeHandlerData.IsThereTradableProperties)
             {
-                this.AddNextEvent(this.SelectTradeTarget);
-            
-                return;
+                if (this.tradeHandlerData.SelectableTargetNumbers.Count() == 0)
+                {
+                    this.AddNextEvent(this.HasNoTradeTarget);
+                }
+                else
+                {
+                    this.AddNextEvent(this.SelectTradeTarget);
+                }
             }
             else
             {
                 this.events!.HouseBuildEvent.AddNextEvent(this.events!
                                 .HouseBuildEvent
                                 .StartEvent);
-                return;
             }
+            return;
+        }
+
+        if( this.lastEvent == this.HasNoTradeTarget)
+        {
+            if (this.tradeHandlerData.IsLastParticipant)
+            {
+                this.AddNextEvent(this.EndTrade);
+            }
+            else
+            {
+                this.AddNextEvent(this.ChangeTradeOwner);
+            }
+
+            return;
         }
 
         if (this.lastEvent == this.SelectTradeTarget)
@@ -316,33 +345,31 @@ public class TradeEvent : Event
             }
             else
             {
-                if (this.tradeHandlerData.IsTimeToCloseTrade)
+                if (this.tradeHandlerData.IsLastParticipant)
                 {
                     this.AddNextEvent(this.EndTrade);
-
-                    return;
                 }
                 else
                 {
                     this.AddNextEvent(this.ChangeTradeOwner);
-
-                    return;
                 }
+                
+                return;
             }
         }
 
         if (this.lastEvent == this.DoTrade)
         {
-            if (this.tradeHandlerData.IsTimeToCloseTrade)
+            if (this.tradeHandlerData.IsLastParticipant)
             {
                 this.AddNextEvent(this.EndTrade);
-                return;
             }
             else
             {
                 this.AddNextEvent(this.ChangeTradeOwner);
-                return;
             }
+
+            return;
         }
 
         if (this.lastEvent == this.ChangeTradeOwner)
@@ -351,14 +378,13 @@ public class TradeEvent : Event
             {
                 this.AddNextEvent(this.SelectTradeTarget);
 
-                return;
             }
             else
             {
-                this.AddNextEvent(this.EndTrade);
-
-                return;
+                this.AddNextEvent(this.HasNoTradeTarget);
             }
+
+            return;
         }
 
         if (this.lastEvent == this.EndTrade)

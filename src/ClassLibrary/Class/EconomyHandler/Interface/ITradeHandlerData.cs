@@ -8,6 +8,7 @@ public interface ITradeHandlerData
     public bool? IsTradeAgreed { get; }
     public int? CurrentTradeOwner { get; }
     public int? CurrentTradeTarget { get; }
-    public bool IsTimeToCloseTrade { get; }
+    public bool IsLastParticipant { get; }
     public List<int> SelectableTargetNumbers { get; }
+    public bool IsThereTradableProperties { get; }
 }

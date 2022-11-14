@@ -1,12 +1,12 @@
 public interface ITradeDecisionMaker
 {
-    public int SelectTradeTarget(int playerNumber);
+    public int SelectTradeTarget();
 
-    public IPropertyData SelectPropertyToGet(int playerNumber);
+    public int? SelectPropertyToGet();
 
-    public IPropertyData SelectPropertyToGive(int playerNumber);
+    public int? SelectPropertyToGive();
 
-    public int DecideAdditionalMoney(int playerNumber);
+    public int DecideAdditionalMoney();
 
-    public bool MakeTradeTargetDecisionOnTradeAgreement(int playerNumber);
+    public bool MakeTradeTargetDecisionOnTradeAgreement();
 }

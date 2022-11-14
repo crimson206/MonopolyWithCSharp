@@ -7,27 +7,27 @@ public class TradeDecisionMaker : ITradeDecisionMaker
         this.dataCenter = dataCenter;
     }
 
-    public int SelectTradeTarget(int playerNumber)
+    public int SelectTradeTarget()
     {
-        return this.dataCenter.TradeHandler.SelectableTargetNumbers[0];
+        return 0;
     }
 
-    public IPropertyData SelectPropertyToGet(int playerNumber)
+    public int? SelectPropertyToGet()
     {
-        return this.dataCenter.TradeHandler.TradablePropertiesOfTradeTarget[0];
+        return 0;
     }
 
-    public IPropertyData SelectPropertyToGive(int playerNumber)
+    public int? SelectPropertyToGive()
     {
-        return this.dataCenter.TradeHandler.TradablePropertiesOfTradeOwner[0];
+        return 0;
     }
 
-    public int DecideAdditionalMoney(int playerNumber)
+    public int DecideAdditionalMoney()
     {
         return 50;
     }
 
-    public bool MakeTradeTargetDecisionOnTradeAgreement(int playerNumber)
+    public bool MakeTradeTargetDecisionOnTradeAgreement()
     {
         return true;
     }

@@ -20,6 +20,7 @@ namespace Tests
         public Delegator delegator = new Delegator();
         public InGameHandler inGameHandler = new InGameHandler(4);
         public HouseBuildEvent houseBuildEvent;
+        public IDataCenter dataCenter => this.mockedDataCenter.Object;
         public Mock<ITileManager> mockedTileManager = new Mock<ITileManager>();
         public Mock<IStatusHandlers> mockedStatusHandlers = new Mock<IStatusHandlers>();
         public Mock<IDataCenter> mockedDataCenter = new Mock<IDataCenter>();
@@ -108,15 +109,15 @@ namespace Tests
     public class TradeEventTests
     {
 
-    public void SetOnwerNumbersOfProperties(List<Property> properties)
-    {
-        List<int> ownerNumbers = new List<int> {0, 0, 1, 1, 2, 2, 3, 3};
-
-        for (int i = 0; i < 8; i++)
+        public void MakeAllFourPlayerHaveProperties(List<Property> properties)
         {
-            properties[i].SetOnwerPlayerNumber(ownerNumbers[i]);
+            List<int> ownerNumbers = new List<int> {0, 0, 1, 1, 2, 2, 3, 3};
+
+            for (int i = 0; i < 8; i++)
+            {
+                properties[i].SetOnwerPlayerNumber(ownerNumbers[i]);
+            }
         }
-    }
 
         [TestMethod]
         public void RoughTestForWholeProcess()
@@ -209,6 +210,7 @@ namespace Tests
             delegator.RunEvent();
             Assert.AreEqual(delegator.NextEventName, "StartEvent");
         }
+
         [TestMethod]
         public void StartTrade_Without_TradableProperties_And_End_VerySoon()
         {
@@ -224,19 +226,26 @@ namespace Tests
             Assert.AreEqual(delegator.NextEventName, "StartEvent");
         }
         [TestMethod]
-        public void StartTrade_With_TradableProperties_And_Follow_TradeEventFlow()
+        public void StartTrade_With_TradableProperties_And_Follow_TradeEventFlow_For_OneCycle()
         {
             TestSettingWithMockedClasses testSet = new TestSettingWithMockedClasses();
             Delegator delegator = testSet.delegator;
 
-            /// use real decisionmaker
-            TradeDecisionMaker tradeDecisionMaker = new TradeDecisionMaker(testSet.mockedDataCenter.Object);
-            testSet.mockedDecisionMakers.Setup(t => t.TradeDecisionMaker).Returns(tradeDecisionMaker);
+            this.MakeAllFourPlayerHaveProperties(testSet.properties);
+
+            testSet.mockedTradeDecisionMaker.Setup(t => t.SelectTradeTarget())
+                                            .Returns(0);
+            testSet.mockedTradeDecisionMaker.Setup(t => t.SelectPropertyToGet())
+                                            .Returns(0);
+            testSet.mockedTradeDecisionMaker.Setup(t => t.SelectPropertyToGive())
+                                            .Returns(0);
+            testSet.mockedTradeDecisionMaker.Setup(t => t.DecideAdditionalMoney())
+                                            .Returns(50);
+            testSet.mockedTradeDecisionMaker.Setup(t => t.MakeTradeTargetDecisionOnTradeAgreement())
+                                            .Returns(true);
 
             testSet.SetTradeEvent();
             TradeEvent tradeEvent = testSet.tradeEvent!;
-
-            this.SetOnwerNumbersOfProperties(testSet.properties);
 
             delegator.SetNextEvent(tradeEvent.StartEvent);
             Assert.AreEqual(delegator.NextEventName, "StartEvent");
@@ -254,9 +263,37 @@ namespace Tests
             delegator.RunEvent();
             Assert.AreEqual(delegator.NextEventName, "SelectTradeTarget");
             delegator.RunEvent();
+        }
+        [TestMethod]
+        public void StartTrade_With_TradableProperties_And_Follow_TradeEventFlow_For_OneCy()
+        {
+            TestSettingWithMockedClasses testSet = new TestSettingWithMockedClasses();
+            Delegator delegator = testSet.delegator;
+
+            testSet.properties[0].SetOnwerPlayerNumber(0);
+
+            testSet.mockedTradeDecisionMaker.Setup(t => t.SelectTradeTarget())
+                                            .Returns(0);
+            testSet.mockedTradeDecisionMaker.Setup(t => t.SelectPropertyToGet())
+                                            .Returns(0);
+            testSet.mockedTradeDecisionMaker.Setup(t => t.SelectPropertyToGive())
+                                            .Returns(0);
+            testSet.mockedTradeDecisionMaker.Setup(t => t.DecideAdditionalMoney())
+                                            .Returns(50);
+            testSet.mockedTradeDecisionMaker.Setup(t => t.MakeTradeTargetDecisionOnTradeAgreement())
+                                            .Returns(true);
+
+            testSet.SetTradeEvent();
+
+            delegator.SetNextEvent(testSet.tradeEvent!.StartEvent);
+            Assert.AreEqual(delegator.NextEventName, "StartEvent");
+
             delegator.RunEvent();
+            Assert.AreEqual(delegator.NextEventName, "HasNoTradeTarget");
             delegator.RunEvent();
+            Assert.AreEqual(delegator.NextEventName, "ChangeTradeOwner");
             delegator.RunEvent();
+            Assert.AreEqual(delegator.NextEventName, "SelectTradeTarget");
         }
     }
 }
