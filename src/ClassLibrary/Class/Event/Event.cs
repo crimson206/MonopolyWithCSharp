@@ -12,25 +12,26 @@ public abstract class Event
         this.delegator = delegator;
         this.dataCenter = dataCenter;
         this.tileManager = tileManager;
+        this.propertyManager = tileManager.PropertyManager;
 
         this.lastEvent = this.StartEvent;
     }
 
     protected int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
 
-    public void SetEvents(Events events)
+    public void SetEvents(IEvents events)
     {
         this.events = events;
     }
     protected abstract void CallNextEvent();
     public abstract void StartEvent();
 
-    public void AddNextEvent(Action nextEvent)
+    public void AddNextAction(Action nextAction)
     {
-        this.lastEvent = nextEvent;
+        this.lastEvent = nextAction;
 
         this.delegator
-            .SetNextAction(nextEvent);
+            .SetNextAction(nextAction);
     }
 
     protected string ConvertIntListToString(List<int> ints)

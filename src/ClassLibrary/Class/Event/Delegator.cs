@@ -7,7 +7,6 @@ public class Delegator : IDelegatorData
     private string nextEventName = string.Empty;
     private string lastEventName = string.Empty;
 
-
     public delegate void DelEvent();
     public DelEvent? NextAction => this.nextAction;
     public string NextActionName => this.nextActionName;

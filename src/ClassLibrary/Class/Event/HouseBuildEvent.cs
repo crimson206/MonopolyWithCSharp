@@ -5,7 +5,7 @@ public class HouseBuildEvent : Event
     private HouseBuildHandler houseBuildHandler;
     private IHouseBuildHandlerData houseBuildHandlerData;
     private IHouseBuildDecisionMaker houseBuildDecisionMaker;
-    private BankHandler bankHandler;
+    private IBankHandler bankHandler;
 
     public HouseBuildEvent
     (Delegator delegator,
@@ -68,7 +68,7 @@ public class HouseBuildEvent : Event
             this.houseBuildHandler.SetRealEstateToBuildHouse(realEstateToBuildHouse);
 
             this.eventFlow.RecommendedString = string.Format(
-                "Player{0} will build a house at {}",
+                "Player{0} will build a house at {1}",
                 this.CurrentHouseBuilder,
                 this.RealEstateToBuildHouse
             );
@@ -118,11 +118,11 @@ public class HouseBuildEvent : Event
         {
             if (this.houseBuildHandlerData.AreAnyBuildable is true)
             {
-                this.AddNextEvent(this.MakeCurrentBuilderDecision);
+                this.AddNextAction(this.MakeCurrentBuilderDecision);
             }
             else
             {
-                this.events!.MainEvent.AddNextEvent(this.events!.MainEvent.EndTurn);
+                this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndTurn);
             }
 
             return;
@@ -132,18 +132,32 @@ public class HouseBuildEvent : Event
         {
             if (this.houseBuildHandlerData.RealEstateToBuildHouse is not null)
             {
-                this.AddNextEvent(this.BuildHouse);
+                this.AddNextAction(this.BuildHouse);
             }
             else
             {
                 if (this.houseBuildHandlerData.IsLastBuilder)
                 {
-                    this.AddNextEvent(this.EndEvent);
+                    this.AddNextAction(this.EndEvent);
                 }
                 else
                 {
-                    this.AddNextEvent(this.ChangeBuilder);
+                    this.AddNextAction(this.ChangeBuilder);
                 }
+            }
+
+            return;
+        }
+
+        if (this.lastEvent == this.BuildHouse)
+        {
+            if (this.houseBuildHandlerData.IsLastBuilder is true)
+            {
+                this.AddNextAction(this.EndEvent);
+            }
+            else
+            {
+                this.AddNextAction(this.ChangeBuilder);
             }
 
             return;
@@ -151,14 +165,14 @@ public class HouseBuildEvent : Event
 
         if (this.lastEvent == this.ChangeBuilder)
         {
-            this.AddNextEvent(this.MakeCurrentBuilderDecision);
+            this.AddNextAction(this.MakeCurrentBuilderDecision);
 
             return;
         }
 
         if (this.lastEvent == this.EndEvent)
         {
-            this.events!.MainEvent.AddNextEvent(this.events!.MainEvent.EndTurn);
+            this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndTurn);
 
             return;
         }

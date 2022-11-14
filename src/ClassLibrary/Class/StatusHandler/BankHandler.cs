@@ -1,4 +1,4 @@
-public class BankHandler : IBankHandlerData
+public class BankHandler : IBankHandlerData, IBankHandler
 {
 
     private int initialBalance = 1500;

@@ -7,7 +7,7 @@ using Moq;
 
 namespace Tests
 {
-    public class TestSettingWithMockedClasses
+    public class TradeEventTestSettingWithMockedClasses
     {
         public TradeEvent? tradeEvent;
         public List<Tile> tiles = new List<Tile>();
@@ -29,7 +29,7 @@ namespace Tests
         public Mock<IDecisionMakers> mockedDecisionMakers = new Mock<IDecisionMakers>();
         public Mock<IEvents> mockedEvents = new Mock<IEvents>();
 
-        public TestSettingWithMockedClasses()
+        public TradeEventTestSettingWithMockedClasses()
         {
             this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.mockedDataCenter.Object, this.mockedStatusHandlers.Object, this.mockedTileManager.Object, mockedEconomyHandlers.Object, mockedDecisionMakers.Object);
             this.SetProperties();
@@ -214,7 +214,7 @@ namespace Tests
         [TestMethod]
         public void StartTrade_Without_TradableProperties_And_End_VerySoon()
         {
-            TestSettingWithMockedClasses testSet = new TestSettingWithMockedClasses();
+            TradeEventTestSettingWithMockedClasses testSet = new TradeEventTestSettingWithMockedClasses();
             testSet.SetTradeEvent();
             TradeEvent tradeEvent = testSet.tradeEvent!;
             Delegator delegator = testSet.delegator;
@@ -228,7 +228,7 @@ namespace Tests
         [TestMethod]
         public void StartTrade_With_TradableProperties_And_Follow_TradeEventFlow_For_OneCycle()
         {
-            TestSettingWithMockedClasses testSet = new TestSettingWithMockedClasses();
+            TradeEventTestSettingWithMockedClasses testSet = new TradeEventTestSettingWithMockedClasses();
             Delegator delegator = testSet.delegator;
 
             this.MakeAllFourPlayerHaveProperties(testSet.properties);
@@ -267,7 +267,7 @@ namespace Tests
         [TestMethod]
         public void StartTrade_With_TradableProperties_And_Follow_TradeEventFlow_For_OneCy()
         {
-            TestSettingWithMockedClasses testSet = new TestSettingWithMockedClasses();
+            TradeEventTestSettingWithMockedClasses testSet = new TradeEventTestSettingWithMockedClasses();
             Delegator delegator = testSet.delegator;
 
             testSet.properties[0].SetOnwerPlayerNumber(0);

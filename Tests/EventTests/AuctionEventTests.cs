@@ -71,7 +71,7 @@ namespace Tests
             mainEvent.SetEvents(events);
             auctionEvent.SetEvents(events);
 
-            mainEvent.AddNextEvent(mainEvent.StartEvent);
+            mainEvent.AddNextAction(mainEvent.StartEvent);
 
 
             Assert.AreEqual(delegator.NextActionName, "StartEvent");
