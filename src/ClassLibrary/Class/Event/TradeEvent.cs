@@ -34,11 +34,6 @@ public class TradeEvent : Event
     private int currentTradeTarget => (int)this.tradeHandlerData.CurrentTradeTarget!;
     private int additionalMoneyFromTradeOwner => this.tradeHandlerData.MoneyOwnerWillingToAddOnTrade;
     private List<Property> properties => this.tileManager.Properties;
-
-    public void SetEvents(IEvents events)
-    {
-        this.events = events;
-    }
     public override void StartEvent()
     {
         this.SetParticipantPlayerNumbers();

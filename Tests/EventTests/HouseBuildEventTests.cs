@@ -185,12 +185,12 @@ namespace Tests
             HouseBuildEventTestSet testSet = this.CreateTestSetWhereNextActionIsBuildHouse();
 
             testSet.mockedBankHandler.Setup(t => t.DecreaseBalance(It.IsAny<int>(), It.IsAny<int>()));
-            testSet.mockedPropertyManager.Setup(t => t.ChangeOwner(It.IsAny<Property>(), It.IsAny<int>()));
+            testSet.mockedPropertyManager.Setup(t => t.BuildHouse(It.IsAny<RealEstate>()));
 
             testSet.delegator.RunAction();
             Assert.AreEqual(testSet.delegator.LastActionName, "BuildHouse");
             testSet.mockedBankHandler.Verify(t => t.DecreaseBalance(It.IsAny<int>(), It.IsAny<int>()), Times.Once());
-            testSet.mockedPropertyManager.Verify(t => t.ChangeOwner(It.IsAny<Property>(), It.IsAny<int>()), Times.Once());
+            testSet.mockedPropertyManager.Verify(t => t.BuildHouse(It.IsAny<RealEstate>()), Times.Once());
         }
     }
 }
