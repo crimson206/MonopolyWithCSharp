@@ -63,41 +63,44 @@ namespace Tests
 
             AuctionEvent auctionEvent = new AuctionEvent(statusHandlers, tileManager, dataCenter, economyHandlers.AuctionHandler, delegator, decisionMakers);
 
-            Events events = new Events(mainEvent, auctionEvent, new HouseBuildEvent(delegator, dataCenter, statusHandlers), new TradeEvent(statusHandlers, tileManager, dataCenter, economyHandlers, delegator, decisionMakers));
+            Events events = new Events(mainEvent,
+                                    auctionEvent,
+                                    new HouseBuildEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers),
+                                    new TradeEvent(statusHandlers, tileManager, dataCenter, economyHandlers, delegator, decisionMakers));
 
             mainEvent.SetEvents(events);
             auctionEvent.SetEvents(events);
 
-            mainEvent.AddNextEvent(mainEvent.StartEvent);
+            mainEvent.AddNextAction(mainEvent.StartEvent);
 
 
-            Assert.AreEqual(delegator.NextEventName, "StartEvent");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "RollDice");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "MoveByRollDiceResultTotal");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "LandOnTile");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "MakeDecisionOnPurchaseOfProperty");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "DontPurchaseProperty");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "StartEvent");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "DecideInitialPrice");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "SetUpAuction");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "SuggestPriceInTurn");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "SuggestPriceInTurn");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "SuggestPriceInTurn");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "BuyWinnerProperty");
-            delegator.RunEvent();
-            Assert.AreEqual(delegator.NextEventName, "CheckExtraTurn");
+            Assert.AreEqual(delegator.NextActionName, "StartEvent");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "RollDice");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "MoveByRollDiceResultTotal");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "LandOnTile");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "MakeDecisionOnPurchaseOfProperty");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "DontPurchaseProperty");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "StartEvent");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "DecideInitialPrice");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "SetUpAuction");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "SuggestPriceInTurn");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "SuggestPriceInTurn");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "SuggestPriceInTurn");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "BuyWinnerProperty");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "CheckExtraTurn");
 
         }
     }

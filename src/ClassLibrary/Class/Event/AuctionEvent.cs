@@ -7,8 +7,7 @@ public class AuctionEvent : Event
     private int participantCount => this.AreInGame.Where(isInGame => isInGame == true).Count();
     private int initialPrice;
     private IAuctionDecisionMaker auctionDecisionMaker;
-    private BankHandler bankHandler;
-    private ITileManager tileManager;
+    private IBankHandler bankHandler;
 
     public AuctionEvent
     (StatusHandlers statusHandlers,
@@ -19,7 +18,8 @@ public class AuctionEvent : Event
     DecisionMakers decisionMakers)
         :base
         (delegator,
-        dataCenter)
+        dataCenter,
+        tileManager)
     {
         this.bankHandler = statusHandlers.BankHandler;
         this.tileManager = tileManager;
@@ -31,8 +31,6 @@ public class AuctionEvent : Event
     private List<int> Balances => this.dataCenter.Bank.Balances;
 
     private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
-
-    private int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
     private IPropertyData? CurrentPropertyData => (IPropertyData)this.dataCenter.CurrentTileData;
     private Property CurrentProperty => this.GetCurrentProperty();
 
@@ -122,20 +120,6 @@ public class AuctionEvent : Event
         return players;
     }
 
-    private string ConvertIntListToString(List<int> intList)
-    {
-        string converted = string.Empty;
-
-        foreach (var item in intList)
-        {
-            converted += item.ToString() + ", ";
-        }
-
-        converted.Remove(-2, 2);
-
-        return converted;
-    }
-
     private string CreateParticipantNumbersString()
     {
         Dictionary<int, int> suggestedPrices = this.dataCenter.AuctionHandler.SuggestedPrices;
@@ -146,20 +130,20 @@ public class AuctionEvent : Event
     {
         if (this.lastEvent == this.StartEvent)
         {
-            this.AddNextEvent(this.DecideInitialPrice);
+            this.AddNextAction(this.DecideInitialPrice);
 
             return;
         }
 
         if (this.lastEvent == this.DecideInitialPrice)
         {
-            this.AddNextEvent(this.SetUpAuction);
+            this.AddNextAction(this.SetUpAuction);
             return;
         }
 
         if (this.lastEvent == this.SetUpAuction)
         {
-            this.AddNextEvent(this.SuggestPriceInTurn);
+            this.AddNextAction(this.SuggestPriceInTurn);
             return;
         }
 
@@ -167,20 +151,20 @@ public class AuctionEvent : Event
         {
             if (this.dataCenter.AuctionHandler.IsAuctionOn)
             {
-                this.AddNextEvent(this.SuggestPriceInTurn);
+                this.AddNextAction(this.SuggestPriceInTurn);
 
                 return;
             }
             else
             {
-                this.AddNextEvent(this.BuyWinnerProperty);
+                this.AddNextAction(this.BuyWinnerProperty);
                 return;
             }
         }
 
         if (this.lastEvent == this.BuyWinnerProperty)
         {
-            this.events!.MainEvent.AddNextEvent(this.events!.MainEvent.CheckExtraTurn);
+            this.events!.MainEvent.AddNextAction(this.events!.MainEvent.CheckExtraTurn);
             return;
         }
     }

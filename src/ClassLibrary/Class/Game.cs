@@ -38,7 +38,7 @@ public class Game
         /// make events
         this.decisionMakers = new DecisionMakers(this.dataCenter);
         this.auctionEvent = new AuctionEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.economyHandlers.AuctionHandler, this.delegator, this.decisionMakers);
-        this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.dataCenter, this.statusHandlers);
+        this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.dataCenter, this.statusHandlers, this.tileManager, this.economyHandlers, this.decisionMakers);
         this.tradeEvent = new TradeEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.economyHandlers, this.delegator, this.decisionMakers);
         this.mainEvent = new MainEvent(this.statusHandlers, this.tileManager, this.decisionMakers, this.dataCenter, this.delegator, new Dice(), new Random());
 
@@ -47,10 +47,11 @@ public class Game
     }
 
     public DataCenter Data => this.dataCenter;
+    public IDelegatorData DelegatorData => (IDelegatorData)this.delegator;
 
     public void Run()
     {
-        this.delegator.RunEvent();
+        this.delegator.RunAction();
     }
 
     private DataCenter GenerateDataCenter()

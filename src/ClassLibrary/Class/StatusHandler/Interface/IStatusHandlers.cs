@@ -1,6 +1,6 @@
 public interface IStatusHandlers
 {
-    public BankHandler BankHandler { get; }
+    public IBankHandler BankHandler { get; }
     public BoardHandler BoardHandler { get; }
     public DoubleSideEffectHandler DoubleSideEffectHandler { get; }
     public InGameHandler InGameHandler { get; }

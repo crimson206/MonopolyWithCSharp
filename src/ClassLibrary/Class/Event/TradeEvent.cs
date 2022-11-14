@@ -1,14 +1,11 @@
 public class TradeEvent : Event
 {
     private EventFlow eventFlow;
-    private BankHandler bankHandler;
-    private ITileManager tileManager;
+    private IBankHandler bankHandler;
     private ITradeHandlerFunction tradeHandler;
     private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
-    private int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
     private List<int>? participantPlayerNumbers = new List<int>();
     private ITradeDecisionMaker tradeDecisionMaker;
-    private PropertyManager propertyManager = new PropertyManager();
     private TileFilter tileFilter = new TileFilter();
     private ITradeHandlerData tradeHandlerData;
 
@@ -22,7 +19,8 @@ public class TradeEvent : Event
         IDecisionMakers decisionMakers
     )
         : base(delegator,
-            dataCenter)
+            dataCenter,
+            tileManager)
     {
         this.bankHandler = statusHandlers.BankHandler;
         this.eventFlow = statusHandlers.EventFlow;
@@ -221,7 +219,7 @@ public class TradeEvent : Event
         this.CallNextEvent();
     }
 
-    private void EndTrade()
+    private void EndEvent()
     {
         this.eventFlow
             .RecommendedString =
@@ -260,20 +258,6 @@ public class TradeEvent : Event
         return players;
     }
 
-    private string ConvertIntListToString(List<int> intList)
-    {
-        string converted = string.Empty;
-
-        foreach (var item in intList)
-        {
-            converted += item.ToString() + ", ";
-        }
-
-        converted.Remove(-2, 2);
-
-        return converted;
-    }
-
     private string CreateParticipantNumbersString()
     {
         Dictionary<int, int> suggestedPrices = this.dataCenter
@@ -291,16 +275,16 @@ public class TradeEvent : Event
             {
                 if (this.tradeHandlerData.SelectableTargetNumbers.Count() == 0)
                 {
-                    this.AddNextEvent(this.HasNoTradeTarget);
+                    this.AddNextAction(this.HasNoTradeTarget);
                 }
                 else
                 {
-                    this.AddNextEvent(this.SelectTradeTarget);
+                    this.AddNextAction(this.SelectTradeTarget);
                 }
             }
             else
             {
-                this.events!.HouseBuildEvent.AddNextEvent(this.events!
+                this.events!.HouseBuildEvent.AddNextAction(this.events!
                                 .HouseBuildEvent
                                 .StartEvent);
             }
@@ -311,11 +295,11 @@ public class TradeEvent : Event
         {
             if (this.tradeHandlerData.IsLastParticipant)
             {
-                this.AddNextEvent(this.EndTrade);
+                this.AddNextAction(this.EndEvent);
             }
             else
             {
-                this.AddNextEvent(this.ChangeTradeOwner);
+                this.AddNextAction(this.ChangeTradeOwner);
             }
 
             return;
@@ -323,14 +307,14 @@ public class TradeEvent : Event
 
         if (this.lastEvent == this.SelectTradeTarget)
         {
-            this.AddNextEvent(this.SuggestTradeOwnerTradeCondition);
+            this.AddNextAction(this.SuggestTradeOwnerTradeCondition);
 
             return;
         }
 
         if (this.lastEvent == this.SuggestTradeOwnerTradeCondition)
         {
-            this.AddNextEvent(this.MakeTradeTargetDecisionOnTradeAgreement);
+            this.AddNextAction(this.MakeTradeTargetDecisionOnTradeAgreement);
 
             return;
         }
@@ -339,7 +323,7 @@ public class TradeEvent : Event
         {
             if (this.tradeHandlerData.IsTradeAgreed is true)
             {
-                this.AddNextEvent(this.DoTrade);
+                this.AddNextAction(this.DoTrade);
 
                 return;
             }
@@ -347,11 +331,11 @@ public class TradeEvent : Event
             {
                 if (this.tradeHandlerData.IsLastParticipant)
                 {
-                    this.AddNextEvent(this.EndTrade);
+                    this.AddNextAction(this.EndEvent);
                 }
                 else
                 {
-                    this.AddNextEvent(this.ChangeTradeOwner);
+                    this.AddNextAction(this.ChangeTradeOwner);
                 }
                 
                 return;
@@ -362,11 +346,11 @@ public class TradeEvent : Event
         {
             if (this.tradeHandlerData.IsLastParticipant)
             {
-                this.AddNextEvent(this.EndTrade);
+                this.AddNextAction(this.EndEvent);
             }
             else
             {
-                this.AddNextEvent(this.ChangeTradeOwner);
+                this.AddNextAction(this.ChangeTradeOwner);
             }
 
             return;
@@ -376,20 +360,20 @@ public class TradeEvent : Event
         {
             if (this.tradeHandlerData.SelectableTargetNumbers.Count() != 0)
             {
-                this.AddNextEvent(this.SelectTradeTarget);
+                this.AddNextAction(this.SelectTradeTarget);
 
             }
             else
             {
-                this.AddNextEvent(this.HasNoTradeTarget);
+                this.AddNextAction(this.HasNoTradeTarget);
             }
 
             return;
         }
 
-        if (this.lastEvent == this.EndTrade)
+        if (this.lastEvent == this.EndEvent)
         {
-            this.AddNextEvent(this.events!
+            this.AddNextAction(this.events!
                             .HouseBuildEvent
                             .StartEvent);
 
