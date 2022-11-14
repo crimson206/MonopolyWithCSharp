@@ -16,6 +16,7 @@ public class HouseBuildHandler : IHouseBuildHandlerData
     public Dictionary<int, List<IRealEstateData>> HouseBuildableRealEstatesOfOwners => this.houseBuildableRealEstatesOfOwners;
     public IRealEstateData? RealEstateToBuildHouse => this.realEstateToBuildHouse;
     public int? CurrentHouseBuilder => this.currentHouseBuilder;
+    public List<IRealEstateData> HouseBuildableRealEstatesOfCurrentBuilder => this.houseBuildableRealEstatesOfOwners[(int)this.currentHouseBuilder!];
 
     public void SetHouseBuildHandler(List<int> balances, List<IRealEstateData> realEstateDatas)
     {

@@ -5,6 +5,7 @@ public abstract class Event
     protected Delegator delegator;
     protected IDataCenter dataCenter;
     protected ITileManager tileManager;
+    protected IPropertyManager propertyManager;
 
     public Event(Delegator delegator, IDataCenter dataCenter, ITileManager tileManager)
     {
@@ -29,7 +30,7 @@ public abstract class Event
         this.lastEvent = nextEvent;
 
         this.delegator
-            .SetNextEvent(nextEvent);
+            .SetNextAction(nextEvent);
     }
 
     protected string ConvertIntListToString(List<int> ints)

@@ -12,8 +12,17 @@ namespace Tests
             {
                 game.Run();
 
+                int breakPoint1 = 0;
+                int breakPoint2 = 0;
+
                 if (i % 100 == 0)
                 {
+                    breakPoint1++;
+                }
+
+                if (game.DelegatorData.NextEventName == "HouseBuildEvent")
+                {
+                    breakPoint2++;
                 }
             }
         }
