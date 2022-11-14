@@ -34,7 +34,7 @@ public class HouseBuildEvent : Event
                 (balances,
                 realEstateDatas);
 
-        if (this.houseBuildHandlerData.AreAnyBuildable)
+        if (this.houseBuildHandlerData.AreAnyBuildable is true)
         {
             this.eventFlow.RecommendedString = "Player " +
                                                 this.ConvertIntListToString(this.participantPlayerNumbers)
@@ -48,7 +48,7 @@ public class HouseBuildEvent : Event
     {
         if (this.lastEvent == this.StartEvent)
         {
-            if (this.houseBuildHandlerData.AreAnyBuildable)
+            if (this.houseBuildHandlerData.AreAnyBuildable is true)
             {
             }
             else

@@ -5,22 +5,26 @@ public class HouseBuildHandler : IHouseBuildHandlerData
     private List<IRealEstateData>? backupRealEstateDatas;
     private List<int>? backupBalances;
     private Dictionary<int, List<IRealEstateData>> houseBuildableRealEstatesOfOwners = new Dictionary<int, List<IRealEstateData>>();
-    private bool areAnyBuildable;
-    private int currentHouseBuilder;
-    private int builderChangedCount;
+    private bool? areAnyBuildable;
+    private int? currentHouseBuilder;
+    private int? builderChangedCount;
+    private IRealEstateData? realEstateToBuildHouse;
 
-    public bool AreAnyBuildable => this.areAnyBuildable;
+    public bool? AreAnyBuildable => this.areAnyBuildable;
     public List<int>? ParticipantPlayerNumbers => this.participantPlayerNumbers;
     public bool IsLastBuilder => (this.builderChangedCount == this.participantPlayerNumbers.Count() - 1? true : false);
-    public Dictionary<int, List<IRealEstateData>> HouseBuildableRealEstatesOfOwners => this.HouseBuildableRealEstatesOfOwners;
+    public Dictionary<int, List<IRealEstateData>> HouseBuildableRealEstatesOfOwners => this.houseBuildableRealEstatesOfOwners;
+    public IRealEstateData? RealEstateToBuildHouse => this.realEstateToBuildHouse;
+    public int? CurrentHouseBuilder => this.currentHouseBuilder;
 
     public void SetHouseBuildHandler(List<int> balances, List<IRealEstateData> realEstateDatas)
     {
         this.builderChangedCount = 0;
+        this.realEstateToBuildHouse = null;
         this.backupRealEstateDatas = realEstateDatas;
         this.backupBalances = balances;
         this.SetAreAnyBuildable();
-        if (this.areAnyBuildable)
+        if (this.areAnyBuildable is true)
         {
             this.SetHouseBuildableRealEstatesOfOwners();
             this.SetParticipantPlayerNumbers();
@@ -35,8 +39,19 @@ public class HouseBuildHandler : IHouseBuildHandlerData
             throw new Exception();
         }
 
+        this.realEstateToBuildHouse = null;
         this.builderChangedCount++;
-        this.currentHouseBuilder = this.participantPlayerNumbers![this.builderChangedCount];
+        this.currentHouseBuilder = this.participantPlayerNumbers![(int)this.builderChangedCount!];
+    }
+
+    public void SetRealEstateToBuildHouse(IRealEstateData realEstateToBuildHouse)
+    {
+        if (this.houseBuildableRealEstatesOfOwners[(int)this.currentHouseBuilder!].Contains(realEstateToBuildHouse) is false)
+        {
+            throw new Exception();
+        }
+
+        this.realEstateToBuildHouse = realEstateToBuildHouse;
     }
 
     private void SetHouseBuildableRealEstatesOfOwners()
@@ -69,10 +84,12 @@ public class HouseBuildHandler : IHouseBuildHandlerData
             if (this.backupBalances![ownerNumber] >= realEstateData.BuildingCost)
             {
                 this.areAnyBuildable = true;
+                return;
             }
-
-            this.areAnyBuildable = false;
         }
+
+        this.areAnyBuildable = false;
+        return;
     }
 
     private List<IRealEstateData> CreateReallyBuildableRealEstateDatas()
@@ -98,5 +115,6 @@ public class HouseBuildHandler : IHouseBuildHandlerData
     private void SetParticipantPlayerNumbers()
     {
         this.participantPlayerNumbers = this.houseBuildableRealEstatesOfOwners.Keys.ToList();
+        this.participantPlayerNumbers.Sort();
     }
 }
