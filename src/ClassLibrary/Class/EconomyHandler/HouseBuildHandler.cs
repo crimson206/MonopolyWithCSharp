@@ -1,4 +1,4 @@
-public class HouseBuildHandler
+public class HouseBuildHandler : IHouseBuildHandlerData
 {
     private List<int> participantPlayerNumbers = new List<int>();
     private TileFilter tileFilter = new TileFilter();

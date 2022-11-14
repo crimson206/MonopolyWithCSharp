@@ -259,20 +259,6 @@ public class TradeEvent : Event
         return players;
     }
 
-    private string ConvertIntListToString(List<int> intList)
-    {
-        string converted = string.Empty;
-
-        foreach (var item in intList)
-        {
-            converted += item.ToString() + ", ";
-        }
-
-        converted.Remove(-2, 2);
-
-        return converted;
-    }
-
     private string CreateParticipantNumbersString()
     {
         Dictionary<int, int> suggestedPrices = this.dataCenter

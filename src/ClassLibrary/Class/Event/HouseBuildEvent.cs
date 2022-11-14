@@ -25,10 +25,14 @@ public class HouseBuildEvent : Event
 
     public override void StartEvent()
     {
+        List<int> balances = this.dataCenter.Bank.Balances;
+        List<ITileData> tileDatas = this.dataCenter.TileDatas;
+        List<IRealEstateData> realEstateDatas = this.FilterTileDatasToRealEstateDatas(tileDatas);
+
         this.houseBuildHandler
             .SetHouseBuildHandler
-                (this.dataCenter.Bank.Balances,
-                this.dataCenter.TileDatas.Cast<IRealEstateData>().ToList());
+                (balances,
+                realEstateDatas);
 
         if (this.houseBuildHandlerData.AreAnyBuildable)
         {
@@ -56,4 +60,12 @@ public class HouseBuildEvent : Event
         }
     }
 
+    private List<IRealEstateData> FilterTileDatasToRealEstateDatas(List<ITileData> tileDatas)
+    {
+        List<IRealEstateData> realEstateDatas = 
+            (from tileData in tileDatas
+            where tileData is IRealEstateData
+            select tileData as IRealEstateData).ToList();
+        return realEstateDatas;
+    }
 }

@@ -8,7 +8,6 @@ public class AuctionEvent : Event
     private int initialPrice;
     private IAuctionDecisionMaker auctionDecisionMaker;
     private BankHandler bankHandler;
-    private ITileManager tileManager;
 
     public AuctionEvent
     (StatusHandlers statusHandlers,
@@ -32,8 +31,6 @@ public class AuctionEvent : Event
     private List<int> Balances => this.dataCenter.Bank.Balances;
 
     private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
-
-    private int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
     private IPropertyData? CurrentPropertyData => (IPropertyData)this.dataCenter.CurrentTileData;
     private Property CurrentProperty => this.GetCurrentProperty();
 
@@ -121,20 +118,6 @@ public class AuctionEvent : Event
             players += item.ToString() + ", ";
         }
         return players;
-    }
-
-    private string ConvertIntListToString(List<int> intList)
-    {
-        string converted = string.Empty;
-
-        foreach (var item in intList)
-        {
-            converted += item.ToString() + ", ";
-        }
-
-        converted.Remove(-2, 2);
-
-        return converted;
     }
 
     private string CreateParticipantNumbersString()
