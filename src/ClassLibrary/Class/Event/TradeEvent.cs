@@ -220,7 +220,7 @@ public class TradeEvent : Event
         this.CallNextEvent();
     }
 
-    private void EndTrade()
+    private void EndEvent()
     {
         this.eventFlow
             .RecommendedString =
@@ -296,7 +296,7 @@ public class TradeEvent : Event
         {
             if (this.tradeHandlerData.IsLastParticipant)
             {
-                this.AddNextEvent(this.EndTrade);
+                this.AddNextEvent(this.EndEvent);
             }
             else
             {
@@ -332,7 +332,7 @@ public class TradeEvent : Event
             {
                 if (this.tradeHandlerData.IsLastParticipant)
                 {
-                    this.AddNextEvent(this.EndTrade);
+                    this.AddNextEvent(this.EndEvent);
                 }
                 else
                 {
@@ -347,7 +347,7 @@ public class TradeEvent : Event
         {
             if (this.tradeHandlerData.IsLastParticipant)
             {
-                this.AddNextEvent(this.EndTrade);
+                this.AddNextEvent(this.EndEvent);
             }
             else
             {
@@ -372,7 +372,7 @@ public class TradeEvent : Event
             return;
         }
 
-        if (this.lastEvent == this.EndTrade)
+        if (this.lastEvent == this.EndEvent)
         {
             this.AddNextEvent(this.events!
                             .HouseBuildEvent

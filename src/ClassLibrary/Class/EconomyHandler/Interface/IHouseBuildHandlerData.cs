@@ -6,4 +6,5 @@ public interface IHouseBuildHandlerData
     public Dictionary<int, List<IRealEstateData>> HouseBuildableRealEstatesOfOwners { get; }
     public IRealEstateData? RealEstateToBuildHouse { get; }
     public int? CurrentHouseBuilder { get; }
+    public List<IRealEstateData> HouseBuildableRealEstatesOfCurrentBuilder { get; }
 }

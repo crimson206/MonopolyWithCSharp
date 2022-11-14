@@ -34,7 +34,7 @@ public class MainEvent : Event
         this.decisionMakers = decisionMakers;
         this.delegator = delegator;
 
-        this.delegator.SetNextEvent(this.StartEvent);
+        this.delegator.SetNextAction(this.StartEvent);
         this.lastEvent = this.StartEvent;
 
         this.dice = dice;
@@ -351,7 +351,7 @@ public class MainEvent : Event
 
             this.eventFlow.RecommendedString = this.stringPlayer + " is released after staying 3 turns in jail";
 
-            this.delegator.SetNextEvent(this.MoveByRollDiceResultTotal);
+            this.delegator.SetNextAction(this.MoveByRollDiceResultTotal);
         }
     }
 
