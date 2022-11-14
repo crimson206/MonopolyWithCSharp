@@ -14,7 +14,6 @@ namespace Tests
 
                 if (i % 100 == 0)
                 {
-                    int breakPoint = 0;
                 }
             }
         }

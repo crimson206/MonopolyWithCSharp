@@ -4,7 +4,7 @@ public class BoardHandler : IBoardHandlerData
     private int goPosition = 0;
     private List<int> playerPositions = new List<int>() { 0, 0, 0, 0 };
     private List<bool> playerPassedGo = new List<bool>() { false, false, false, false };
-    private List<ITileData>? tileDatas;
+
 
     public List<int> PlayerPositions { get => new List<int>(this.playerPositions); }
 
