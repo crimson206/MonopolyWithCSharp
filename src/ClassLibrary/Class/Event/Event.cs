@@ -6,13 +6,15 @@ public abstract class Event
     protected IDataCenter dataCenter;
     protected ITileManager tileManager;
     protected IPropertyManager propertyManager;
+    protected EventFlow eventFlow;
 
-    public Event(Delegator delegator, IDataCenter dataCenter, ITileManager tileManager)
+    public Event(Delegator delegator, IDataCenter dataCenter, ITileManager tileManager, IStatusHandlers statusHandlers)
     {
         this.delegator = delegator;
         this.dataCenter = dataCenter;
         this.tileManager = tileManager;
         this.propertyManager = tileManager.PropertyManager;
+        this.eventFlow = statusHandlers.EventFlow;
 
         this.lastEvent = this.StartEvent;
     }

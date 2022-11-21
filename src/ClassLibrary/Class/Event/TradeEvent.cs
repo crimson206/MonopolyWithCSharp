@@ -1,6 +1,5 @@
 public class TradeEvent : Event
 {
-    private EventFlow eventFlow;
     private IBankHandler bankHandler;
     private ITradeHandlerFunction tradeHandler;
     private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
@@ -20,7 +19,8 @@ public class TradeEvent : Event
     )
         : base(delegator,
             dataCenter,
-            tileManager)
+            tileManager,
+            statusHandlers)
     {
         this.bankHandler = statusHandlers.BankHandler;
         this.eventFlow = statusHandlers.EventFlow;

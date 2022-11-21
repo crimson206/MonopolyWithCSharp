@@ -1,6 +1,5 @@
 public class HouseBuildEvent : Event
 {
-    private EventFlow eventFlow;
     private List<int> participantPlayerNumbers = new List<int>();
     private HouseBuildHandler houseBuildHandler;
     private IHouseBuildHandlerData houseBuildHandlerData;
@@ -17,7 +16,8 @@ public class HouseBuildEvent : Event
         :base
         (delegator,
         dataCenter,
-        tileManager)
+        tileManager,
+        statusHandlers)
     {
         this.eventFlow = statusHandlers.EventFlow;
         this.houseBuildHandler = economyHandlers.HouseBuildHandler;

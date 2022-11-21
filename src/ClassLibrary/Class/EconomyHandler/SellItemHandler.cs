@@ -1,4 +1,4 @@
-public class SellItemHandler
+public class SellItemHandler : ISellItemHandler
 {
     private List<IPropertyData> backUpPropertyData = new List<IPropertyData>();
     private int playerToSellItem;
@@ -9,9 +9,36 @@ public class SellItemHandler
         this.backUpPropertyData = properties;
     }
 
-    public List<IPropertyData> MortgagibleItems => this.GetMortgagibleItems();
+
+
+    public List<IPropertyData> MortgagibleProperties => this.GetMortgagibleItems();
     public List<IPropertyData> RealEstatesWithDistructableHouse => this.GetRealEstatesWithDistructableHouse();
     public List<IPropertyData> SoldableItemWithAuction => this.GetSoldableItemsWithAuction();
+    public IPropertyData? PropertyToAuction { get; private set; }
+    public IPropertyData? RealEstateToDistructHouse { get; private set; }
+    public IPropertyData? PropertyToMortgage { get; private set; }
+
+    public void SetPropertyToAuction(int index)
+    {
+        this.PropertyToAuction = this.SoldableItemWithAuction[index];
+    }
+
+    public void SetRealEstateToBuildHouse(int index)
+    {
+        this.RealEstateToDistructHouse =  this.RealEstatesWithDistructableHouse[index];
+    }
+
+    public void SetPropertyToMortgage(int index)
+    {
+        this.PropertyToMortgage = this.MortgagibleProperties[index];
+    }
+
+    public void ResetPropertyToChange()
+    {
+        this.PropertyToAuction = null;
+        this.PropertyToMortgage = null;
+        this.RealEstateToDistructHouse = null;
+    }
 
     private List<IPropertyData> GetSoldableItemsWithAuction()
     {

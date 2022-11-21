@@ -4,5 +4,6 @@ public interface IEconomyHandlers
 
     public TradeHandler TradeHandler { get; }
 
-public HouseBuildHandler HouseBuildHandler { get; }
+    public HouseBuildHandler HouseBuildHandler { get; }
+    public SellItemHandler SellItemHandler { get; }
 }

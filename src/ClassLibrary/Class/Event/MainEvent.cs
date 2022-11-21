@@ -5,7 +5,6 @@ public class MainEvent : Event, IMainEvent
     private IDice dice;
     private DoubleSideEffectHandler doubleSideEffectHandler;
     private JailHandler jailHandler;
-    private EventFlow eventFlow;
     private Random random;
     private IDecisionMakers decisionMakers;
     private bool isDoubleSideEffectOn = true;
@@ -23,7 +22,8 @@ public class MainEvent : Event, IMainEvent
         :base
         (delegator,
         dataCenter,
-        tileManager)
+        tileManager,
+        statusHandlers)
     {
         this.bankHandler = statusHandlers.BankHandler;
         this.boardHandler = statusHandlers.BoardHandler;

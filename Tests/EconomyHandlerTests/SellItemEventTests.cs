@@ -62,7 +62,7 @@ namespace Tests
 
             sellItemHandler.SetPlayerToSellItems(playerNumber:0, properties);
 
-            Assert.AreEqual(sellItemHandler.MortgagibleItems.Count(), 0);
+            Assert.AreEqual(sellItemHandler.MortgagibleProperties.Count(), 0);
             Assert.AreEqual(sellItemHandler.RealEstatesWithDistructableHouse.Count(), 0);
             Assert.AreEqual(sellItemHandler.SoldableItemWithAuction.Count(), 0);
         }
@@ -104,7 +104,7 @@ namespace Tests
 
             sellItemHandler.SetPlayerToSellItems(playerNumber:0, properties);
 
-            foreach (var property in sellItemHandler.MortgagibleItems)
+            foreach (var property in sellItemHandler.MortgagibleProperties)
             {
                 Assert.AreEqual(MortgagiblePropertiesOwnedByPlayer0.Contains(property), true);
             }
