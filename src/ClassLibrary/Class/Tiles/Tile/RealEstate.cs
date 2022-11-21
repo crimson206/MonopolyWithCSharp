@@ -101,4 +101,16 @@ public class RealEstate : Property, IRealEstateData
             return true;
         }
     }
+
+    protected override bool CheckSoldableWithAuction()
+    {
+        if (this.colorGroup.Any(member => member.HouseCount > 0) || this.ownerPlayerNumber is null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 }
