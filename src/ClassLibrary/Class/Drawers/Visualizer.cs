@@ -37,6 +37,7 @@ public class Visualizer
         }
     }
 
+    private List<bool> AreInGame => this.data.InGame.AreInGame;
     private List<int> PlayerPositions => this.data.Board.PlayerPositions;
     private string RecommendedString => this.data.EventFlow.RecommendedString;
 
@@ -85,7 +86,7 @@ public class Visualizer
         List<IRailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is IRailRoadData select tileData as IRailRoadData).ToList();
         List<IUtilityData> utilityDatas = (from tileData in tileDatas where tileData is IUtilityData select tileData as IUtilityData).ToList();        
 
-        this.tileDrawer!.DrawPlayers(this.PlayerPositions);
+        this.tileDrawer!.DrawPlayers(this.PlayerPositions, this.AreInGame);
         this.tileDrawer.DrawTiles(tileDatas);
 
         this.displayTiles.DisplayRealEstates(this.innerMapEdge[0][0] + 5, this.innerMapEdge[0][1] + 1, realEstateDatas, 2);
@@ -114,7 +115,7 @@ public class Visualizer
         List<IRailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoad select tileData as IRailRoadData).ToList();
         List<IUtilityData> utilityDatas = (from tileData in tileDatas where tileData is Utility select tileData as IUtilityData).ToList();
 
-        this.tileDrawer!.DrawPlayers(this.PlayerPositions);
+        this.tileDrawer!.DrawPlayers(this.PlayerPositions, this.AreInGame);
         this.tileDrawer.DrawTiles(tileDatas);
 
         this.displayTiles.DisplayRealEstates(this.innerMapEdge[0][0] + 3, this.innerMapEdge[0][1], realEstateDatas, 2);

@@ -9,13 +9,16 @@ public class TileDrawer
         this.tileEdgeInfo = tileEdgeInfo;
     }
 
-    public void DrawPlayers(List<int> playerPositions)
+    public void DrawPlayers(List<int> playerPositions, List<bool> areInGame)
     {
         for (int i = 0; i < 4; i++)
         {
-            Console.CursorLeft = this.tileEdgeInfo[playerPositions[i]][0] + (3 * i) + 1;
-            Console.CursorTop = this.tileEdgeInfo[playerPositions[i]][1] + 2;
-            Console.Write(string.Format("P{0}", i));
+            if (areInGame[i] is true)
+            {
+                Console.CursorLeft = this.tileEdgeInfo[playerPositions[i]][0] + (3 * i) + 1;
+                Console.CursorTop = this.tileEdgeInfo[playerPositions[i]][1] + 2;
+                Console.Write(string.Format("P{0}", i));
+            }
         }
     }
 

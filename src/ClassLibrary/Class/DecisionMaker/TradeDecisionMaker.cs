@@ -1,7 +1,7 @@
-public class TradeDecisionMaker : ITradeDecisionMaker
+public class TradeDecisionMaker : DecisionMaker, ITradeDecisionMaker
 {
-    private IDataCenter dataCenter;
     public TradeDecisionMaker(IDataCenter dataCenter)
+        :base(dataCenter)
     {
         this.dataCenter = dataCenter;
     }

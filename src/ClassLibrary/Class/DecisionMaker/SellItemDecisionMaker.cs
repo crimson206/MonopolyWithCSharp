@@ -1,11 +1,10 @@
-public class SellItemDecisionMaker : ISellItemDecisionMaker
+public class SellItemDecisionMaker : DecisionMaker, ISellItemDecisionMaker
 {    
-    private IDataCenter dataCenter;
     private ISellItemHandlerData sellItemHandlerData;
 
     public SellItemDecisionMaker(IDataCenter dataCenter)
+        :base(dataCenter)
     {
-        this.dataCenter = dataCenter;
         this.sellItemHandlerData = dataCenter.SellItemHandler;
     }
 

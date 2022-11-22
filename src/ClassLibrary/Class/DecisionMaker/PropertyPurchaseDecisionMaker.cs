@@ -1,6 +1,11 @@
-public class PropertyPurchaseDecisionMaker : IPropertyPurchaseDecisionMaker
+public class PropertyPurchaseDecisionMaker : DecisionMaker, IPropertyPurchaseDecisionMaker
 {
     private Random random = new Random();
+
+    public PropertyPurchaseDecisionMaker(IDataCenter dataCenter)
+        :base(dataCenter)
+    {
+    }
 
     public bool MakeDecisionOnPurchase(int playerNumber)
     {

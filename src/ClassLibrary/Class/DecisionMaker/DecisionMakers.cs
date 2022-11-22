@@ -1,9 +1,9 @@
 public class DecisionMakers : IDecisionMakers
 {
-    private IAuctionDecisionMaker auctionDecisionMaker = new AuctionDecisionMaker();
-    private IPropertyPurchaseDecisionMaker propertyPurchaseDecisionMaker = new PropertyPurchaseDecisionMaker();
-    private IJailFreeCardUsageDecisionMaker jailFreeCardUsageDecisionMaker = new JailFreeCardUsageDecisionMaker();
-    private IJailFinePaymentDecisionMaker jailFinePaymentDecisionMaker = new JailFinePaymentDecisionMaker();
+    private IAuctionDecisionMaker auctionDecisionMaker;
+    private IPropertyPurchaseDecisionMaker propertyPurchaseDecisionMaker;
+    private IJailFreeCardUsageDecisionMaker jailFreeCardUsageDecisionMaker; 
+    private IJailFinePaymentDecisionMaker jailFinePaymentDecisionMaker;
     private ITradeDecisionMaker tradeDecisionMaker;
     private IHouseBuildDecisionMaker houseBuildDecisionMaker;
     private ISellItemDecisionMaker sellItemDecisionMaker;
@@ -13,6 +13,10 @@ public class DecisionMakers : IDecisionMakers
         this.tradeDecisionMaker = new TradeDecisionMaker(dataCenter);
         this.houseBuildDecisionMaker = new HouseBuildDecisionMaker(dataCenter);
         this.sellItemDecisionMaker = new SellItemDecisionMaker(dataCenter);
+        this.auctionDecisionMaker = new AuctionDecisionMaker(dataCenter);
+        this.jailFinePaymentDecisionMaker = new JailFinePaymentDecisionMaker(dataCenter);
+        this.propertyPurchaseDecisionMaker = new PropertyPurchaseDecisionMaker(dataCenter);
+        this.jailFreeCardUsageDecisionMaker = new JailFreeCardUsageDecisionMaker(dataCenter);
     }
 
     public IAuctionDecisionMaker AuctionDecisionMaker {get => this.auctionDecisionMaker; set => this.auctionDecisionMaker = value; }

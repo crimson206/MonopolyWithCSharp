@@ -1,9 +1,9 @@
-public class HouseBuildDecisionMaker : IHouseBuildDecisionMaker
+public class HouseBuildDecisionMaker : DecisionMaker, IHouseBuildDecisionMaker
 {
-    private IDataCenter dataCenter;
     private Random random = new Random();
 
     public HouseBuildDecisionMaker(IDataCenter dataCenter)
+        :base(dataCenter)
     {
         this.dataCenter = dataCenter;
     }
