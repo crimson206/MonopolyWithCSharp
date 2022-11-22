@@ -4,4 +4,5 @@ public interface IEvents
     public AuctionEvent AuctionEvent { get; }
     public HouseBuildEvent HouseBuildEvent { get; }
     public TradeEvent TradeEvent { get; }
+    public SellItemEvent SellItemEvent { get; }
 }

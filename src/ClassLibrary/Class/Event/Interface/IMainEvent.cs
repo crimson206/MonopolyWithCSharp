@@ -1,5 +1,6 @@
 public interface IMainEvent : IEvent
 {
     public void CheckExtraTurn();
-    public void EndTurn();
+
+    public void EndEvent();
 }

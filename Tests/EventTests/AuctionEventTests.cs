@@ -66,7 +66,8 @@ namespace Tests
             Events events = new Events(mainEvent,
                                     auctionEvent,
                                     new HouseBuildEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers),
-                                    new TradeEvent(statusHandlers, tileManager, dataCenter, economyHandlers, delegator, decisionMakers));
+                                    new TradeEvent(statusHandlers, tileManager, dataCenter, economyHandlers, delegator, decisionMakers),
+                                    new SellItemEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers));
 
             mainEvent.SetEvents(events);
             auctionEvent.SetEvents(events);
@@ -86,6 +87,8 @@ namespace Tests
             delegator.RunAction();
             Assert.AreEqual(delegator.NextActionName, "DontPurchaseProperty");
             delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "PassAuctionCondition");
+            delegator.RunAction();
             Assert.AreEqual(delegator.NextActionName, "StartEvent");
             delegator.RunAction();
             Assert.AreEqual(delegator.NextActionName, "DecideInitialPrice");
@@ -100,8 +103,9 @@ namespace Tests
             delegator.RunAction();
             Assert.AreEqual(delegator.NextActionName, "BuyWinnerProperty");
             delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "EndEvent");
+            delegator.RunAction();
             Assert.AreEqual(delegator.NextActionName, "CheckExtraTurn");
-
         }
     }
 }

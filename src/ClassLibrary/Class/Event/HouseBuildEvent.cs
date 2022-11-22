@@ -104,7 +104,7 @@ public class HouseBuildEvent : Event
         this.CallNextEvent();
     }
 
-    private void EndEvent()
+    public override void EndEvent()
     {
         this.eventFlow.RecommendedString = "This house build event is over";
 
@@ -114,7 +114,7 @@ public class HouseBuildEvent : Event
 
     protected override void CallNextEvent()
     {
-        if (this.lastEvent == this.StartEvent)
+        if (this.lastAction == this.StartEvent)
         {
             if (this.houseBuildHandlerData.AreAnyBuildable is true)
             {
@@ -122,13 +122,13 @@ public class HouseBuildEvent : Event
             }
             else
             {
-                this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndTurn);
+                this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndEvent);
             }
 
             return;
         }
 
-        if (this.lastEvent == this.MakeCurrentBuilderDecision)
+        if (this.lastAction == this.MakeCurrentBuilderDecision)
         {
             if (this.houseBuildHandlerData.RealEstateToBuildHouse is not null)
             {
@@ -149,7 +149,7 @@ public class HouseBuildEvent : Event
             return;
         }
 
-        if (this.lastEvent == this.BuildHouse)
+        if (this.lastAction == this.BuildHouse)
         {
             if (this.houseBuildHandlerData.IsLastBuilder is true)
             {
@@ -163,16 +163,16 @@ public class HouseBuildEvent : Event
             return;
         }
 
-        if (this.lastEvent == this.ChangeBuilder)
+        if (this.lastAction == this.ChangeBuilder)
         {
             this.AddNextAction(this.MakeCurrentBuilderDecision);
 
             return;
         }
 
-        if (this.lastEvent == this.EndEvent)
+        if (this.lastAction == this.EndEvent)
         {
-            this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndTurn);
+            this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndEvent);
 
             return;
         }

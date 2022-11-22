@@ -1,6 +1,6 @@
-public abstract class Event
+public abstract class Event : IEvent
 {
-    protected Action lastEvent;
+    protected Action lastAction;
     protected IEvents? events;
     protected Delegator delegator;
     protected IDataCenter dataCenter;
@@ -16,10 +16,11 @@ public abstract class Event
         this.propertyManager = tileManager.PropertyManager;
         this.eventFlow = statusHandlers.EventFlow;
 
-        this.lastEvent = this.StartEvent;
+        this.lastAction = this.StartEvent;
     }
 
     protected int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
+    public IEvent? LastEvent { get; set; }
 
     public void SetEvents(IEvents events)
     {
@@ -30,11 +31,13 @@ public abstract class Event
 
     public void AddNextAction(Action nextAction)
     {
-        this.lastEvent = nextAction;
+        this.lastAction = nextAction;
 
         this.delegator
             .SetNextAction(nextAction);
     }
+
+    public abstract void EndEvent();
 
     protected string ConvertIntListToString(List<int> ints)
     {

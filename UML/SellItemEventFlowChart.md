@@ -4,7 +4,7 @@ A["StartSellItemEvent : \n set a player to sell items"]
 B["MakePlayerDecisionOnItemToSell : \n the player choose an item to sell"]
 C["SellItem"]
 a{"the player's \n balance is \n still negative"}
-D["EndSellItemEvetn"]
+D["EndSellItemEvent"]
 
 A --> B
 B --> C

@@ -214,7 +214,7 @@ public class TradeEvent : Event
         this.CallNextEvent();
     }
 
-    private void EndEvent()
+    public override void EndEvent()
     {
         this.eventFlow
             .RecommendedString =
@@ -264,7 +264,7 @@ public class TradeEvent : Event
 
     protected override void CallNextEvent()
     {
-        if (this.lastEvent == this.StartEvent)
+        if (this.lastAction == this.StartEvent)
         {
             if (this.tradeHandlerData.IsThereTradableProperties)
             {
@@ -286,7 +286,7 @@ public class TradeEvent : Event
             return;
         }
 
-        if( this.lastEvent == this.HasNoTradeTarget)
+        if( this.lastAction == this.HasNoTradeTarget)
         {
             if (this.tradeHandlerData.IsLastParticipant)
             {
@@ -300,21 +300,21 @@ public class TradeEvent : Event
             return;
         }
 
-        if (this.lastEvent == this.SelectTradeTarget)
+        if (this.lastAction == this.SelectTradeTarget)
         {
             this.AddNextAction(this.SuggestTradeOwnerTradeCondition);
 
             return;
         }
 
-        if (this.lastEvent == this.SuggestTradeOwnerTradeCondition)
+        if (this.lastAction == this.SuggestTradeOwnerTradeCondition)
         {
             this.AddNextAction(this.MakeTradeTargetDecisionOnTradeAgreement);
 
             return;
         }
 
-        if (this.lastEvent == this.MakeTradeTargetDecisionOnTradeAgreement)
+        if (this.lastAction == this.MakeTradeTargetDecisionOnTradeAgreement)
         {
             if (this.tradeHandlerData.IsTradeAgreed is true)
             {
@@ -337,7 +337,7 @@ public class TradeEvent : Event
             }
         }
 
-        if (this.lastEvent == this.DoTrade)
+        if (this.lastAction == this.DoTrade)
         {
             if (this.tradeHandlerData.IsLastParticipant)
             {
@@ -351,7 +351,7 @@ public class TradeEvent : Event
             return;
         }
 
-        if (this.lastEvent == this.ChangeTradeOwner)
+        if (this.lastAction == this.ChangeTradeOwner)
         {
             if (this.tradeHandlerData.SelectableTargetNumbers.Count() != 0)
             {
@@ -366,7 +366,7 @@ public class TradeEvent : Event
             return;
         }
 
-        if (this.lastEvent == this.EndEvent)
+        if (this.lastAction == this.EndEvent)
         {
             this.AddNextAction(this.events!
                             .HouseBuildEvent

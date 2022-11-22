@@ -9,6 +9,7 @@ public class TileManager : ITileManager
     private IPropertyManager propertyManager;
     private List<ITileData> tileDatas;
 
+
     /// <summary>
     /// normal tiles size = 40, smaller tiles size = 32
     /// </summary>
@@ -37,6 +38,22 @@ public class TileManager : ITileManager
     public List<RealEstate> RealEstates { get => new List<RealEstate>(this.realEstates); }
     public List<ITileData> TileDatas { get => new List<ITileData>(this.tileDatas); }
     public IPropertyManager PropertyManager { get => this.propertyManager; }
+
+    private List<IPropertyData> player0sProperties => this.GetPropertyDatasWithOwnerNumber(0);
+    private List<IPropertyData> player1sProperties => this.GetPropertyDatasWithOwnerNumber(1);
+    private List<IPropertyData> player2sProperties => this.GetPropertyDatasWithOwnerNumber(2);
+    private List<IPropertyData> player3sProperties => this.GetPropertyDatasWithOwnerNumber(3);
+    public List<IPropertyData> GetPropertyDatasWithOwnerNumber(int? playerNumber)
+    {
+        List<IPropertyData> propertiesOnwedByThePlayer = this.tileDatas
+                                                            .Cast<IPropertyData>()
+                                                            .Where(property => property.OwnerPlayerNumber == playerNumber)
+                                                            .ToList();
+                            
+        return propertiesOnwedByThePlayer;
+    }
+
+
     private List<Tile> CreateTiles()
     {
         return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3, true, 0, 10, 20, 30);

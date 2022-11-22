@@ -8,4 +8,9 @@ public interface IPropertyManager
 
     public void DistructHouse(RealEstate realEstate);
 
+    public void SetIsMortgaged(IPropertyData propertyData, bool value);
+
+    public void DistructHouse(IPropertyData propertyData, bool value);
+
+
 }

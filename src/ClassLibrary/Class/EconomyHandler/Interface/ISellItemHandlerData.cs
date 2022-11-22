@@ -6,5 +6,6 @@ public interface ISellItemHandlerData
     public IPropertyData? PropertyToAuction { get; }
     public IPropertyData? RealEstateToDistructHouse { get; }
     public IPropertyData? PropertyToMortgage { get; }
+    public SellingType? SellingOption { get; }
 
 }

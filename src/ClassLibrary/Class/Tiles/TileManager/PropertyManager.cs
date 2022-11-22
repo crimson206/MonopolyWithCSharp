@@ -19,4 +19,16 @@ public class PropertyManager : IPropertyManager
     {
         realEstate.DistructHouse();
     }
+
+    public void SetIsMortgaged(IPropertyData propertyData, bool value)
+    {
+        Property property = (Property)propertyData;
+        property.SetIsMortgaged(value);
+    }
+
+    public void DistructHouse(IPropertyData propertyData, bool value)
+    {
+        RealEstate property = (RealEstate)propertyData;
+        property.DistructHouse();
+    }
 }
