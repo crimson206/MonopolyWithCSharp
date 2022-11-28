@@ -29,6 +29,7 @@ public class DataCenter : IDataCenter
         this.auctionHandler = economyHandlers.AuctionHandler;
         this.tradeHandler = economyHandlers.TradeHandler;
         this.houseBuildHandler = economyHandlers.HouseBuildHandler;
+        this.sellItemHandler = economyHandlers.SellItemHandler;
     }
 
     public IBankHandlerData Bank => this.bank;

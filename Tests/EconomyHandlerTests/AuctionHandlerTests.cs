@@ -31,7 +31,8 @@ namespace Tests
         {
             AuctionHandler auctionHandler = new AuctionHandler();
             List<int> participantNumbers = new List<int> { 3, 0, 1 };
-            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100);
+            RailRoad railRoad = new RailRoad("RailRoad", 100, new List<int> {10, 20, 30}, 50);
+            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad);
 
             int expectedPositiveSuggestedPriceCount = 1;
             Assert.AreEqual(auctionHandler.SuggestedPrices.Values.Where(price => price > 0).Count(), expectedPositiveSuggestedPriceCount);
@@ -41,7 +42,8 @@ namespace Tests
         {
             AuctionHandler auctionHandler = new AuctionHandler();
             List<int> participantNumbers = new List<int> { 3, 0, 1 };
-            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100);
+            RailRoad railRoad = new RailRoad("RailRoad", 100, new List<int> {10, 20, 30}, 50);
+            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad);
 
             int expectedInitialPrice = 100;
             Assert.AreEqual(auctionHandler.SuggestedPrices[3], expectedInitialPrice); 
@@ -50,7 +52,8 @@ namespace Tests
         {
             AuctionHandler auctionHandler = new AuctionHandler();
             List<int> participantNumbers = new List<int> { 3, 0, 1 };
-            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100);
+            RailRoad railRoad = new RailRoad("RailRoad", 100, new List<int> {10, 20, 30}, 50);
+            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad);
             return auctionHandler;
         }
         [TestMethod]
@@ -91,7 +94,8 @@ namespace Tests
         {
             AuctionHandler auctionHandler = new AuctionHandler();
             List<int> participantNumbers = new List<int> { 3, 0, 1 };
-            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100);
+            RailRoad railRoad = new RailRoad("RailRoad", 100, new List<int> {10, 20, 30}, 50);
+            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad);
 
             bool expectedIsAuctionOn = true;
             Assert.AreEqual(auctionHandler.IsAuctionOn, expectedIsAuctionOn);

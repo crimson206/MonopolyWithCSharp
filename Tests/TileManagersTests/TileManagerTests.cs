@@ -8,7 +8,7 @@ namespace Tests.TileManagersTests
         public void TestMethod1()
         {
             TileManager tileManager = new TileManager(isBoardSmall:false);
-            List<RealEstate> realEstates = tileManager.RealEstates;
+            List<IRealEstate> realEstates = tileManager.RealEstates;
             
             foreach (var item in tileManager.Properties)
             {
@@ -19,7 +19,7 @@ namespace Tests.TileManagersTests
             Assert.AreEqual(tileManager.Tiles.Count(), 40);
 
             /// can't change tiles list out of tile manager
-            List<Tile> invader = tileManager.Tiles;
+            List<ITile> invader = tileManager.Tiles;
             invader[0] = new Jail("Invader", 10);
             Assert.AreNotEqual(tileManager.Tiles[0], invader[0]);
 
@@ -28,7 +28,7 @@ namespace Tests.TileManagersTests
             Assert.AreEqual(numRealEstates, 22);
 
             /// get sample realEstate
-            RealEstate realEstate = (RealEstate) tileManager.Properties.Where(property => property is RealEstate).ToList()[0];
+            IRealEstate realEstate = (IRealEstate) tileManager.Properties.Where(property => property is IRealEstate).ToList()[0];
 
             /// get property manager
             IPropertyManager propertyManager = tileManager.PropertyManager;
@@ -43,16 +43,6 @@ namespace Tests.TileManagersTests
                 playerNum = (playerNum + 1) % 4;
             }
 
-            /// get analyser
-            Analyser analyser = tileManager.Analyser;
-            List<int> totalPrices = analyser.TotalPricesOfProerties;
-            List<int> totalRents = analyser.TotalRentsOfProerties;
-            List<double> costEfficienceis = analyser.ConvertRealEstateToBuildingHouseCoseEfficiency(tileManager.RealEstates);
-
-
-
-            bool isAbleToMonopoly = analyser.IsAbleToMonopoly(0, realEstate);
-            Assert.AreEqual(isAbleToMonopoly, false);
 
             /// reset owners
             foreach (var property in tileManager.Properties)
@@ -60,20 +50,12 @@ namespace Tests.TileManagersTests
                 propertyManager.ChangeOwner(property, null);
             }
 
-            bool isAbleToMonopoly2 = analyser.IsAbleToMonopoly(0, realEstate);
-            Assert.AreEqual(isAbleToMonopoly2, true);
-
             propertyManager.ChangeOwner(realEstates[0], 0);
-            bool isAbleToMonopoly3 = analyser.IsAbleToMonopoly(0, realEstate);
-            Assert.AreEqual(isAbleToMonopoly3, true);
 
             foreach (var property in tileManager.Properties)
             {
                 propertyManager.ChangeOwner(property, 0);
             }
-
-            List<double> costEfficienceis2 = analyser.ConvertRealEstateToBuildingHouseCoseEfficiency(tileManager.RealEstates);
-
         }
     }
 }

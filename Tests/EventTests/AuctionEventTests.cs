@@ -13,7 +13,7 @@ namespace Tests
         [TestMethod]
         public void RoughTestForWholeProcess()
         {
-            List<Tile> tiles = new List<Tile>();
+            List<ITile> tiles = new List<ITile>();
             tiles.Add(new RealEstate("Red0", 100, 50, new List<int> {10, 20, 40, 60}, 50, "Red"));
             tiles.Add(new RealEstate("Red1", 100, 50, new List<int> {10, 20, 40, 60}, 50, "Red"));
             tiles.Add(new RealEstate("Red2", 100, 50, new List<int> {10, 20, 40, 60}, 50, "Red"));
@@ -32,7 +32,8 @@ namespace Tests
             Mock<ITileManager> mockedTileManager = new Mock<ITileManager>();
             Mock<IAuctionDecisionMaker> mockedAuctionDecisionMaker = new Mock<IAuctionDecisionMaker>();
             Mock<IPropertyPurchaseDecisionMaker> mockedPropertyPurchaseDecisionMaker
-            = new Mock<IPropertyPurchaseDecisionMaker>();            
+            = new Mock<IPropertyPurchaseDecisionMaker>();
+            Mock<IDecisionMakers> mocekdDecisionMakers = new Mock<IDecisionMakers>();    
 
             IDice dice = mockedDice.Object;
             ITileManager tileManager = mockedTileManager.Object;
@@ -41,25 +42,25 @@ namespace Tests
             mockedTileManager.Setup(t => t.Tiles).Returns(tiles);
             mockedTileManager.Setup(t => t.TileDatas).Returns(tileDatas);
             mockedTileManager.Setup(t => t.PropertyManager).Returns(propertyManager);
-            mockedPropertyPurchaseDecisionMaker.Setup(t => t.MakeDecisionOnPurchase(0)).Returns(false);
-            for (int i = 0; i < 4; i++)
-            {
-                mockedAuctionDecisionMaker.Setup(t => t.SuggestPrice(i)).Returns(0);   
-            }
+            mockedPropertyPurchaseDecisionMaker.Setup(t => t.MakeDecisionOnPurchase()).Returns(false);
 
+            mockedAuctionDecisionMaker.Setup(t => t.SuggestPrice()).Returns(0);   
+            IAuctionDecisionMaker auctionDecisionMaker = mockedAuctionDecisionMaker.Object;
             StatusHandlers statusHandlers = new StatusHandlers();
 
             EconomyHandlers economyHandlers = new EconomyHandlers();
+            IDecisionMakers decisionMakers = mocekdDecisionMakers.Object;
 
-
+            mocekdDecisionMakers.Setup(t => t.PropertyPurchaseDecisionMaker).Returns(mockedPropertyPurchaseDecisionMaker.Object);
+            mocekdDecisionMakers.Setup(t => t.AuctionDecisionMaker).Returns(mockedAuctionDecisionMaker.Object);
 
             IDataCenter dataCenter = new DataCenter(statusHandlers, economyHandlers, tileManager);
-            DecisionMakers decisionMakers = new DecisionMakers(dataCenter);
+
             Delegator delegator = new Delegator();
             MainEvent mainEvent = new MainEvent(statusHandlers, tileManager, decisionMakers, dataCenter, delegator, dice, random);
-            decisionMakers.PropertyPurchaseDecisionMaker = mockedPropertyPurchaseDecisionMaker.Object;
 
-            IAuctionDecisionMaker auctionDecisionMaker = mockedAuctionDecisionMaker.Object;
+
+            
 
             AuctionEvent auctionEvent = new AuctionEvent(statusHandlers, tileManager, dataCenter, economyHandlers.AuctionHandler, delegator, decisionMakers);
 

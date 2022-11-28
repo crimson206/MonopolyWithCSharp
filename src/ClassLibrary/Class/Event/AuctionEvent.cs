@@ -1,10 +1,9 @@
 public class AuctionEvent : Event
 {
 
-    private IAuctionHandlerFunction auctionHandler;
+    private IAuctionHandler auctionHandler;
     private List<int> participantPlayerNumbers = new List<int>();
     private int participantCount => this.AreInGame.Where(isInGame => isInGame == true).Count();
-    private int initialPrice;
     private IAuctionDecisionMaker auctionDecisionMaker;
     private IBankHandler bankHandler;
 
@@ -12,9 +11,9 @@ public class AuctionEvent : Event
     (StatusHandlers statusHandlers,
     ITileManager tileManager,
     IDataCenter dataCenter,
-    AuctionHandler auctionHandler,
+    IAuctionHandler auctionHandler,
     Delegator delegator,
-    DecisionMakers decisionMakers)
+    IDecisionMakers decisionMakers)
         :base
         (delegator,
         dataCenter,
@@ -32,20 +31,22 @@ public class AuctionEvent : Event
     private List<int> Balances => this.dataCenter.Bank.Balances;
 
     private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
-    private IPropertyData? CurrentPropertyData => (IPropertyData)this.dataCenter.CurrentTileData;
-    public Property? PropertyToAuction { get; set; }
+
+    public IPropertyData? PropertyToAuction { get; set; }
+
+    public int InitialPrice { get; set; }
 
     public string RecommendedString { get; private set; } = string.Empty;
 
     public override void StartEvent()
     {
-        this.eventFlow.RecommendedString = string.Format("An auction for {0} starts", this.CurrentPropertyData!.Name);
+        this.eventFlow.RecommendedString = string.Format("An auction for {0} starts", this.PropertyToAuction!.Name);
         this.CallNextEvent();
     }
 
     private void SetUpAuction()
     {
-        this.auctionHandler.SetAuctionCondition(this.participantPlayerNumbers, initialPrice);
+        this.auctionHandler.SetAuctionCondition(this.participantPlayerNumbers, this.InitialPrice, this.PropertyToAuction!);
 
         this.eventFlow.RecommendedString = this.CreateParticipantsString() + " joined in the auction";
 
@@ -54,19 +55,7 @@ public class AuctionEvent : Event
 
     private void DecideInitialPrice()
     {
-        int currentPlayersBalance = this.Balances[CurrentPlayerNumber];
-        int currentPropertysPrice = this.CurrentPropertyData!.Price;
-
-        if (currentPlayersBalance < currentPropertysPrice)
-        {
-            this.initialPrice = currentPlayersBalance;
-            this.eventFlow.RecommendedString = "The initial price is the balance of the initiator";
-        }
-        else
-        {
-            this.initialPrice = currentPropertysPrice;
-            this.eventFlow.RecommendedString = string.Format("The initial price is {0} ", this.CurrentPropertyData.Price);
-        }
+        this.eventFlow.RecommendedString = string.Format("The initial price is {0} ", this.InitialPrice);
 
         this.CallNextEvent();
     }
@@ -74,10 +63,16 @@ public class AuctionEvent : Event
     private void SuggestPriceInTurn()
     {
         int participantNumber = this.dataCenter.AuctionHandler.NextParticipantNumber;
-        int suggestedPrice = this.auctionDecisionMaker.SuggestPrice(participantNumber);
+        int suggestedPrice = this.auctionDecisionMaker.SuggestPrice();
+
+        if (suggestedPrice > this.Balances[participantNumber])
+        {
+            throw new Exception();
+        }        
+
         this.auctionHandler.SuggestNewPriceInTurn(suggestedPrice);
 
-        this.eventFlow.RecommendedString = string.Format("Player {0} suggested {1}", participantNumber, suggestedPrice);
+        this.eventFlow.RecommendedString = string.Format("Player{0} suggested {1}", participantNumber, suggestedPrice);
 
         this.CallNextEvent();
     }
@@ -90,7 +85,12 @@ public class AuctionEvent : Event
         if (this.PropertyToAuction!.OwnerPlayerNumber is not null)
         {
             int previousOwner = (int)this.PropertyToAuction.OwnerPlayerNumber;
-            this.bankHandler.IncreaseBalance(previousOwner, finalPrice);
+            int moneyToReceive = finalPrice;
+            if (this.PropertyToAuction.IsMortgaged)
+            {
+                moneyToReceive -= this.PropertyToAuction.Mortgage;
+            }
+            this.bankHandler.IncreaseBalance(previousOwner, moneyToReceive);
         }
 
         this.tileManager.PropertyManager.ChangeOwner(this.PropertyToAuction, winnerNumber);

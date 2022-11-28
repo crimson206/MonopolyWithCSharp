@@ -6,9 +6,10 @@
 /// <summary>
 /// This class deals with the auction event of Monopoly
 /// </summary>
-public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
+public class AuctionHandler : IAuctionHandlerData, IAuctionHandler
 {
     private Dictionary<int, int> suggestedPrices = new Dictionary<int, int>();
+    private IPropertyData? propertyToAuction;
     private List<int> participantNumbers = new List<int>();
     private int? finalPrice;
     private int? winnerNumber;
@@ -45,14 +46,16 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
 
     public int NextParticipantNumber { get=> this.nextParticipantNumber; }
 
-    private int MaxPrice => this.SuggestedPrices.Values.Max();
+    public int MaxPrice => this.SuggestedPrices.Values.Max();
+
+    public IPropertyData? PropertyToAuction => this.propertyToAuction;
 
     /// <summary>
     /// It sets conditions to start a new auction
     /// </summary>
     /// <param name="participantNumbers"> a list of playerNumbers participating in the auction in the auction order </param>
     /// <param name="initialPrice"> a positive integer </param>
-    public void SetAuctionCondition(List<int> participantNumbers, int initialPrice)
+    public void SetAuctionCondition(List<int> participantNumbers, int initialPrice, IPropertyData propertyToAuction)
     {
         if (initialPrice < 0)
         {
@@ -65,7 +68,17 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
         this.isAuctionOn = true;
         this.participantNumbers = participantNumbers;
         this.winningParticipantNumber = participantNumbers[0];
-        this.nextParticipantNumber = participantNumbers[1];
+
+        if (participantNumbers.Count() == 1)
+        {
+            this.nextParticipantNumber = participantNumbers[0];
+        }
+        else
+        {
+            this.nextParticipantNumber = participantNumbers[1];
+        }
+ 
+        this.propertyToAuction = propertyToAuction;
 
         int participantCount = participantNumbers.Count();
         foreach (var participantNumber in participantNumbers)

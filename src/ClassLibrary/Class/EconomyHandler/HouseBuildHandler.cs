@@ -7,12 +7,12 @@ public class HouseBuildHandler : IHouseBuildHandlerData
     private Dictionary<int, List<IRealEstateData>> houseBuildableRealEstatesOfOwners = new Dictionary<int, List<IRealEstateData>>();
     private bool? areAnyBuildable;
     private int? currentHouseBuilder;
-    private int? builderChangedCount;
+    private int builderChangedCount = 0;
     private IRealEstateData? realEstateToBuildHouse;
 
     public bool? AreAnyBuildable => this.areAnyBuildable;
     public List<int>? ParticipantPlayerNumbers => this.participantPlayerNumbers;
-    public bool IsLastBuilder => (this.builderChangedCount == this.participantPlayerNumbers.Count() - 1? true : false);
+    public bool IsLastBuilder => (this.builderChangedCount == this.participantPlayerNumbers.Count()? true : false);
     public Dictionary<int, List<IRealEstateData>> HouseBuildableRealEstatesOfOwners => this.houseBuildableRealEstatesOfOwners;
     public IRealEstateData? RealEstateToBuildHouse => this.realEstateToBuildHouse;
     public int? CurrentHouseBuilder => this.currentHouseBuilder;
@@ -41,23 +41,19 @@ public class HouseBuildHandler : IHouseBuildHandlerData
         }
 
         this.realEstateToBuildHouse = null;
-        this.builderChangedCount++;
         this.currentHouseBuilder = this.participantPlayerNumbers![(int)this.builderChangedCount!];
+        this.builderChangedCount++;
     }
 
-    public void SetRealEstateToBuildHouse(IRealEstateData realEstateToBuildHouse)
+    public void SetRealEstateToBuildHouse(int indexOfRealEstate)
     {
-        if (this.houseBuildableRealEstatesOfOwners[(int)this.currentHouseBuilder!].Contains(realEstateToBuildHouse) is false)
-        {
-            throw new Exception();
-        }
-
-        this.realEstateToBuildHouse = realEstateToBuildHouse;
+        this.realEstateToBuildHouse = HouseBuildableRealEstatesOfCurrentBuilder[indexOfRealEstate];
     }
 
     private void SetHouseBuildableRealEstatesOfOwners()
     {
         List<IRealEstateData> buildableRealEstateDatas = this.CreateReallyBuildableRealEstateDatas();
+        this.houseBuildableRealEstatesOfOwners.Clear();
 
         foreach (var realEstateData in buildableRealEstateDatas)
         {

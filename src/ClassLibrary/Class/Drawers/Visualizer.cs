@@ -74,6 +74,12 @@ public class Visualizer
         this.loggingDrawer.UpdateLogging(this.RecommendedString);
     }
 
+    public void UpdateLogging(bool addBlankLine)
+    {
+        this.loggingDrawer.UpdateLogging(" ");
+        this.loggingDrawer.UpdateLogging(this.RecommendedString);
+    }
+
     public void VisualizeLargeMap()
     {
         Console.Clear();
@@ -121,9 +127,9 @@ public class Visualizer
         this.displayTiles.DisplayRealEstates(this.innerMapEdge[0][0] + 3, this.innerMapEdge[0][1], realEstateDatas, 2);
         this.displayTiles.DisplayRailRoad(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1], railRoadDatas, 2);
         this.displayTiles.DisplayUtility(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 4, utilityDatas, 2);
-        this.playerStatusDrawer.DrawArrangedLines(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 8, this.data);
+        this.playerStatusDrawer.DrawArrangedLines(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 9, this.data);
 
-        this.loggingDrawer.DrawLogging(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 14);
+        this.loggingDrawer.DrawLogging(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 13);
 
         Console.CursorLeft = this.backUpCursorLeft;
         Console.CursorTop = this.backUpCursorTop;

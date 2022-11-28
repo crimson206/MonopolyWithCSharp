@@ -10,9 +10,9 @@ namespace Tests
     public class HouseBuildHandlerTests
     {
 
-        public List<RealEstate> CreateFreeRealEstates(int realEstateCount, string color)
+        public List<IRealEstate> CreateFreeRealEstates(int realEstateCount, string color)
         {
-            List<RealEstate> realEstates  = new List<RealEstate>();
+            List<IRealEstate> realEstates  = new List<IRealEstate>();
 
             for (int i = 0; i < realEstateCount; i++)
             {
@@ -22,25 +22,25 @@ namespace Tests
 
             foreach (var realEstate in realEstates)
             {
-                realEstate.SetGroup(realEstates.Cast<Property>().ToList());
+                realEstate.SetGroup(realEstates.Cast<IProperty>().ToList());
             }
 
             return realEstates;
         }
 
-        public void SetOwnerNumbers(List<RealEstate> realEstates, int playerNumber)
+        public void SetOwnerNumbers(List<IRealEstate> realEstates, int playerNumber)
         {
             foreach (var realEstate in realEstates)
             {
-                realEstate.SetOnwerPlayerNumber(playerNumber);
+                realEstate.SetOwnerPlayerNumber(playerNumber);
             }
         }
 
-        public List<RealEstate> CreateRealEstatesWithTwoOwners()
+        public List<IRealEstate> CreateRealEstatesWithTwoOwners()
         {
-            List<RealEstate> freeRealEstates = this.CreateFreeRealEstates(realEstateCount:3, "Red");
-            List<RealEstate> freeRealEstates2= this.CreateFreeRealEstates(realEstateCount:3, "Blue");
-            List<RealEstate> realEstatesSum = freeRealEstates.Concat(freeRealEstates2).ToList();
+            List<IRealEstate> freeRealEstates = this.CreateFreeRealEstates(realEstateCount:3, "Red");
+            List<IRealEstate> freeRealEstates2= this.CreateFreeRealEstates(realEstateCount:3, "Blue");
+            List<IRealEstate> realEstatesSum = freeRealEstates.Concat(freeRealEstates2).ToList();
             this.SetOwnerNumbers(freeRealEstates, 1);
             this.SetOwnerNumbers(freeRealEstates2, 2);
 
@@ -60,7 +60,7 @@ namespace Tests
         {
             HouseBuildHandler houseBuildHandler = new HouseBuildHandler();
             List<int> balances = new List<int>{100, 200, 300, 400};
-            List<RealEstate> freeRealEstates = this.CreateFreeRealEstates(3, "Red");
+            List<IRealEstate> freeRealEstates = this.CreateFreeRealEstates(3, "Red");
             List<IRealEstateData> realEstateDatas = freeRealEstates.Cast<IRealEstateData>().ToList();
 
             houseBuildHandler.SetHouseBuildHandler(balances, realEstateDatas);
@@ -72,7 +72,7 @@ namespace Tests
         {
             HouseBuildHandler houseBuildHandler = new HouseBuildHandler();
             List<int> balances = new List<int>{40, 200, 300, 400};
-            List<RealEstate> freeRealEstates = this.CreateFreeRealEstates(3, "Red");
+            List<IRealEstate> freeRealEstates = this.CreateFreeRealEstates(3, "Red");
             List<IRealEstateData> realEstateDatas = freeRealEstates.Cast<IRealEstateData>().ToList();
             this.SetOwnerNumbers(freeRealEstates, 0);
 
@@ -85,7 +85,7 @@ namespace Tests
         {
             HouseBuildHandler houseBuildHandler = new HouseBuildHandler();
             List<int> balances = new List<int>{50, 200, 300, 400};
-            List<RealEstate> freeRealEstates = this.CreateFreeRealEstates(3, "Red");
+            List<IRealEstate> freeRealEstates = this.CreateFreeRealEstates(3, "Red");
             List<IRealEstateData> realEstateDatas = freeRealEstates.Cast<IRealEstateData>().ToList();
             this.SetOwnerNumbers(freeRealEstates, 0);
 
@@ -98,7 +98,7 @@ namespace Tests
         {
             HouseBuildHandler houseBuildHandler = new HouseBuildHandler();
             List<int> balances = new List<int>{50, 200, 300, 400};
-            List<RealEstate> freeRealEstates = this.CreateFreeRealEstates(3, "Red");
+            List<IRealEstate> freeRealEstates = this.CreateFreeRealEstates(3, "Red");
             List<IRealEstateData> realEstateDatas = freeRealEstates.Cast<IRealEstateData>().ToList();
             this.SetOwnerNumbers(freeRealEstates, 0);
             houseBuildHandler.SetHouseBuildHandler(balances, realEstateDatas);
@@ -110,7 +110,7 @@ namespace Tests
         {
             HouseBuildHandler houseBuildHandler = new HouseBuildHandler();
             List<int> balances = new List<int>{80, 200, 300, 400};
-            List<RealEstate> freeRealEstates = this.CreateFreeRealEstates(realEstateCount:3, "Red");
+            List<IRealEstate> freeRealEstates = this.CreateFreeRealEstates(realEstateCount:3, "Red");
             List<IRealEstateData> realEstateDatas_buildingCosts_50_70_90 = freeRealEstates.Cast<IRealEstateData>().ToList();
             this.SetOwnerNumbers(freeRealEstates, 0);
             houseBuildHandler.SetHouseBuildHandler(balances, realEstateDatas_buildingCosts_50_70_90);
@@ -122,9 +122,9 @@ namespace Tests
         {
             HouseBuildHandler houseBuildHandler = new HouseBuildHandler();
             List<int> balances = new List<int>{80, 200, 300, 400};
-            List<RealEstate> freeRealEstates = this.CreateFreeRealEstates(realEstateCount:3, "Red");
-            List<RealEstate> freeRealEstates2= this.CreateFreeRealEstates(realEstateCount:3, "Blue");
-            List<RealEstate> realEstatesSum = freeRealEstates.Concat(freeRealEstates2).ToList();
+            List<IRealEstate> freeRealEstates = this.CreateFreeRealEstates(realEstateCount:3, "Red");
+            List<IRealEstate> freeRealEstates2= this.CreateFreeRealEstates(realEstateCount:3, "Blue");
+            List<IRealEstate> realEstatesSum = freeRealEstates.Concat(freeRealEstates2).ToList();
             this.SetOwnerNumbers(freeRealEstates, 1);
             this.SetOwnerNumbers(freeRealEstates2, 2);
             houseBuildHandler.SetHouseBuildHandler(balances, realEstatesSum.Cast<IRealEstateData>().ToList());
@@ -138,7 +138,7 @@ namespace Tests
         {
             HouseBuildHandler houseBuildHandler = new HouseBuildHandler();
             List<int> balances = new List<int>{80, 200, 300, 400};
-            List<RealEstate> realEstatesWithTwoOwners = this.CreateRealEstatesWithTwoOwners();
+            List<IRealEstate> realEstatesWithTwoOwners = this.CreateRealEstatesWithTwoOwners();
             houseBuildHandler.SetHouseBuildHandler(balances, realEstatesWithTwoOwners.Cast<IRealEstateData>().ToList());
 
             Assert.AreEqual(houseBuildHandler.IsLastBuilder, false);
@@ -150,27 +150,14 @@ namespace Tests
         {
             HouseBuildHandler houseBuildHandler = new HouseBuildHandler();
             List<int> balances = new List<int>{80, 200, 300, 400};
-            List<RealEstate> realEstatesWithTwoOwners = this.CreateRealEstatesWithTwoOwners();
+            List<IRealEstate> realEstatesWithTwoOwners = this.CreateRealEstatesWithTwoOwners();
             houseBuildHandler.SetHouseBuildHandler(balances, realEstatesWithTwoOwners.Cast<IRealEstateData>().ToList());
             List<IRealEstateData> currentBuildableRealEstateDatas = this.GetBuildableRealEstatesOfCurrentHouseBuilder(houseBuildHandler);
             IRealEstateData realEstateToBuildHouse = currentBuildableRealEstateDatas[0];
 
-            houseBuildHandler.SetRealEstateToBuildHouse(realEstateToBuildHouse);
+            houseBuildHandler.SetRealEstateToBuildHouse(0);
 
             Assert.AreEqual(houseBuildHandler.RealEstateToBuildHouse, realEstateToBuildHouse);
-        }
-        [TestMethod]
-        public void SetRealEstateToBuildHouse_With_NotBuildable_RealEstate()
-        {
-            HouseBuildHandler houseBuildHandler = new HouseBuildHandler();
-            List<int> balances = new List<int>{80, 80, 300, 400};
-            List<RealEstate> realEstatesWithTwoOwners_BuildingCosts_50_70_90 = this.CreateRealEstatesWithTwoOwners();
-            houseBuildHandler.SetHouseBuildHandler(balances, realEstatesWithTwoOwners_BuildingCosts_50_70_90.Cast<IRealEstateData>().ToList());
-            List<IRealEstateData> currentBuildableRealEstateDatas = this.GetBuildableRealEstatesOfCurrentHouseBuilder(houseBuildHandler);
-            IRealEstateData realEstateWithExpensiveHouse = realEstatesWithTwoOwners_BuildingCosts_50_70_90[2];
-            
-            Assert.AreEqual(realEstateWithExpensiveHouse.BuildingCost > 80, true);
-            Assert.ThrowsException<Exception>(() => houseBuildHandler.SetRealEstateToBuildHouse(realEstateWithExpensiveHouse));
         }
     }
 }

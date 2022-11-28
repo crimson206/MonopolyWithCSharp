@@ -10,11 +10,12 @@ public class DisplayTileInfo
         int spaceForRents = 4 + buffer;
         int spaceForHouses = 6 + buffer;
         int spaceForOwner = 7 + buffer;
+        int spaceForMortgaged = 9 + buffer;
 
         Console.CursorLeft = cursorLeft;
         Console.CursorTop = cursorTop;
 
-        Console.Write(this.CreateRealEstatesBanner(spaceForName, spaceForPrice, spaceForRents, spaceForHouses, spaceForOwner));
+        Console.Write(this.CreateRealEstatesBanner(spaceForName, spaceForPrice, spaceForRents, spaceForHouses, spaceForOwner, spaceForMortgaged));
 
         int index = 1;
         foreach (var realEstate in realEstates)
@@ -22,7 +23,7 @@ public class DisplayTileInfo
             Console.CursorLeft = cursorLeft;
             Console.CursorTop = cursorTop + index;
 
-            this.WriteRealEstateWithColor(realEstate, spaceForName, spaceForPrice, spaceForRents, spaceForHouses, spaceForOwner);
+            this.WriteRealEstateWithColor(realEstate, spaceForName, spaceForPrice, spaceForRents, spaceForHouses, spaceForOwner, spaceForMortgaged);
 
             index++;
         }
@@ -37,11 +38,12 @@ public class DisplayTileInfo
         int spaceForPrice = maxPriceLength + buffer;
         int spaceForRents = 4 + buffer;
         int spaceForOwner = 7 + buffer;
+        int spaceForMortgaged = 9 + buffer;
 
         Console.CursorLeft = cursorLeft;
         Console.CursorTop = cursorTop;
 
-        this.WriteRailRoadBanner(spaceForName, spaceForPrice, spaceForRents, spaceForOwner);
+        this.WriteRailRoadBanner(spaceForName, spaceForPrice, spaceForRents, spaceForOwner, spaceForMortgaged);
 
         int index = 1;
 
@@ -50,7 +52,7 @@ public class DisplayTileInfo
             Console.CursorLeft = cursorLeft;
             Console.CursorTop = cursorTop + index;
 
-            this.WriteRailRoad(railRoad, spaceForName, spaceForPrice, spaceForRents, spaceForOwner);
+            this.WriteRailRoad(railRoad, spaceForName, spaceForPrice, spaceForRents, spaceForOwner, spaceForMortgaged);
 
             index++;
         }
@@ -65,11 +67,12 @@ public class DisplayTileInfo
         int spaceForPrice = maxPriceLength + buffer;
         int spaceForRents = 4 + buffer;
         int spaceForOwner = 7 + buffer;
+        int spaceForMortgaged = 9 + buffer;
 
         Console.CursorLeft = cursorLeft;
         Console.CursorTop = cursorTop;
 
-        this.WriteUtilityBanner(spaceForName, spaceForPrice, spaceForRents, spaceForOwner);
+        this.WriteUtilityBanner(spaceForName, spaceForPrice, spaceForRents, spaceForOwner, spaceForMortgaged);
 
         int index = 1;
 
@@ -78,40 +81,43 @@ public class DisplayTileInfo
             Console.CursorLeft = cursorLeft;
             Console.CursorTop = cursorTop + index;
 
-            this.WriteUtility(utilityData, spaceForName, spaceForPrice, spaceForRents, spaceForOwner);
+            this.WriteUtility(utilityData, spaceForName, spaceForPrice, spaceForRents, spaceForOwner, spaceForMortgaged);
 
             index++;
         }
     }
 
-    private void WriteRailRoadBanner(int spaceForName, int spaceForPrice, int spaceForRent, int spaceForOwner)
+    private void WriteRailRoadBanner(int spaceForName, int spaceForPrice, int spaceForRent, int spaceForOwner, int spaceForMortgaged)
     {
         this.WriteStringAtCenter("RailRoads", spaceForName);
         this.WriteStringAtCenter("Price", spaceForPrice);
         this.WriteStringAtCenter("Rent", spaceForRent);
         this.WriteStringAtCenter("Owner", spaceForOwner);
+        this.WriteStringAtCenter("Mortgaged", spaceForMortgaged);
     }
 
-    private void WriteUtilityBanner(int spaceForName, int spaceForPrice, int spaceForRent, int spaceForOwner)
+    private void WriteUtilityBanner(int spaceForName, int spaceForPrice, int spaceForRent, int spaceForOwner, int spaceForMortgaged)
     {
         this.WriteStringAtCenter("Utilities", spaceForName);
         this.WriteStringAtCenter("Price", spaceForPrice);
         this.WriteStringAtCenter("Rent", spaceForRent);
         this.WriteStringAtCenter("Owner", spaceForOwner);
+        this.WriteStringAtCenter("Mortgaged", spaceForMortgaged);
     }
 
-    private string CreateRealEstatesBanner(int nameL, int priceL, int rentL, int numHouseL, int ownerL)
+    private string CreateRealEstatesBanner(int nameL, int priceL, int rentL, int numHouseL, int ownerL, int mortgagedL)
     {
         string realestateBanner = this.ArrangeCenter("RealEstates", nameL) +
                                 this.ArrangeCenter("Price", priceL) + this.ArrangeCenter("Rent", rentL) +
-                                this.ArrangeCenter("Houses", numHouseL) + this.ArrangeCenter("Owner", ownerL);
+                                this.ArrangeCenter("Houses", numHouseL) + this.ArrangeCenter("Owner", ownerL) +
+                                this.ArrangeCenter("Mortgaged", mortgagedL);;
         return realestateBanner;
     }
 
-    private void WriteRailRoad(IRailRoadData railRoadData, int nameL, int priceL, int rentL, int ownerL)
+    private void WriteRailRoad(IRailRoadData railRoadData, int nameL, int priceL, int rentL, int ownerL, int mortgagedL)
     {
         string ownerIDToStr = "Player" + railRoadData.OwnerPlayerNumber.ToString();
-        string stringRents = railRoadData.Rents[0].ToString();
+        string stringRents = railRoadData.CurrentRent.ToString();
 
         this.WriteStringAtCenter(railRoadData.Name, nameL);
         this.WriteStringAtCenter(railRoadData.Price.ToString(), priceL);
@@ -124,12 +130,13 @@ public class DisplayTileInfo
         {
             this.WriteStringAtCenter(ownerIDToStr, ownerL);
         }
+        this.WriteStringAtCenter(railRoadData.IsMortgaged.ToString(), mortgagedL);
     }
 
-    private void WriteUtility(IUtilityData utilityData, int nameL, int priceL, int rentL, int ownerL)
+    private void WriteUtility(IUtilityData utilityData, int nameL, int priceL, int rentL, int ownerL, int mortgagedL)
     {
         string ownerIDToStr = "Player" + utilityData.OwnerPlayerNumber.ToString();
-        string stringRents = utilityData.Rents[0].ToString();
+        string stringRents = utilityData.CurrentRent.ToString();
 
         this.WriteStringAtCenter(utilityData.Name, nameL);
         this.WriteStringAtCenter(utilityData.Price.ToString(), priceL);
@@ -142,19 +149,20 @@ public class DisplayTileInfo
         {
             this.WriteStringAtCenter(ownerIDToStr, ownerL);
         }
+        this.WriteStringAtCenter(utilityData.IsMortgaged.ToString(), mortgagedL);
     }
 
-    private void WriteRealEstateWithColor(IRealEstateData realEstate, int nameL, int priceL, int rentL, int numHouseL, int ownerL)
+    private void WriteRealEstateWithColor(IRealEstateData realEstateData, int nameL, int priceL, int rentL, int numHouseL, int ownerL, int mortgagedL)
     {
-        string ownerIDToStr = "Player" + realEstate.OwnerPlayerNumber.ToString();
-        string stringRents = realEstate.Rents[0].ToString();
+        string ownerIDToStr = "Player" + realEstateData.OwnerPlayerNumber.ToString();
+        string stringRents = realEstateData.CurrentRent.ToString();
 
-        this.WriteStringWithColorAtCenter(realEstate.Name, realEstate.Color, nameL);
-        this.WriteStringAtCenter(realEstate.Price.ToString(), priceL);
+        this.WriteStringWithColorAtCenter(realEstateData.Name, realEstateData.Color, nameL);
+        this.WriteStringAtCenter(realEstateData.Price.ToString(), priceL);
         this.WriteStringAtCenter(stringRents, rentL);
-        this.WriteStringAtCenter(realEstate.HouseCount.ToString(), numHouseL);
+        this.WriteStringAtCenter(realEstateData.HouseCount.ToString(), numHouseL);
 
-        if (realEstate.OwnerPlayerNumber is null)
+        if (realEstateData.OwnerPlayerNumber is null)
         {
             this.WriteStringAtCenter("free", ownerL);
         }
@@ -162,6 +170,7 @@ public class DisplayTileInfo
         {
             this.WriteStringAtCenter(ownerIDToStr, ownerL);
         }
+        this.WriteStringAtCenter(realEstateData.IsMortgaged.ToString(), mortgagedL);
     }
 
     private string ConvertRealEstateToStr(IRealEstateData realEstate, int nameL, int colorL, int priceL, int rentL, int numHouseL, int ownerL)

@@ -42,10 +42,7 @@ public class HouseBuildEvent : Event
 
         if (this.houseBuildHandlerData.AreAnyBuildable is true)
         {
-            this.eventFlow.RecommendedString = string.Format(
-                "Player{0} can build houses",
-                (int)this.houseBuildHandlerData.CurrentHouseBuilder!
-            );
+            this.eventFlow.RecommendedString = "Players can build houses";
         }
 
         this.CallNextEvent();
@@ -64,8 +61,7 @@ public class HouseBuildEvent : Event
         }
         else
         {
-            IRealEstateData realEstateToBuildHouse = this.houseBuildHandler.HouseBuildableRealEstatesOfCurrentBuilder[(int)decision];
-            this.houseBuildHandler.SetRealEstateToBuildHouse(realEstateToBuildHouse);
+            this.houseBuildHandler.SetRealEstateToBuildHouse((int)decision);
 
             this.eventFlow.RecommendedString = string.Format(
                 "Player{0} will build a house at {1}",
@@ -93,13 +89,9 @@ public class HouseBuildEvent : Event
     {
         this.houseBuildHandler.ChangeHouseBuilder();
 
-        if (this.houseBuildHandlerData.AreAnyBuildable is true)
-        {
-            this.eventFlow.RecommendedString = string.Format(
-                "Player{0} can build houses",
-                (int)this.houseBuildHandlerData.CurrentHouseBuilder!
-            );
-        }
+        this.eventFlow.RecommendedString = string.Format(
+            "Player{0} can build a house",
+            (int)this.houseBuildHandlerData.CurrentHouseBuilder!);
 
         this.CallNextEvent();
     }
@@ -118,7 +110,7 @@ public class HouseBuildEvent : Event
         {
             if (this.houseBuildHandlerData.AreAnyBuildable is true)
             {
-                this.AddNextAction(this.MakeCurrentBuilderDecision);
+                this.AddNextAction(this.ChangeBuilder);
             }
             else
             {
@@ -172,9 +164,9 @@ public class HouseBuildEvent : Event
 
         if (this.lastAction == this.EndEvent)
         {
-            this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndEvent);
+           this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndEvent);
 
-            return;
+    	    return;
         }
     }
 
@@ -185,5 +177,10 @@ public class HouseBuildEvent : Event
             where tileData is IRealEstateData
             select tileData as IRealEstateData).ToList();
         return realEstateDatas;
+    }
+
+    private int GetBalanceOfCurrentPlayer()
+    {
+        return this.dataCenter.Bank.Balances[this.CurrentPlayerNumber];
     }
 }

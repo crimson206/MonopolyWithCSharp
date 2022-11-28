@@ -1,8 +1,8 @@
 public class TileManager : ITileManager
 {
-    private List<Tile> tiles;
-    private List<Property> properties;
-    private List<RealEstate> realEstates;
+    private List<ITile> tiles;
+    private List<IProperty> properties;
+    private List<IRealEstate> realEstates;
     private Random random = new Random();
     private MapTilesFactory mapTilesFactory = new MapTilesFactory();
     public Analyser Analyser;
@@ -27,64 +27,59 @@ public class TileManager : ITileManager
 
         this.realEstates = this.FilterRealEstates(this.tiles);
         this.properties = this.FilterProperties(this.tiles);
-        this.Analyser = new Analyser(properties, realEstates);
         this.propertyManager = new PropertyManager();
         this.tileDatas = this.mapTilesFactory.ExtractTileDataSet(this.tiles);
     }
 
-    public List<Tile> Tiles { get => new List<Tile>(this.tiles); }
+    public List<ITile> Tiles { get => new List<ITile>(this.tiles); }
 
-    public List<Property> Properties { get => new List<Property>(this.properties); }
-    public List<RealEstate> RealEstates { get => new List<RealEstate>(this.realEstates); }
+    public List<IProperty> Properties { get => new List<IProperty>(this.properties); }
+    public List<IRealEstate> RealEstates { get => new List<IRealEstate>(this.realEstates); }
     public List<ITileData> TileDatas { get => new List<ITileData>(this.tileDatas); }
     public IPropertyManager PropertyManager { get => this.propertyManager; }
 
-    private List<IPropertyData> player0sProperties => this.GetPropertyDatasWithOwnerNumber(0);
-    private List<IPropertyData> player1sProperties => this.GetPropertyDatasWithOwnerNumber(1);
-    private List<IPropertyData> player2sProperties => this.GetPropertyDatasWithOwnerNumber(2);
-    private List<IPropertyData> player3sProperties => this.GetPropertyDatasWithOwnerNumber(3);
     public List<IPropertyData> GetPropertyDatasWithOwnerNumber(int? playerNumber)
     {
-        List<IPropertyData> propertiesOnwedByThePlayer = this.tileDatas
-                                                            .Cast<IPropertyData>()
-                                                            .Where(property => property.OwnerPlayerNumber == playerNumber)
-                                                            .ToList();
+        List<IPropertyData> properties = this.tileDatas.Where(tile => tile is IPropertyData).Cast<IPropertyData>().ToList();
+        List<IPropertyData> propertiesOnwedByThePlayer = properties
+                                                        .Where(property => property.OwnerPlayerNumber == playerNumber)
+                                                        .ToList();
                             
         return propertiesOnwedByThePlayer;
     }
 
 
-    private List<Tile> CreateTiles()
+    private List<ITile> CreateTiles()
     {
         return this.mapTilesFactory.CreateRandomMapTiles(22, 4, 2, 3, 3, true, 0, 10, 20, 30);
     }
 
-    private List<Tile> CreateSmallerTiles()
+    private List<ITile> CreateSmallerTiles()
     {
         return this.mapTilesFactory.CreateRandomMapTiles(22, 2, 2, 0, 0, true, 0, 9, 16, 27);
     }
 
-    private List<Property> FilterProperties(List<Tile> tiles)
+    private List<IProperty> FilterProperties(List<ITile> tiles)
     {
-        var query = from tile in this.tiles where tile is Property select tile as Property;
+        var query = from tile in this.tiles where tile is IProperty select tile as IProperty;
         return query.ToList();
     }
 
-    private List<RealEstate> FilterRealEstates(List<Tile> tiles)
+    private List<IRealEstate> FilterRealEstates(List<ITile> tiles)
     {
-        var query = from tile in this.tiles where tile is RealEstate select tile as RealEstate;
+        var query = from tile in this.tiles where tile is IRealEstate select tile as IRealEstate;
         return query.ToList();
     }
 
-    private List<RailRoad> FilterRailRoads(List<Tile> tiles)
+    private List<IRailRoad> FilterRailRoads(List<ITile> tiles)
     {
-        var query = from tile in this.tiles where tile is RailRoad select tile as RailRoad;
+        var query = from tile in this.tiles where tile is IRailRoad select tile as IRailRoad;
         return query.ToList();
     }
 
-    private List<Utility> FilterUtilities(List<Tile> tiles)
+    private List<IUtility> FilterUtilities(List<ITile> tiles)
     {
-        var query = from tile in this.tiles where tile is Utility select tile as Utility;
+        var query = from tile in this.tiles where tile is IUtility select tile as IUtility;
         return query.ToList();
     }
 }

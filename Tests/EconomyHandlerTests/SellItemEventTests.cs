@@ -11,9 +11,9 @@ namespace Tests
     public class SellItemHandlerTests
     {
 
-        public List<RealEstate> CreateFreeRealEstates(int realEstateCount, string color)
+        public List<IRealEstate> CreateFreeRealEstates(int realEstateCount, string color)
         {
-            List<RealEstate> realEstates  = new List<RealEstate>();
+            List<IRealEstate> realEstates  = new List<IRealEstate>();
 
             for (int i = 0; i < realEstateCount; i++)
             {
@@ -23,25 +23,25 @@ namespace Tests
 
             foreach (var realEstate in realEstates)
             {
-                realEstate.SetGroup(realEstates.Cast<Property>().ToList());
+                realEstate.SetGroup(realEstates.Cast<IProperty>().ToList());
             }
 
             return realEstates;
         }
 
-        public void SetOwnerNumbers(List<RealEstate> realEstates, int playerNumber)
+        public void SetOwnerNumbers(List<IRealEstate> realEstates, int playerNumber)
         {
             foreach (var realEstate in realEstates)
             {
-                realEstate.SetOnwerPlayerNumber(playerNumber);
+                realEstate.SetOwnerPlayerNumber(playerNumber);
             }
         }
 
-        public List<RealEstate> CreateRealEstatesWithTwoOwners(int playerNumber1, int playerNumber2)
+        public List<IRealEstate> CreateRealEstatesWithTwoOwners(int playerNumber1, int playerNumber2)
         {
-            List<RealEstate> freeRealEstates = this.CreateFreeRealEstates(realEstateCount:3, "Red");
-            List<RealEstate> freeRealEstates2= this.CreateFreeRealEstates(realEstateCount:3, "Blue");
-            List<RealEstate> realEstatesSum = freeRealEstates.Concat(freeRealEstates2).ToList();
+            List<IRealEstate> freeRealEstates = this.CreateFreeRealEstates(realEstateCount:3, "Red");
+            List<IRealEstate> freeRealEstates2= this.CreateFreeRealEstates(realEstateCount:3, "Blue");
+            List<IRealEstate> realEstatesSum = freeRealEstates.Concat(freeRealEstates2).ToList();
             this.SetOwnerNumbers(freeRealEstates, playerNumber1);
             this.SetOwnerNumbers(freeRealEstates2, playerNumber2);
 
@@ -63,15 +63,15 @@ namespace Tests
             sellItemHandler.SetPlayerToSellItems(playerNumber:0, properties);
 
             Assert.AreEqual(sellItemHandler.MortgagibleProperties.Count(), 0);
-            Assert.AreEqual(sellItemHandler.RealEstatesWithDistructableHouse.Count(), 0);
-            Assert.AreEqual(sellItemHandler.SoldableItemWithAuction.Count(), 0);
+            Assert.AreEqual(sellItemHandler.HouseDistructableRealEstates.Count(), 0);
+            Assert.AreEqual(sellItemHandler.AuctionableProperties.Count(), 0);
         }
     
         [TestMethod]
         public void SetPlayerToSellItem_WhoHasRealEstatesWithDistructableHouse()
         {
             SellItemHandler sellItemHandler = new SellItemHandler();
-            List<RealEstate> realEstates = this.CreateRealEstatesWithTwoOwners(0, 1).ToList();
+            List<IRealEstate> realEstates = this.CreateRealEstatesWithTwoOwners(0, 1).ToList();
             foreach (var realEstate in realEstates)
             {
                 realEstate.BuildHouse();
@@ -86,9 +86,9 @@ namespace Tests
 
             sellItemHandler.SetPlayerToSellItems(playerNumber:0, propertyDatas);
 
-            foreach (var property in sellItemHandler.RealEstatesWithDistructableHouse)
+            foreach (var property in sellItemHandler.HouseDistructableRealEstates)
             {
-                Assert.AreEqual(sellItemHandler.RealEstatesWithDistructableHouse.Contains(property), true);
+                Assert.AreEqual(sellItemHandler.HouseDistructableRealEstates.Contains(property), true);
             }
             
         }
@@ -121,7 +121,7 @@ namespace Tests
 
             sellItemHandler.SetPlayerToSellItems(playerNumber:0, properties);
 
-            foreach (var property in sellItemHandler.SoldableItemWithAuction)
+            foreach (var property in sellItemHandler.AuctionableProperties)
             {
                 Assert.AreEqual(propertiesWhichAreSoldableWithAuction.Contains(property), true);
             }
@@ -141,10 +141,10 @@ namespace Tests
             foreach (var propertyData in propertiesWhichAreSoldableWithAuction)
             {
                 Property property = (Property)propertyData;
-                property.SetOnwerPlayerNumber(null);
+                property.SetOwnerPlayerNumber(null);
             }
             
-            Assert.AreEqual(sellItemHandler.SoldableItemWithAuction.Count(), 0);
+            Assert.AreEqual(sellItemHandler.AuctionableProperties.Count(), 0);
         }
     }
 }

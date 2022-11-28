@@ -10,9 +10,9 @@ namespace Tests
     public class TradeHandlerTests
     {
 
-        public List<Property> CreateNotOwnedProperties()
+        public List<IProperty> CreateNotOwnedProperties()
         {
-            List<Property> properties = new List<Property>();
+            List<IProperty> properties = new List<IProperty>();
             
             for (int i = 0; i < 4; i++)
             {
@@ -35,24 +35,24 @@ namespace Tests
             return properties;
         }
 
-        public List<Property> CreatePropertiesPartialyOwnedByPlayer1()
+        public List<IProperty> CreatePropertiesPartialyOwnedByPlayer1()
         {
-            List<Property> properties =  this.CreateNotOwnedProperties();
+            List<IProperty> properties =  this.CreateNotOwnedProperties();
             for (int i = 0; i < 3; i++)
             {
-                properties[i].SetOnwerPlayerNumber(1);
+                properties[i].SetOwnerPlayerNumber(1);
             }
             return properties;
         }
 
-        public List<Property> CreatePropertiesOwnedByPlayer0_1_2_3()
+        public List<IProperty> CreatePropertiesOwnedByPlayer0_1_2_3()
         {
-            List<Property> properties =  this.CreateNotOwnedProperties();
+            List<IProperty> properties =  this.CreateNotOwnedProperties();
 
             int rotatedPlayerNumber = 0;
             foreach (var item in properties)
             {
-                item.SetOnwerPlayerNumber(rotatedPlayerNumber);
+                item.SetOwnerPlayerNumber(rotatedPlayerNumber);
                 rotatedPlayerNumber = (rotatedPlayerNumber + 1) % 4;
             }
             return properties;
@@ -62,14 +62,16 @@ namespace Tests
         {
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {1, 2, 3, 0};
-            List<Property> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
+            List<IProperty> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
             List<int> expectedTradeOwners = new List<int> {1, 2, 3, 0};
             tradeHandler.SetTrade(participantNumbers, properties);
             tradeHandler.SetTradeTarget(2);
-            Property propertyToGet = properties.Where(property => property.OwnerPlayerNumber == 2).ToList()[0];
-            Property propertyToGive = properties.Where(property => property.OwnerPlayerNumber == 1).ToList()[0];
+            int indexOfIPropertyToGet = 0;;
+            int indexOfIPropertyToGive = 0;
             int additionalMoney = 100;
-            tradeHandler.SuggestTradeConditions(propertyToGet, propertyToGive, additionalMoney);
+            tradeHandler.SetPropertyTradeOwnerIsWillingToGive(indexOfIPropertyToGive);
+            tradeHandler.SetPropertyTradeOwnerWantsFromTarget(indexOfIPropertyToGet);
+            tradeHandler.SetAdditionalMoneyTradeOwnerIsWillingToAdd(additionalMoney);
             tradeHandler.SetIsTradeAgreed(true);
 
             return tradeHandler;
@@ -80,7 +82,7 @@ namespace Tests
         {
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {1, 2, 3, 0};
-            List<Property> properties = this.CreatePropertiesPartialyOwnedByPlayer1();
+            List<IProperty> properties = this.CreatePropertiesPartialyOwnedByPlayer1();
             List<int> expectedSelectableTradeTargetCount = new List<int> {0, 1, 1, 1};
 
             for (int i = 0; i < 3; i++)
@@ -102,7 +104,7 @@ namespace Tests
         {
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {0, 1, 2, 3};
-            List<Property> properties = this.CreatePropertiesPartialyOwnedByPlayer1();
+            List<IProperty> properties = this.CreatePropertiesPartialyOwnedByPlayer1();
             tradeHandler.SetTrade(participantNumbers, properties);
 
             int expectedSelectableTargetNumber = 1;
@@ -110,42 +112,20 @@ namespace Tests
             Assert.AreEqual(tradeHandler.SelectableTargetNumbers.Count(), 1);
         }
         [TestMethod]
-        public void SetTradeTarget_Who_Is_Selectable()
-        {
-            TradeHandler tradeHandler = new TradeHandler();
-            List<int> participantNumbers = new List<int> {0, 1, 2, 3};
-            List<Property> properties = this.CreatePropertiesPartialyOwnedByPlayer1();
-            tradeHandler.SetTrade(participantNumbers, properties);
-
-            tradeHandler.SetTradeTarget(1);
-
-            int expectedTradeTarget = 1;
-            Assert.AreEqual(tradeHandler.CurrentTradeTarget, expectedTradeTarget);
-        }
-        [TestMethod]
-        public void SetTradeTarget_Who_Is_Not_Selectable_And_Throw_Exception()
-        {
-            TradeHandler tradeHandler = new TradeHandler();
-            List<int> participantNumbers = new List<int> {1, 2, 3, 0};
-            List<Property> properties = this.CreatePropertiesPartialyOwnedByPlayer1();
-            tradeHandler.SetTrade(participantNumbers, properties);
-
-            Assert.AreEqual(tradeHandler.SelectableTargetNumbers.Contains(2), false);
-            Assert.ThrowsException<Exception>(() => tradeHandler.SetTradeTarget(2));
-        }
-        [TestMethod]
         public void SetTradeTarget_And_Get_TradablePropertiesOfTradeTarget()
         {
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {0, 1, 2, 3};
-            List<Property> properties = this.CreateNotOwnedProperties();
+            List<IProperty> properties = this.CreateNotOwnedProperties();
             for (int i = 0; i < 3; i++)
             {
-                properties[i].SetOnwerPlayerNumber(1);
+                properties[i].SetOwnerPlayerNumber(1);
             }
             tradeHandler.SetTrade(participantNumbers, properties);
 
-            tradeHandler.SetTradeTarget(1);
+            int indexOfTradeTarget = 0;
+
+            tradeHandler.SetTradeTarget(indexOfTradeTarget);
 
             Assert.AreEqual(tradeHandler.TradablePropertiesOfTradeTarget.Count(), 3);
             for (int i = 0; i < 3; i++)
@@ -158,7 +138,7 @@ namespace Tests
         {
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {1, 2, 3, 0};
-            List<Property> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
+            List<IProperty> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
             List<int> expectedTradeOwners = new List<int> {1, 2, 3, 0};
 
             tradeHandler.SetTrade(participantNumbers, properties);
@@ -175,7 +155,7 @@ namespace Tests
         {
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {1, 2, 3, 0};
-            List<Property> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
+            List<IProperty> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
             List<int> expectedTradeOwners = new List<int> {1, 2, 3, 0};
 
             tradeHandler.SetTrade(participantNumbers, properties);
@@ -191,18 +171,20 @@ namespace Tests
         {
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {1, 2, 3, 0};
-            List<Property> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
+            List<IProperty> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
             List<int> expectedTradeOwners = new List<int> {1, 2, 3, 0};
             tradeHandler.SetTrade(participantNumbers, properties);
             tradeHandler.SetTradeTarget(2);
-            Property propertyToGet = properties.Where(property => property.OwnerPlayerNumber == 2).ToList()[0];
-            Property propertyToGive = properties.Where(property => property.OwnerPlayerNumber == 1).ToList()[0];
+            int indexOfIPropertyToGet = 0;;
+            int indexOfIPropertyToGive = 0;
             int additionalMoney = 100;
+            tradeHandler.SetPropertyTradeOwnerIsWillingToGive(indexOfIPropertyToGive);
+            tradeHandler.SetPropertyTradeOwnerWantsFromTarget(indexOfIPropertyToGet);
+            tradeHandler.SetAdditionalMoneyTradeOwnerIsWillingToAdd(additionalMoney);
 
-            tradeHandler.SuggestTradeConditions(propertyToGet, propertyToGive, additionalMoney);
 
-            Assert.AreEqual(tradeHandler.PropertyTradeOwnerToGet, propertyToGet);
-            Assert.AreEqual(tradeHandler.PropertyTradeOwnerToGive, propertyToGive);
+            Assert.AreEqual(tradeHandler.PropertyTradeOwnerToGet, tradeHandler.TradablePropertiesOfTradeTarget[indexOfIPropertyToGet]);
+            Assert.AreEqual(tradeHandler.PropertyTradeOwnerToGive, tradeHandler.TradablePropertiesOfTradeOwner[indexOfIPropertyToGive]);
             Assert.AreEqual(tradeHandler.MoneyOwnerWillingToAddOnTrade, additionalMoney);
         }
         [TestMethod]
@@ -210,15 +192,16 @@ namespace Tests
         {
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {1, 2, 3, 0};
-            List<Property> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
+            List<IProperty> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
             List<int> expectedTradeOwners = new List<int> {1, 2, 3, 0};
             tradeHandler.SetTrade(participantNumbers, properties);
             tradeHandler.SetTradeTarget(2);
-            Property propertyToGet = properties.Where(property => property.OwnerPlayerNumber == 2).ToList()[0];
-            Property propertyToGive = properties.Where(property => property.OwnerPlayerNumber == 1).ToList()[0];
+            int indexOfIPropertyToGet = 0;;
+            int indexOfIPropertyToGive = 0;
             int additionalMoney = 100;
-            tradeHandler.SuggestTradeConditions(propertyToGet, propertyToGive, additionalMoney);
-
+            tradeHandler.SetPropertyTradeOwnerIsWillingToGive(indexOfIPropertyToGive);
+            tradeHandler.SetPropertyTradeOwnerWantsFromTarget(indexOfIPropertyToGet);
+            tradeHandler.SetAdditionalMoneyTradeOwnerIsWillingToAdd(additionalMoney);
             tradeHandler.SetIsTradeAgreed(true);
 
             Assert.AreEqual(tradeHandler.IsTradeAgreed, true);
@@ -228,7 +211,7 @@ namespace Tests
         {
             TradeHandler tradeHandler = new TradeHandler();
             List<int> participantNumbers = new List<int> {1, 2, 3, 0};
-            List<Property> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
+            List<IProperty> properties = this.CreatePropertiesOwnedByPlayer0_1_2_3();
             List<int> expectedTradeOwners = new List<int> {1, 2, 3, 0};
             tradeHandler.SetTrade(participantNumbers, properties);
             tradeHandler.SetTradeTarget(2);
@@ -264,7 +247,7 @@ namespace Tests
         public void SetTrade_And_Reset_Conditions()
         {
             TradeHandler tradeHandler = this.CreateTradeHandlerWithTradeConditions();
-            List<Property> properties = this.CreateNotOwnedProperties();
+            List<IProperty> properties = this.CreateNotOwnedProperties();
             List<int> participantNumbers = new List<int> {1, 2, 3, 0};
 
             tradeHandler.SetTrade(participantNumbers, properties);

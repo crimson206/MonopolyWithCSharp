@@ -9,8 +9,10 @@ public class MainEvent : Event, IMainEvent
     private Random random;
     private IDecisionMakers decisionMakers;
     private bool isDoubleSideEffectOn = true;
-    private Tile currentTile => this.GetCurrentTile();
+    private ITile currentTile => this.GetCurrentTile();
     private bool rolledDouble => this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
+    private Action? previousActionOfLastAction;
+    private bool timeToTrade = false;
 
     public MainEvent
     (StatusHandlers statusHandlers,
@@ -97,7 +99,7 @@ public class MainEvent : Event, IMainEvent
         if (this.lastAction == this.RollDice)
         {
 
-            if (this.lastAction == this.MakeDecisionOnPaymentOfJailFine || this.lastAction == this.MakeDecisionOnUsageOfJailFreeCard)
+            if (this.previousActionOfLastAction == this.MakeDecisionOnPaymentOfJailFine || this.previousActionOfLastAction == this.MakeDecisionOnUsageOfJailFreeCard)
             {
                 if (this.rolledDouble)
                 {
@@ -115,7 +117,9 @@ public class MainEvent : Event, IMainEvent
                     }
                 }
             }
-            else
+            else if (this.previousActionOfLastAction == this.CheckExtraTurn
+                    || this.previousActionOfLastAction == this.StartEvent
+                    || this.previousActionOfLastAction == this.EscapeJail)
             {
                 if (this.isDoubleSideEffectOn && this.doubleSideEffectHandler.DoubleCounts[this.PlayerNumber] == 3)
                 {
@@ -123,9 +127,20 @@ public class MainEvent : Event, IMainEvent
                 }
                 else
                 {
-                this.AddNextAction(this.MoveByRollDiceResultTotal);
+                    this.AddNextAction(this.MoveByRollDiceResultTotal);
                 }
             }
+            else if (this.previousActionOfLastAction == this.LandOnTile)
+            {
+                this.AddNextAction(this.PayRent);
+            }
+
+            return;
+        }
+
+        if (this.lastAction == this.IsReleasedFromJail)
+        {
+            this.AddNextAction(this.MoveByRollDiceResultTotal);
 
             return;
         }
@@ -168,10 +183,21 @@ public class MainEvent : Event, IMainEvent
                     {
                         this.AddNextAction(this.MakeDecisionOnPurchaseOfProperty);
                     }
+                    else
+                    {
+                        this.AddNextAction(this.CheckExtraTurn);
+                    }
                 }
                 else
                 {
-                    this.AddNextAction(this.PayRent);
+                    if (currentProperty is not Utility)
+                    {
+                        this.AddNextAction(this.PayRent);
+                    }
+                    else
+                    {
+                        this.AddNextAction(this.RollDice);
+                    }
                 }
             }
             else if (this.currentTile is TaxTile)
@@ -192,14 +218,26 @@ public class MainEvent : Event, IMainEvent
 
         if (this.lastAction == this.CheckExtraTurn)
         {
-            if ( this.doubleSideEffectHandler.ExtraTurns[this.PlayerNumber])
+            if (this.doubleSideEffectHandler.ExtraTurns[this.PlayerNumber])
             {
                 this.AddNextAction(this.RollDice);
             }
+            else if (this.bankHandler.Balances[this.CurrentPlayerNumber] < 0)
+            {
+                this.events!.SellItemEvent.PlayerToSellItmes = this.CurrentPlayerNumber;
+                this.events!.SellItemEvent.AddNextAction(this.events!.SellItemEvent.StartEvent);
+            }
             else
             {
-                this.events!.TradeEvent.AddNextAction(this.events.TradeEvent.StartEvent);
+                this.events!.HouseBuildEvent.AddNextAction(this.events.HouseBuildEvent.StartEvent);
             }
+
+            return;
+        }
+
+        if (this.lastAction == this.StayInJail)
+        {
+            this.events!.HouseBuildEvent.AddNextAction(this.events.HouseBuildEvent.StartEvent);
 
             return;
         }
@@ -233,7 +271,7 @@ public class MainEvent : Event, IMainEvent
         }
         if (this.lastAction == this.HasJailPenalty)
         {
-            this.events!.TradeEvent.AddNextAction(this.events.TradeEvent.StartEvent);
+            this.events!.HouseBuildEvent.AddNextAction(this.events.HouseBuildEvent.StartEvent);
 
             return;
         }
@@ -261,6 +299,11 @@ public class MainEvent : Event, IMainEvent
             if (this.inGameHandler.AreInGame.Where(isInGame => isInGame == true).Count() == 1)
             {
                 this.AddNextAction(this.GameIsOver);
+            }
+            else if (this.timeToTrade)
+            {
+                this.timeToTrade = false;
+                this.events!.TradeEvent.AddNextAction(this.events.TradeEvent.StartEvent);
             }
             else
             {
@@ -312,9 +355,25 @@ public class MainEvent : Event, IMainEvent
 
     private void PassAuctionCondition()
     {
+        List<int> participantNumber = this.CreateAuctionParticipantPlayerNumbers();
+        IPropertyData propertyToAuction = (IPropertyData)this.GetCurrentTile();
+        int balanceOfCurrentPlayer = this.bankHandler.Balances[this.CurrentPlayerNumber];
+        int priceOfPropertyToAuction = propertyToAuction.Price;
+        int initialPrice = 0;
+
+        if (balanceOfCurrentPlayer > priceOfPropertyToAuction)
+        {
+            initialPrice = priceOfPropertyToAuction;
+        }
+        else
+        {
+            initialPrice = balanceOfCurrentPlayer;
+        }
+
         this.events!.AuctionEvent.ParticipantNumbers = this.CreateAuctionParticipantPlayerNumbers();
         this.events!.AuctionEvent.PropertyToAuction = (Property)this.GetCurrentTile();
         this.events!.AuctionEvent.LastEvent = this;
+        this.events!.AuctionEvent.InitialPrice = initialPrice;
         this.CallNextEvent();
     }
 
@@ -322,7 +381,7 @@ public class MainEvent : Event, IMainEvent
     {
         this.jailHandler.RemoveAJailFreeCard(this.PlayerNumber);
         this.jailHandler.ResetTurnInJail(this.PlayerNumber);
-        this.eventFlow.RecommendedString = this.stringPlayer + " paid the jail fine";
+        this.eventFlow.RecommendedString = this.stringPlayer + " used the jail fine";
 
         this.CallNextEvent();
     }
@@ -347,6 +406,10 @@ public class MainEvent : Event, IMainEvent
         {
             this.isDoubleSideEffectOn = true;
             this.eventFlow.BoolDecision = this.decisionMakers.JailFreeCardUsageDecisionMaker.MakeDecisionOnUsage(this.PlayerNumber);
+        }
+        else
+        {
+            this.eventFlow.BoolDecision = false;
         }
 
         this.CallNextEvent();
@@ -395,11 +458,12 @@ public class MainEvent : Event, IMainEvent
         {
             this.eventFlow.RecommendedString = this.stringPlayer + " is released from jail becasue he/she rolled double";
         }
-
-        if (this.lastAction == this.PayJailFine)
+        else if (this.lastAction == this.PayJailFine)
         {
             this.eventFlow.RecommendedString = this.stringPlayer + " is released from jail";
         }
+
+        this.CallNextEvent();
     }
 
     public void HasJailPenalty()
@@ -416,6 +480,7 @@ public class MainEvent : Event, IMainEvent
         }
 
         this.boardHandler.Teleport(this.PlayerNumber, this.GetJailPosition());
+        this.jailHandler.CountTurnInJail(this.PlayerNumber);
         this.CallNextEvent();
     }
 
@@ -440,8 +505,13 @@ public class MainEvent : Event, IMainEvent
         int propertyOwner = (int)property.OwnerPlayerNumber!;
 
         int rentOfProperty = property.CurrentRent;
+        if (property is Utility)
+        {
+            rentOfProperty = rentOfProperty * this.eventFlow.RollDiceResult.Sum();
+        }
+
         this.bankHandler.TransferBalanceFromTo(this.PlayerNumber, propertyOwner, rentOfProperty);
-        this.eventFlow.RecommendedString = this.stringPlayer + " paid a rent to the owner of the property";
+        this.eventFlow.RecommendedString = this.stringPlayer + " paid the rent to the owner of the property";
 
         this.CallNextEvent();
     }
@@ -472,14 +542,14 @@ public class MainEvent : Event, IMainEvent
         Property property = (Property)this.currentTile;
 
         this.eventFlow.BoolDecision = this.decisionMakers.
-        PropertyPurchaseDecisionMaker.MakeDecisionOnPurchase(this.PlayerNumber);
+        PropertyPurchaseDecisionMaker.MakeDecisionOnPurchase();
 
         this.CallNextEvent();
     }
 
     public void PurchaseProperty()
     {
-        Property property = (Property)this.currentTile;
+        IProperty property = (IProperty)this.currentTile;
 
         this.tileManager.PropertyManager.ChangeOwner(property, this.PlayerNumber);
         this.bankHandler.DecreaseBalance(this.PlayerNumber, property.Price);
@@ -504,6 +574,7 @@ public class MainEvent : Event, IMainEvent
             if (bankHandler.Balances[i] < 0 && this.inGameHandler.AreInGame[i] is true)
             {
                 this.inGameHandler.SetIsInGame(i, false);
+                this.ResetPropertiesOfPlayerNumber(i);
                 this.eventFlow.RecommendedString = string.Format("Player{0} is bankrupt", i);
             }
         }
@@ -550,7 +621,7 @@ public class MainEvent : Event, IMainEvent
 
     private int GetJailPosition()
     {
-        Tile jail = this.tileManager.Tiles.Where(tile => tile is Jail).ToList()[0];
+        ITile jail = this.tileManager.Tiles.Where(tile => tile is Jail).ToList()[0];
         return this.tileManager.Tiles.IndexOf(jail);
     }
 
@@ -561,19 +632,28 @@ public class MainEvent : Event, IMainEvent
 
     private int CalculateNextPlayer()
     {
+        int previousPlayerNumber = this.PlayerNumber;
+
         for (int i = 0; i < 3; i++)
         {
             int candidate = (this.PlayerNumber + 1 + i) % 4;
-            if (this.inGameHandler.AreInGame[i])
+            if (this.inGameHandler.AreInGame[candidate])
             {
-                return candidate;
+                int newPlayerNumber = candidate;
+                if (newPlayerNumber < previousPlayerNumber)
+                {
+                    this.eventFlow.Turn++;
+                    this.timeToTrade = true;
+                }
+
+                return newPlayerNumber;
             }
         }
 
         throw new Exception();
     }
 
-    private Tile GetCurrentTile()
+    private ITile GetCurrentTile()
     {
         int playerPosition = this.boardHandler.PlayerPositions[this.PlayerNumber];
         return this.tileManager.Tiles[playerPosition];
@@ -604,5 +684,55 @@ public class MainEvent : Event, IMainEvent
         }
 
         return auctionParticipantNumbers;
+    }
+
+    public override void AddNextAction(Action nextAction)
+    {
+        this.previousActionOfLastAction = this.lastAction;
+        this.lastAction = nextAction;
+
+        this.delegator
+            .SetNextAction(nextAction);
+    }
+
+    private void SetOwnerNumberOfPropertiesNull(List<IProperty> properties)
+    {
+        foreach (var property in properties)
+        {
+            this.propertyManager.ChangeOwner(property, null);
+        }
+    }
+
+    private void SetIsMortgagedOfPropertiesFalse(List<IProperty> properties)
+    {
+        foreach (var property in properties)
+        {
+            this.propertyManager.SetIsMortgaged(property, false);
+        }
+    }
+
+    private void DistructAllHouses(List<IRealEstate> realEstates)
+    {
+        do
+        {
+            foreach (var realEstate in realEstates)
+            {
+                if (realEstate.IsHouseDistructable)
+                {
+                    this.propertyManager.DistructHouse(realEstate);
+                }
+            }
+        } while (realEstates.Where(realEstate => realEstate.IsHouseDistructable).Count() != 0);
+    }
+
+    private void ResetPropertiesOfPlayerNumber(int playerNumber)
+    {
+        List<IProperty> properties = this.tileManager.Tiles.Where(tile => tile is IProperty).Cast<IProperty>().ToList();
+        List<IProperty> propertiesOfPlayer = properties.Where(property => property.OwnerPlayerNumber == playerNumber).ToList();
+        List<IRealEstate> realEstatesOfPlayer = propertiesOfPlayer.Where(property => property is IRealEstate).Cast<IRealEstate>().ToList();
+
+        this.SetIsMortgagedOfPropertiesFalse(propertiesOfPlayer);
+        this.DistructAllHouses(realEstatesOfPlayer);
+        this.SetOwnerNumberOfPropertiesNull(propertiesOfPlayer);
     }
 }

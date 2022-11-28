@@ -3,9 +3,10 @@ public class SellItemEvent : Event
     private IBankHandler bankHandler;
     private ISellItemHandler sellItemHandler;
     private ISellItemHandlerData sellItemHandlerData;
-    private int playerToSellItmes;
+    private int playerToSellItems;
     private ISellItemDecisionMaker sellItemDecisionMaker;
     private IEvent? nextEvent;
+    private List<int> auctionParticipants = new List<int>();
 
     public SellItemEvent
     (Delegator delegator,
@@ -28,7 +29,7 @@ public class SellItemEvent : Event
         this.propertyManager = this.tileManager.PropertyManager;
     }
 
-    public int PlayerToSellItmes { get => this.playerToSellItmes; set => this.playerToSellItmes = value; }
+    public int PlayerToSellItmes { get => this.playerToSellItems; set => this.playerToSellItems = value; }
 
     private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
     public override void StartEvent()
@@ -38,42 +39,33 @@ public class SellItemEvent : Event
 
         this.sellItemHandler.SetPlayerToSellItems(playerNumber, propertyDatasOnwedByThePlayer);
 
-        this.eventFlow.RecommendedString = string.Format("Player{0} needs to sell items", this.playerToSellItmes);
+        this.eventFlow.RecommendedString = string.Format("Player{0} needs to sell items", this.playerToSellItems);
 
         this.CallNextEvent();
     }
 
     private void MakeDecisionOnItemToSell()
     {
-        Dictionary<SellingType, int> itemToSell = this.sellItemDecisionMaker.MakeDecisionOnItemToSell();
-        string method;
+        Dictionary<SellingType, int> decisionOnItemToSell = this.sellItemDecisionMaker.MakeDecisionOnItemToSell();
+        
+        SellingType sellingType = decisionOnItemToSell.Keys.ElementAt(0);
+        int indexOfItemToSell = decisionOnItemToSell.Values.ElementAt(0);
 
-        switch (itemToSell.Keys.ElementAt(0))
+        this.sellItemHandler.SetSellingOption(decisionOnItemToSell);
+        string[] decisionStrings = sellingType.ToString().Split("_");
+        string decisionString = string.Empty;
+
+        foreach (var _string in decisionStrings)
         {
-            case SellingType.MortgageProperty:
-                int indexOfPropertyToMortgage = itemToSell.Values.ElementAt(0);
-                this.sellItemHandler.SetPropertyToMortgage(indexOfPropertyToMortgage);
-                method = "moartgage";
-                break;
-
-            case SellingType.DistructHouse:
-                int indexOfRealEstateToDistructHouse = itemToSell.Values.ElementAt(0);
-                this.sellItemHandler.SetRealEstateToBuildHouse(indexOfRealEstateToDistructHouse);
-                method = "distruct a house of";
-                break;
-
-            case SellingType.AuctionProperty:
-                int indexOfPropertyToAuction = itemToSell.Values.ElementAt(0);
-                this.sellItemHandler.SetPropertyToAuction(indexOfPropertyToAuction);
-                method = "auction";
-                break;
-
-            default:
-                throw new Exception();
+            decisionString += _string + " ";
         }
-        this.eventFlow.RecommendedString = string.Format("Player {0}decided to {1} a property",
-                                                this.playerToSellItmes,
-                                                method);
+
+        if (decisionOnItemToSell.Keys.ElementAt(0) is not SellingType.None)
+        {
+            this.eventFlow.RecommendedString = string.Format("Player{0} decided to {1}",
+                                                    this.playerToSellItems,
+                                                    decisionString);
+        }
 
         this.CallNextEvent();
     }
@@ -85,10 +77,10 @@ public class SellItemEvent : Event
         int balanceToIncrease = propertyToMortgage.Mortgage;
 
         this.propertyManager.SetIsMortgaged(propertyToMortgage, true);
-        this.bankHandler.IncreaseBalance(this.playerToSellItmes, balanceToIncrease);
+        this.bankHandler.IncreaseBalance(this.playerToSellItems, balanceToIncrease);
 
         this.eventFlow.RecommendedString = string.Format("Player{0} mortgated {1}",
-                                                this.playerToSellItmes,
+                                                this.playerToSellItems,
                                                 propertyToMortgage.Name);
 
         this.CallNextEvent();
@@ -98,29 +90,115 @@ public class SellItemEvent : Event
     {
             RealEstate realEstateToDistructHouse = (RealEstate) this.sellItemHandlerData.RealEstateToDistructHouse!;
 
-            int balanceToIncrease = realEstateToDistructHouse.BuildingCost;
+            int balanceToIncrease = realEstateToDistructHouse.BuildingCost / 2;
 
             this.propertyManager.DistructHouse(realEstateToDistructHouse);
-            this.bankHandler.IncreaseBalance(this.playerToSellItmes, balanceToIncrease);
+            this.bankHandler.IncreaseBalance(this.playerToSellItems, balanceToIncrease);
 
-            this.eventFlow.RecommendedString = string.Format("Player{0} mortgated {1}",
-                                                    this.playerToSellItmes,
+            this.eventFlow.RecommendedString = string.Format("Player{0} distructed a house of {1}",
+                                                    this.playerToSellItems,
                                                     realEstateToDistructHouse.Name);
+
+            this.CallNextEvent();
     }
+
+    private void SellPropertyToBankBecauseNoOneCanAuction()
+    {
+        int moneyToRecieve = 0;
+        IPropertyData property = this.sellItemHandler.PropertyToAuction!;
+
+        if (property.IsMortgaged)
+        {
+            moneyToRecieve = property.Price - property.Mortgage;
+        }
+        else
+        {
+            moneyToRecieve = property.Price;
+        }
+
+        this.bankHandler.IncreaseBalance(this.playerToSellItems, moneyToRecieve);
+        this.propertyManager.SetIsMortgaged(property, false);
+        this.propertyManager.ChangeOwner(property, null);
+
+        this.eventFlow.RecommendedString = "The bank bought it because no one has enough money";
+
+        this.CallNextEvent();
+    }
+
+    private void SellPropertyToTheOnlyPlayerWithEnoughMoney()
+    {
+        int moneyToRecieve = 0;
+        IPropertyData property = this.sellItemHandler.PropertyToAuction!;
+
+        if (property.IsMortgaged)
+        {
+            moneyToRecieve = property.Price - property.Mortgage;
+        }
+        else
+        {
+            moneyToRecieve = property.Price;
+        }
+
+        int playerToBuyProperty = 0;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (this.bankHandler.Balances[i] >= moneyToRecieve)
+            {
+                playerToBuyProperty = i;
+            }
+        }
+
+        this.bankHandler.TransferBalanceFromTo(playerToBuyProperty, this.playerToSellItems, moneyToRecieve);
+        this.propertyManager.ChangeOwner(property, playerToBuyProperty);
+
+        this.eventFlow.RecommendedString = "The only player with enough money bought it";
+
+        this.CallNextEvent();
+    }
+
 
     private void PassAuctionCondition()
     {
-        List<int> auctionParticipantNumbers = this.CreateAuctionParticipantPlayerNumbers();
 
-        this.events!.AuctionEvent.ParticipantNumbers = auctionParticipantNumbers;
-        this.nextEvent = this.events.AuctionEvent;
+        int initialPrice = 0;
+        IPropertyData propertyToAuction = this.sellItemHandler.PropertyToAuction!;
+        int price = propertyToAuction.Price;
+        int mortgage = propertyToAuction.Mortgage;
+
+        if (propertyToAuction.IsMortgaged is false)
+        {
+            initialPrice = price;
+        }
+        else
+        {
+            initialPrice = price - mortgage;
+        }
+
+        this.auctionParticipants = this.CreateAuctionParticipantPlayerNumbers(initialPrice);
+
+        this.events!.AuctionEvent.PropertyToAuction = propertyToAuction;
+        this.events!.AuctionEvent.InitialPrice = initialPrice;
+        this.events!.AuctionEvent.ParticipantNumbers = this.auctionParticipants;
+
+        this.eventFlow.RecommendedString = string.Format("Player{0} wants to auction {1}", this.playerToSellItems, propertyToAuction);
+
+
+        this.CallNextEvent();
+    }
+
+    private void CallAuctionEvent()
+    {
+        this.PassAuctionCondition();
+        this.events!.AuctionEvent.LastEvent = this;
+        this.events.AuctionEvent.AddNextAction(this.events.AuctionEvent.StartEvent);
     }
 
     public void CheckBalanceIsStillNegative()
     {
-        if (this.bankHandler.Balances[this.playerToSellItmes] < 0 )
+        if (this.bankHandler.Balances[this.playerToSellItems] < 0)
         {
-            this.eventFlow.RecommendedString = string.Format("Player{0} needs to pay more money back", this.playerToSellItmes);
+            this.eventFlow.RecommendedString = string.Format("Player{0} needs to pay more money back", this.playerToSellItems);
         }
 
         this.CallNextEvent();
@@ -128,16 +206,16 @@ public class SellItemEvent : Event
 
     public override void EndEvent()
     {
-        if (this.nextEvent == this.events!.AuctionEvent)
+        if (this.bankHandler.Balances[this.playerToSellItems] < 0)
         {
-            this.events.AuctionEvent.LastEvent = this;
-            this.events.AuctionEvent.AddNextAction(this.events.AuctionEvent.StartEvent);
+            this.eventFlow.RecommendedString = string.Format("Player{0} couldn't bail out", this.playerToSellItems);
         }
-        else if (this.nextEvent == this.events!.MainEvent)
+        else
         {
-            this.events.MainEvent.LastEvent = this;
-            this.events.MainEvent.AddNextAction(this.events.MainEvent.EndEvent);
+            this.eventFlow.RecommendedString = string.Format("Player{0} bailed out", this.playerToSellItems);
         }
+
+        this.CallNextEvent();
     }
 
 
@@ -151,20 +229,21 @@ public class SellItemEvent : Event
 
         if (this.lastAction == this.MakeDecisionOnItemToSell)
         {
-            SellingType? sellingType = this.sellItemHandlerData.SellingOption;
+            
+
+            SellingType? sellingType = this.sellItemHandlerData.sellingType;
             switch (sellingType)
             {
-                case SellingType.MortgageProperty:
+                case SellingType.Mortgage_A_Property:
                     this.AddNextAction(this.MortgageProperty);
                     break;
-                case SellingType.DistructHouse:
+                case SellingType.Distruct_A_House:
                     this.AddNextAction(this.DistructHouse);
                     break;
-                case SellingType.AuctionProperty:
+                case SellingType.Auction_A_Property:
                     this.AddNextAction(this.PassAuctionCondition);
                     break;
                 default:
-                    this.nextEvent = this.events!.MainEvent;
                     this.AddNextAction(this.EndEvent);
                     break;
             }
@@ -172,31 +251,72 @@ public class SellItemEvent : Event
             return;
         }
 
+        if (this.lastAction == this.PassAuctionCondition)
+        {
+            if (this.auctionParticipants.Count() >= 2)
+            {
+                this.AddNextAction(this.CallAuctionEvent);
+            }
+            else if (this.auctionParticipants.Count() == 1)
+            {
+                this.AddNextAction(this.SellPropertyToTheOnlyPlayerWithEnoughMoney);
+            }
+            else
+            {
+                this.AddNextAction(this.SellPropertyToBankBecauseNoOneCanAuction);
+            }
+
+            return;
+        }
+
         if (this.lastAction == this.MortgageProperty
-            || this.lastAction == this.DistructHouse)
+            || this.lastAction == this.DistructHouse
+            || this.lastAction == this.CallAuctionEvent
+            || this.lastAction == this.SellPropertyToBankBecauseNoOneCanAuction
+            || this.lastAction == this.SellPropertyToTheOnlyPlayerWithEnoughMoney)
         {
             this.AddNextAction(this.CheckBalanceIsStillNegative);
+
+            return;
+        }
+
+        if (this.lastAction == this.EndEvent)
+        {
+            this.events!.HouseBuildEvent.AddNextAction(this.events.HouseBuildEvent.StartEvent);
+
+            return;
+        }
+
+        if (this.lastAction == this.CheckBalanceIsStillNegative)
+        {
+            if (this.bankHandler.Balances[this.playerToSellItems] < 0)
+            {
+                this.AddNextAction(this.MakeDecisionOnItemToSell);
+            }
+            else
+            {
+                this.AddNextAction(this.EndEvent);
+            }
 
             return;
         }
     }
 
 
-    private List<int> CreateAuctionParticipantPlayerNumbers()
+    private List<int> CreateAuctionParticipantPlayerNumbers(int initialPrice)
     {
         List<int> participantNumbers = new List<int>();
         int playerNumber = this.CurrentPlayerNumber;
 
         for (int i = 0; i < this.AreInGame.Count(); i++)
         {
-            if (AreInGame[playerNumber] is true)
+            if (AreInGame[playerNumber] is true
+            && this.bankHandler.Balances[playerNumber] >= initialPrice)
             {
                 participantNumbers.Add(playerNumber);
             }
             playerNumber = (playerNumber + 1) % this.AreInGame.Count();
         }
-
-        participantNumbers.Remove(this.playerToSellItmes);
 
         return participantNumbers;
     }

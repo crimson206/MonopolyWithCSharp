@@ -29,7 +29,7 @@ public abstract class Event : IEvent
     protected abstract void CallNextEvent();
     public abstract void StartEvent();
 
-    public void AddNextAction(Action nextAction)
+    public virtual void AddNextAction(Action nextAction)
     {
         this.lastAction = nextAction;
 

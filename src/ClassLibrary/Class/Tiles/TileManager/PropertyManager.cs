@@ -1,34 +1,34 @@
 public class PropertyManager : IPropertyManager
 {
-    public void ChangeOwner(Property property, int? playerNumber)
+    public void ChangeOwner(IProperty property, int? playerNumber)
     {
-        property.SetOnwerPlayerNumber(playerNumber);
+        property.SetOwnerPlayerNumber(playerNumber);
     }
 
-    public void SetIsMortgaged(Property property, bool isMortgaged)
+    public void ChangeOwner(IPropertyData propertyData, int? playerNumber)
+    {
+        IProperty property = (IProperty)propertyData;
+        property.SetOwnerPlayerNumber(playerNumber);
+    }
+
+    public void SetIsMortgaged(IProperty property, bool isMortgaged)
     {
         property.SetIsMortgaged(isMortgaged);
     }
 
-    public void BuildHouse(RealEstate realEstate)
+    public void SetIsMortgaged(IPropertyData propertyData, bool isMortgaged)
+    {   
+        IProperty property = (IProperty)propertyData;
+        property.SetIsMortgaged(isMortgaged);
+    }
+
+    public void BuildHouse(IRealEstate realEstate)
     {
         realEstate.BuildHouse();
     }
 
-    public void DistructHouse(RealEstate realEstate)
+    public void DistructHouse(IRealEstate realEstate)
     {
         realEstate.DistructHouse();
-    }
-
-    public void SetIsMortgaged(IPropertyData propertyData, bool value)
-    {
-        Property property = (Property)propertyData;
-        property.SetIsMortgaged(value);
-    }
-
-    public void DistructHouse(IPropertyData propertyData, bool value)
-    {
-        RealEstate property = (RealEstate)propertyData;
-        property.DistructHouse();
     }
 }

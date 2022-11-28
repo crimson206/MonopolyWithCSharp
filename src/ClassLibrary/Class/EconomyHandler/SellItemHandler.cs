@@ -10,29 +10,34 @@ public class SellItemHandler : ISellItemHandler
     }
 
     public List<IPropertyData> MortgagibleProperties => this.GetMortgagibleItems();
-    public List<IPropertyData> RealEstatesWithDistructableHouse => this.GetRealEstatesWithDistructableHouse();
-    public List<IPropertyData> SoldableItemWithAuction => this.GetSoldableItemsWithAuction();
+    public List<IPropertyData> HouseDistructableRealEstates => this.GetRealEstatesWithDistructableHouse();
+    public List<IPropertyData> AuctionableProperties => this.GetSoldableItemsWithAuction();
     public IPropertyData? PropertyToAuction { get; private set; }
     public IPropertyData? RealEstateToDistructHouse { get; private set; }
     public IPropertyData? PropertyToMortgage { get; private set; }
-    public SellingType? SellingOption { get; private set; }
+    public SellingType? sellingType { get; private set; }
 
-    public void SetPropertyToAuction(int index)
+    public void SetSellingOption(Dictionary<SellingType, int> itemToSell)
     {
-        this.PropertyToAuction = this.SoldableItemWithAuction[index];
-        this.SellingOption = SellingType.AuctionProperty;
-    }
+        this.sellingType = itemToSell.Keys.ElementAt(0);
+        int indexOfItemToSell = itemToSell.Values.ElementAt(0);
 
-    public void SetRealEstateToBuildHouse(int index)
-    {
-        this.RealEstateToDistructHouse =  this.RealEstatesWithDistructableHouse[index];
-        this.SellingOption = SellingType.DistructHouse;
-    }
-
-    public void SetPropertyToMortgage(int index)
-    {
-        this.PropertyToMortgage = this.MortgagibleProperties[index];
-        this.SellingOption = SellingType.AuctionProperty;
+        switch (sellingType)
+        {
+            case SellingType.Auction_A_Property:
+                this.PropertyToAuction = this.AuctionableProperties[indexOfItemToSell];
+                break;
+            case SellingType.Mortgage_A_Property:
+                this.PropertyToMortgage = this.MortgagibleProperties[indexOfItemToSell];
+                break;
+            case SellingType.Distruct_A_House:
+                this.RealEstateToDistructHouse = this.HouseDistructableRealEstates[indexOfItemToSell];
+                break;
+            case SellingType.None:
+                break;
+            default:
+                throw new Exception();
+        }
     }
 
     public void ResetPropertyToChange()
@@ -40,7 +45,7 @@ public class SellItemHandler : ISellItemHandler
         this.PropertyToAuction = null;
         this.PropertyToMortgage = null;
         this.RealEstateToDistructHouse = null;
-        this.SellingOption = null;
+        this.sellingType = null;
     }
 
     private List<IPropertyData> GetSoldableItemsWithAuction()
@@ -56,14 +61,15 @@ public class SellItemHandler : ISellItemHandler
 
     private List<IPropertyData> GetRealEstatesWithDistructableHouse()
     {
+        List<IRealEstateData> realEstates = this.backUpPropertyData.Where(property => property is IRealEstateData).Cast<IRealEstateData>().ToList();
 
-        List<IPropertyData> soldableItemsWithAuction =
-            (from realEstate in this.backUpPropertyData.Cast<IRealEstateData>()
+        List<IPropertyData> realEstatesWithDistructableHouse =
+            (from realEstate in realEstates
             where realEstate.OwnerPlayerNumber == this.playerToSellItem
             && realEstate.IsHouseDistructable
             select realEstate).Cast<IPropertyData>().ToList();
 
-        return soldableItemsWithAuction;                    
+        return realEstatesWithDistructableHouse;                    
     }
 
     private List<IPropertyData> GetMortgagibleItems()

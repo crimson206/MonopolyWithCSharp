@@ -9,4 +9,6 @@ public interface IEventFlowData
     public int[] RollDiceResult { get; }
 
     public bool AskedManualBoolDecision { get; }
+
+    public int Turn { get; }
 }

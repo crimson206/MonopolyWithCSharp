@@ -11,4 +11,6 @@ public interface ITradeHandlerData
     public bool IsLastParticipant { get; }
     public List<int> SelectableTargetNumbers { get; }
     public bool IsThereTradableProperties { get; }
+    public Dictionary<int, List<IPropertyData>>? OwnedTradablePropertyDatas { get; }
+
 }

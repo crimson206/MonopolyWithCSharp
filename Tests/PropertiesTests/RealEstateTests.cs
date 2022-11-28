@@ -12,11 +12,11 @@ namespace Tests
         [TestMethod]
         public void Are_RealEstate_Groupable()
         {
-            RealEstate realEstate1 = new RealEstate("Real1", 100, 60,  new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red");
-            RealEstate realEstate2 = new RealEstate("Real2", 100, 60, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red");
-            RealEstate realEstate3 = new RealEstate("Real3", 100, 60, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red");
+            IRealEstate realEstate1 = new RealEstate("Real1", 100, 60,  new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red");
+            IRealEstate realEstate2 = new RealEstate("Real2", 100, 60, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red");
+            IRealEstate realEstate3 = new RealEstate("Real3", 100, 60, new List<int> {10,20,40, 80, 200, 400, 800}, 50, "Red");
 
-            List<Property> colorGroup = new List<Property> {realEstate1, realEstate2, realEstate3};
+            List<IProperty> colorGroup = new List<IProperty> {realEstate1, realEstate2, realEstate3};
 
             /// set group
             realEstate1.SetGroup(colorGroup);
@@ -28,7 +28,7 @@ namespace Tests
             Assert.AreEqual(realEstate1.IsTradable, false);
 
             /// sell realEstate
-            realEstate1.SetOnwerPlayerNumber(1);
+            realEstate1.SetOwnerPlayerNumber(1);
             Assert.AreEqual(realEstate1.OwnerPlayerNumber, 1);
             Assert.ThrowsException<Exception>(() => realEstate1.BuildHouse());
             Assert.AreEqual(realEstate1.IsTradable, true);
@@ -46,8 +46,8 @@ namespace Tests
             Assert.AreEqual(realEstate1.IsTradable, true);
  
             /// make monopoly
-            realEstate2.SetOnwerPlayerNumber(1);
-            realEstate3.SetOnwerPlayerNumber(1);
+            realEstate2.SetOwnerPlayerNumber(1);
+            realEstate3.SetOwnerPlayerNumber(1);
             Assert.AreEqual(realEstate1.CurrentRent, 20);
             Assert.AreEqual(realEstate1.IsHouseBuildable, true);
 
