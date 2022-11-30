@@ -1,4 +1,4 @@
-public interface IDemortgageDecisionMaker
+public interface IUnmortgageDecisionMaker
 {
     public int? MakeDecionOnPropertyToDemortgage();
 }

@@ -32,7 +32,7 @@ namespace Tests
             AuctionHandler auctionHandler = new AuctionHandler();
             List<int> participantNumbers = new List<int> { 3, 0, 1 };
             RailRoad railRoad = new RailRoad("RailRoad", 100, new List<int> {10, 20, 30}, 50);
-            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad);
+            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad, true);
 
             int expectedPositiveSuggestedPriceCount = 1;
             Assert.AreEqual(auctionHandler.SuggestedPrices.Values.Where(price => price > 0).Count(), expectedPositiveSuggestedPriceCount);
@@ -43,7 +43,7 @@ namespace Tests
             AuctionHandler auctionHandler = new AuctionHandler();
             List<int> participantNumbers = new List<int> { 3, 0, 1 };
             RailRoad railRoad = new RailRoad("RailRoad", 100, new List<int> {10, 20, 30}, 50);
-            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad);
+            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad, true);
 
             int expectedInitialPrice = 100;
             Assert.AreEqual(auctionHandler.SuggestedPrices[3], expectedInitialPrice); 
@@ -53,7 +53,7 @@ namespace Tests
             AuctionHandler auctionHandler = new AuctionHandler();
             List<int> participantNumbers = new List<int> { 3, 0, 1 };
             RailRoad railRoad = new RailRoad("RailRoad", 100, new List<int> {10, 20, 30}, 50);
-            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad);
+            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad, true);
             return auctionHandler;
         }
         [TestMethod]
@@ -76,7 +76,7 @@ namespace Tests
 
             for (int i = 0; i < 3; i++)
             {
-                auctionHandler.SuggestNewPriceInTurn(suggestedPrices[i]);
+                auctionHandler.BidNewPriceInTurn(suggestedPrices[i]);
                 Dictionary<int, int> copyOfSuggestedPrices = auctionHandler.SuggestedPrices;
                 Assert.AreEqual(copyOfSuggestedPrices.Values.ToList()[(i+1)%3], expectedPrices[i]);
             }
@@ -95,7 +95,7 @@ namespace Tests
             AuctionHandler auctionHandler = new AuctionHandler();
             List<int> participantNumbers = new List<int> { 3, 0, 1 };
             RailRoad railRoad = new RailRoad("RailRoad", 100, new List<int> {10, 20, 30}, 50);
-            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad);
+            auctionHandler.SetAuctionCondition(participantNumbers, initialPrice:100, railRoad, true);
 
             bool expectedIsAuctionOn = true;
             Assert.AreEqual(auctionHandler.IsAuctionOn, expectedIsAuctionOn);
@@ -108,7 +108,7 @@ namespace Tests
 
             for (int i = 0; i < 3; i++)
             {
-                auctionHandler.SuggestNewPriceInTurn(suggestedPrices[i]);
+                auctionHandler.BidNewPriceInTurn(suggestedPrices[i]);
             }
 
             bool expectedIsAuctionOn = false;
@@ -123,7 +123,7 @@ namespace Tests
 
             for (int i = 0; i < 2; i++)
             {
-                auctionHandler.SuggestNewPriceInTurn(suggestedPrices[i]);
+                auctionHandler.BidNewPriceInTurn(suggestedPrices[i]);
             }
 
             int expectedWinnerNumber = 3;
@@ -138,7 +138,7 @@ namespace Tests
 
             for (int i = 0; i < 3; i++)
             {
-                auctionHandler.SuggestNewPriceInTurn(lastSuggestedPrice);
+                auctionHandler.BidNewPriceInTurn(lastSuggestedPrice);
             }
 
             int expectedLastSuggestedPrice = 200;
@@ -151,7 +151,7 @@ namespace Tests
 
             for (int i = 0; i < 3; i++)
             {
-                auctionHandler.SuggestNewPriceInTurn(200);
+                auctionHandler.BidNewPriceInTurn(200);
             }
 
             int expectedFinalPrice = 200;
@@ -165,7 +165,7 @@ namespace Tests
 
             for (int i = 0; i < 20; i++)
             {
-                auctionHandler.SuggestNewPriceInTurn(100 + i * constantIncreaseOfSuggestedPrice);
+                auctionHandler.BidNewPriceInTurn(100 + i * constantIncreaseOfSuggestedPrice);
             }
 
             bool expectedIsAuctionOn = true;

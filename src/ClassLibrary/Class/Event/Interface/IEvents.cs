@@ -5,5 +5,5 @@ public interface IEvents
     public HouseBuildEvent HouseBuildEvent { get; }
     public TradeEvent TradeEvent { get; }
     public SellItemEvent SellItemEvent { get; }
-    public DemortgageEvent DemortgageEvent { get; }
+    public UnmortgageEvent UnmortgageEvent { get; }
 }

@@ -1,12 +1,12 @@
-public class DemortgageEvent : Event
+public class UnmortgageEvent : Event
 {
     private List<int> participantPlayerNumbers = new List<int>();
-    private DemortgageHandler demortgageHandler;
-    private IDemortgageHandlerData demortgageHandlerData;
-    private IDemortgageDecisionMaker demortgageDecisionMaker;
+    private UnmortgageHandler unmortgageHandler;
+    private IUnmortgageHandlerData unmortgageHandlerData;
+    private IUnmortgageDecisionMaker unmortgageDecisionMaker;
     private IBankHandler bankHandler;
 
-    public DemortgageEvent
+    public UnmortgageEvent
     (Delegator delegator,
     IDataCenter dataCenter,
     IStatusHandlers statusHandlers,
@@ -20,14 +20,14 @@ public class DemortgageEvent : Event
         statusHandlers)
     {
         this.eventFlow = statusHandlers.EventFlow;
-        this.demortgageHandler = economyHandlers.DemortgageHandler;
-        this.demortgageHandlerData = dataCenter.DemortgageHandler;
+        this.unmortgageHandler = economyHandlers.UnmortgageHandler;
+        this.unmortgageHandlerData = dataCenter.UnmortgageHandler;
         this.bankHandler = statusHandlers.BankHandler;
-        this.demortgageDecisionMaker = decisionMakers.DemortgageDecisionMaker;
+        this.unmortgageDecisionMaker = decisionMakers.DemortgageDecisionMaker;
     }
 
-    private int? CurrentPlayerToDemortgage => this.demortgageHandler.CurrentPlayerToDemortgage;
-    private Property PropertyToDemortgage => (Property)this.demortgageHandler.PropertyToDeMortgage!;
+    private int? CurrentPlayerToDemortgage => this.unmortgageHandler.CurrentPlayerToDemortgage;
+    private Property PropertyToDemortgage => (Property)this.unmortgageHandler.PropertyToDeMortgage!;
 
     public override void StartEvent()
     {
@@ -35,14 +35,14 @@ public class DemortgageEvent : Event
         List<ITileData> tileDatas = this.dataCenter.TileDatas;
         List<IPropertyData> propertyDatas = this.FilterPropertyDatas(tileDatas);
 
-        this.demortgageHandler
+        this.unmortgageHandler
             .SetDeMortgageHandler
                 (balances,
                 propertyDatas);
 
-        if (this.demortgageHandlerData.AreAnyDemortgagible is true)
+        if (this.unmortgageHandlerData.AreAnyDemortgagible is true)
         {
-            this.eventFlow.RecommendedString = "Players can de-mortgage a property";
+            this.eventFlow.RecommendedString = "Players can unmortgage a property";
         }
 
         this.CallNextEvent();
@@ -50,21 +50,21 @@ public class DemortgageEvent : Event
 
     private void MakeCurrentPlayerDecision()
     {
-        int? decision = this.demortgageDecisionMaker
+        int? decision = this.unmortgageDecisionMaker
                             .MakeDecionOnPropertyToDemortgage();
 
         if (decision is null)
         {
             this.eventFlow.RecommendedString = "Player" +
                                                 this.CurrentPlayerToDemortgage +
-                                                " didn't de-mortgage any property"; 
+                                                " didn't unmortgage any property"; 
         }
         else
         {
-            this.demortgageHandler.SetRealEstateToBuildHouse((int)decision);
+            this.unmortgageHandler.SetRealEstateToBuildHouse((int)decision);
 
             this.eventFlow.RecommendedString = string.Format(
-                "Player{0} will de-mortgage {1}",
+                "Player{0} will unmortgage {1}",
                 this.CurrentPlayerToDemortgage,
                 this.PropertyToDemortgage.Name
             );
@@ -76,23 +76,23 @@ public class DemortgageEvent : Event
     private void Demortgage()
     {
         this.propertyManager.SetIsMortgaged(this.PropertyToDemortgage, false);
-        int costToDemortgage = (int)(1.1 * this.PropertyToDemortgage.Mortgage);
+        int costToDemortgage = this.PropertyToDemortgage.Mortgage;
 
         this.bankHandler.DecreaseBalance((int)this.CurrentPlayerToDemortgage!, 
                                         costToDemortgage);
 
-        this.eventFlow.RecommendedString = "The property is now not mortgaged";
+        this.eventFlow.RecommendedString = "The property is unmortgaged";
 
         this.CallNextEvent();
     }
 
     private void ChangePlayer()
     {
-        this.demortgageHandler.ChangePlayerToDeMortgage();
+        this.unmortgageHandler.ChangePlayerToDeMortgage();
 
         this.eventFlow.RecommendedString = string.Format(
-            "Player{0} can de-mortgage a property",
-            (int)this.demortgageHandlerData.CurrentPlayerToDemortgage!);
+            "Player{0} can unmortgage a property",
+            (int)this.unmortgageHandlerData.CurrentPlayerToDemortgage!);
 
         this.CallNextEvent();
     }
@@ -101,7 +101,7 @@ public class DemortgageEvent : Event
     {
         if ((this.CurrentPlayerToDemortgage is not null))
         {
-            this.eventFlow.RecommendedString = "This de-mortgage event is over";
+            this.eventFlow.RecommendedString = "This unmortgage event is over";
         }
 
         this.CallNextEvent();
@@ -112,7 +112,7 @@ public class DemortgageEvent : Event
     {
         if (this.lastAction == this.StartEvent)
         {
-            if (this.demortgageHandlerData.AreAnyDemortgagible is true)
+            if (this.unmortgageHandlerData.AreAnyDemortgagible is true)
             {
                 this.AddNextAction(this.MakeCurrentPlayerDecision);
             }
@@ -126,13 +126,13 @@ public class DemortgageEvent : Event
 
         if (this.lastAction == this.MakeCurrentPlayerDecision)
         {
-            if (this.demortgageHandlerData.PropertyToDeMortgage is not null)
+            if (this.unmortgageHandlerData.PropertyToDeMortgage is not null)
             {
                 this.AddNextAction(this.Demortgage);
             }
             else
             {
-                if (this.demortgageHandlerData.IsLastPlayer)
+                if (this.unmortgageHandlerData.IsLastPlayer)
                 {
                     this.AddNextAction(this.EndEvent);
                 }
@@ -147,7 +147,7 @@ public class DemortgageEvent : Event
 
         if (this.lastAction == this.Demortgage)
         {
-            if (this.demortgageHandlerData.IsLastPlayer is true)
+            if (this.unmortgageHandlerData.IsLastPlayer is true)
             {
                 this.AddNextAction(this.EndEvent);
             }
@@ -168,7 +168,7 @@ public class DemortgageEvent : Event
 
         if (this.lastAction == this.EndEvent)
         {
-           this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndEvent);
+           this.events!.MainEvent.AddNextAction(this.events!.MainEvent.StartEvent);
 
     	    return;
         }

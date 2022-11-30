@@ -44,7 +44,7 @@ namespace Tests
             mockedTileManager.Setup(t => t.PropertyManager).Returns(propertyManager);
             mockedPropertyPurchaseDecisionMaker.Setup(t => t.MakeDecisionOnPurchase()).Returns(false);
 
-            mockedAuctionDecisionMaker.Setup(t => t.SuggestPrice()).Returns(0);   
+            mockedAuctionDecisionMaker.Setup(t => t.Bid()).Returns(0);   
             IAuctionDecisionMaker auctionDecisionMaker = mockedAuctionDecisionMaker.Object;
             StatusHandlers statusHandlers = new StatusHandlers();
 
@@ -69,7 +69,7 @@ namespace Tests
                                     new HouseBuildEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers),
                                     new TradeEvent(statusHandlers, tileManager, dataCenter, economyHandlers, delegator, decisionMakers),
                                     new SellItemEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers),
-                                    new DemortgageEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers));
+                                    new UnmortgageEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers));
 
             mainEvent.SetEvents(events);
             auctionEvent.SetEvents(events);
@@ -95,13 +95,13 @@ namespace Tests
             delegator.RunAction();
             Assert.AreEqual(delegator.NextActionName, "DecideInitialPrice");
             delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "SetUpAuction");
+            Assert.AreEqual(delegator.NextActionName, "SetUpAuctionHandler");
             delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "SuggestPriceInTurn");
+            Assert.AreEqual(delegator.NextActionName, "BidInTurn");
             delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "SuggestPriceInTurn");
+            Assert.AreEqual(delegator.NextActionName, "BidInTurn");
             delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "SuggestPriceInTurn");
+            Assert.AreEqual(delegator.NextActionName, "BidInTurn");
             delegator.RunAction();
             Assert.AreEqual(delegator.NextActionName, "BuyWinnerProperty");
             delegator.RunAction();

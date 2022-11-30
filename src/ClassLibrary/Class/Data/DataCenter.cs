@@ -11,7 +11,7 @@ public class DataCenter : IDataCenter
     private IEventFlowData eventFlow;
     private IHouseBuildHandlerData houseBuildHandler;
     public ISellItemHandlerData sellItemHandler;
-    public IDemortgageHandlerData demortgageHandler;
+    public IUnmortgageHandlerData unmortgageHandler;
 
     public DataCenter(
         IStatusHandlers statusHandlers,
@@ -31,7 +31,7 @@ public class DataCenter : IDataCenter
         this.tradeHandler = economyHandlers.TradeHandler;
         this.houseBuildHandler = economyHandlers.HouseBuildHandler;
         this.sellItemHandler = economyHandlers.SellItemHandler;
-        this.demortgageHandler = economyHandlers.DemortgageHandler;
+        this.unmortgageHandler = economyHandlers.UnmortgageHandler;
     }
 
     public IBankHandlerData Bank => this.bank;
@@ -47,7 +47,7 @@ public class DataCenter : IDataCenter
     public ITradeHandlerData TradeHandler => this.tradeHandler;
     public IHouseBuildHandlerData HouseBuildHandler => this.houseBuildHandler;
     public ISellItemHandlerData SellItemHandler => this.sellItemHandler;
-    public IDemortgageHandlerData DemortgageHandler => this.demortgageHandler;
+    public IUnmortgageHandlerData UnmortgageHandler => this.unmortgageHandler;
     public List<ITileData> TileDatas => new List<ITileData>(this.tileDatas);
     public ITileData CurrentTileData => this.GetCurrentTileData();
     private ITileData GetCurrentTileData()

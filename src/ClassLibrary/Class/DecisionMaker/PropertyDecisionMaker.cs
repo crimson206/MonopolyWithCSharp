@@ -16,7 +16,7 @@ public abstract class PropertyDecisionMaker : DecisionMaker
         }
 
         double balance = (double)this.dataCenter.Bank.Balances[playerNumber];
-        double denominator = 0.5 * balance + cost + this.decisionFactorCalculator.CalculateEnemiesTotalRent(playerNumber);
+        double denominator = balance + cost + this.decisionFactorCalculator.CalculateEnemiesTotalRent(playerNumber);
 
         return balance / denominator;
     }

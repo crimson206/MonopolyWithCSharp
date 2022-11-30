@@ -7,6 +7,7 @@ public class SellItemEvent : Event
     private ISellItemDecisionMaker sellItemDecisionMaker;
     private IEvent? nextEvent;
     private List<int> auctionParticipants = new List<int>();
+    private InGameHandler inGameHandler;
 
     public SellItemEvent
     (Delegator delegator,
@@ -26,6 +27,7 @@ public class SellItemEvent : Event
         this.sellItemHandler = economyHandlers.SellItemHandler;
         this.sellItemHandlerData = dataCenter.SellItemHandler;
         this.sellItemDecisionMaker = decisionMakers.SellItemDecisionMaker;
+        this.inGameHandler = statusHandlers.InGameHandler;
         this.propertyManager = this.tileManager.PropertyManager;
     }
 
@@ -102,87 +104,25 @@ public class SellItemEvent : Event
             this.CallNextEvent();
     }
 
-    private void SellPropertyToBankBecauseNoOneCanAuction()
+    public void RenewSellItemEventFromAuction()
     {
-        int moneyToRecieve = 0;
-        IPropertyData property = this.sellItemHandler.PropertyToAuction!;
-
-        if (property.IsMortgaged)
-        {
-            moneyToRecieve = property.Price - property.Mortgage;
-        }
-        else
-        {
-            moneyToRecieve = property.Price;
-        }
-
-        this.bankHandler.IncreaseBalance(this.playerToSellItems, moneyToRecieve);
-        this.propertyManager.SetIsMortgaged(property, false);
-        this.propertyManager.ChangeOwner(property, null);
-
-        this.eventFlow.RecommendedString = "The bank bought it because no one has enough money";
-
-        this.CallNextEvent();
-    }
-
-    private void SellPropertyToTheOnlyPlayerWithEnoughMoney()
-    {
-        int moneyToRecieve = 0;
-        IPropertyData property = this.sellItemHandler.PropertyToAuction!;
-
-        if (property.IsMortgaged)
-        {
-            moneyToRecieve = property.Price - property.Mortgage;
-        }
-        else
-        {
-            moneyToRecieve = property.Price;
-        }
-
-        int playerToBuyProperty = 0;
-
-        for (int i = 0; i < 4; i++)
-        {
-            if (this.bankHandler.Balances[i] >= moneyToRecieve)
-            {
-                playerToBuyProperty = i;
-            }
-        }
-
-        this.bankHandler.TransferBalanceFromTo(playerToBuyProperty, this.playerToSellItems, moneyToRecieve);
-        this.propertyManager.ChangeOwner(property, playerToBuyProperty);
-
-        this.eventFlow.RecommendedString = "The only player with enough money bought it";
-
         this.CallNextEvent();
     }
 
 
     private void PassAuctionCondition()
     {
-
-        int initialPrice = 0;
         IPropertyData propertyToAuction = this.sellItemHandler.PropertyToAuction!;
         int price = propertyToAuction.Price;
-        int mortgage = propertyToAuction.Mortgage;
+        this.auctionParticipants = this.CreateAuctionParticipantPlayerNumbers();
+        List<int> balancesOfAuctionParticipants = this.CreateBalancesOfAuctionParticipants();
+        int minBalance = balancesOfAuctionParticipants.Min();
 
-        if (propertyToAuction.IsMortgaged is false)
-        {
-            initialPrice = price;
-        }
-        else
-        {
-            initialPrice = price - mortgage;
-        }
+        int initialPrice = (price < minBalance? price : minBalance);
 
-        this.auctionParticipants = this.CreateAuctionParticipantPlayerNumbers(initialPrice);
+        this.events!.AuctionEvent.SetUpAuction(this.auctionParticipants, initialPrice, propertyToAuction, true, this);
 
-        this.events!.AuctionEvent.PropertyToAuction = propertyToAuction;
-        this.events!.AuctionEvent.InitialPrice = initialPrice;
-        this.events!.AuctionEvent.ParticipantNumbers = this.auctionParticipants;
-
-        this.eventFlow.RecommendedString = string.Format("Player{0} wants to auction {1}", this.playerToSellItems, propertyToAuction);
-
+        this.eventFlow.RecommendedString = string.Format("Player{0} wants to auction {1}", this.playerToSellItems, propertyToAuction.Name);
 
         this.CallNextEvent();
     }
@@ -253,28 +193,24 @@ public class SellItemEvent : Event
 
         if (this.lastAction == this.PassAuctionCondition)
         {
-            if (this.auctionParticipants.Count() >= 2)
-            {
-                this.AddNextAction(this.CallAuctionEvent);
-            }
-            else if (this.auctionParticipants.Count() == 1)
-            {
-                this.AddNextAction(this.SellPropertyToTheOnlyPlayerWithEnoughMoney);
-            }
-            else
-            {
-                this.AddNextAction(this.SellPropertyToBankBecauseNoOneCanAuction);
-            }
+
+            this.AddNextAction(this.CallAuctionEvent);
 
             return;
         }
 
         if (this.lastAction == this.MortgageProperty
             || this.lastAction == this.DistructHouse
-            || this.lastAction == this.CallAuctionEvent
-            || this.lastAction == this.SellPropertyToBankBecauseNoOneCanAuction
-            || this.lastAction == this.SellPropertyToTheOnlyPlayerWithEnoughMoney)
+            || this.lastAction == this.CallAuctionEvent)
         {
+            this.AddNextAction(this.CheckBalanceIsStillNegative);
+
+            return;
+        }
+
+        if (this.lastAction == this.RenewSellItemEventFromAuction)
+        {
+
             this.AddNextAction(this.CheckBalanceIsStillNegative);
 
             return;
@@ -282,7 +218,7 @@ public class SellItemEvent : Event
 
         if (this.lastAction == this.EndEvent)
         {
-            this.events!.HouseBuildEvent.AddNextAction(this.events.HouseBuildEvent.StartEvent);
+            this.events!.MainEvent.AddNextAction(this.events.MainEvent.EndEvent);
 
             return;
         }
@@ -302,7 +238,7 @@ public class SellItemEvent : Event
         }
     }
 
-    private List<int> CreateAuctionParticipantPlayerNumbers(int initialPrice)
+    private List<int> CreateAuctionParticipantPlayerNumbers()
     {
         List<int> participantNumbers = new List<int>();
         int playerNumber = this.eventFlow.CurrentPlayerNumber;
@@ -310,7 +246,7 @@ public class SellItemEvent : Event
         for (int i = 0; i < this.AreInGame.Count(); i++)
         {
             if (AreInGame[playerNumber] is true
-            && this.bankHandler.Balances[playerNumber] >= initialPrice)
+            && playerNumber != this.playerToSellItems)
             {
                 participantNumbers.Add(playerNumber);
             }
@@ -319,4 +255,58 @@ public class SellItemEvent : Event
 
         return participantNumbers;
     }
+
+    private void SetOwnerNumberOfPropertiesNull(List<IProperty> properties)
+    {
+        foreach (var property in properties)
+        {
+            this.propertyManager.ChangeOwner(property, null);
+        }
+    }
+
+    private void SetIsMortgagedOfPropertiesFalse(List<IProperty> properties)
+    {
+        foreach (var property in properties)
+        {
+            this.propertyManager.SetIsMortgaged(property, false);
+        }
+    }
+
+    private void DistructAllHouses(List<IRealEstate> realEstates)
+    {
+        do
+        {
+            foreach (var realEstate in realEstates)
+            {
+                if (realEstate.IsHouseDistructable)
+                {
+                    this.propertyManager.DistructHouse(realEstate);
+                }
+            }
+        } while (realEstates.Where(realEstate => realEstate.IsHouseDistructable).Count() != 0);
+    }
+
+    private void ResetPropertiesOfPlayerNumber(int playerNumber)
+    {
+        List<IProperty> properties = this.tileManager.Tiles.Where(tile => tile is IProperty).Cast<IProperty>().ToList();
+        List<IProperty> propertiesOfPlayer = properties.Where(property => property.OwnerPlayerNumber == playerNumber).ToList();
+        List<IRealEstate> realEstatesOfPlayer = propertiesOfPlayer.Where(property => property is IRealEstate).Cast<IRealEstate>().ToList();
+
+        this.SetIsMortgagedOfPropertiesFalse(propertiesOfPlayer);
+        this.DistructAllHouses(realEstatesOfPlayer);
+        this.SetOwnerNumberOfPropertiesNull(propertiesOfPlayer);
+    }
+
+    private List<int> CreateBalancesOfAuctionParticipants()
+    {
+        List<int> balancesOfAuctionParticipants = new List<int>();
+
+        foreach (var participant in this.auctionParticipants)
+        {
+            balancesOfAuctionParticipants.Add(this.dataCenter.Bank.Balances[participant]);
+        }
+
+        return balancesOfAuctionParticipants;
+    }
+
 }

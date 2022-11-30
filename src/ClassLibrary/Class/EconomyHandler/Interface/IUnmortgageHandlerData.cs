@@ -1,4 +1,4 @@
-public interface IDemortgageHandlerData
+public interface IUnmortgageHandlerData
 {
     public bool? AreAnyDemortgagible { get;}
     public List<int>? ParticipantPlayerNumbers { get;}

@@ -2,8 +2,7 @@ public class AuctionEvent : Event
 {
 
     private IAuctionHandler auctionHandler;
-    private List<int> participantPlayerNumbers = new List<int>();
-    private int participantCount => this.AreInGame.Where(isInGame => isInGame == true).Count();
+    private List<int> participantNumbers = new List<int>();
     private IAuctionDecisionMaker auctionDecisionMaker;
     private IBankHandler bankHandler;
 
@@ -27,16 +26,13 @@ public class AuctionEvent : Event
         this.auctionDecisionMaker = decisionMakers.AuctionDecisionMaker;
     }
 
-    public List<int> ParticipantNumbers { get => this.participantPlayerNumbers; set => this.participantPlayerNumbers = value; }
+    public List<int> ParticipantNumbers { get => this.participantNumbers; private set => this.participantNumbers = value; }
     private List<int> Balances => this.dataCenter.Bank.Balances;
+    public bool FirstParticipantIsForcedToBid { get; private set; }
 
-    private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
+    public IPropertyData? PropertyToAuction { get; private set; }
 
-    public IPropertyData? PropertyToAuction { get; set; }
-
-    public int InitialPrice { get; set; }
-
-    public string RecommendedString { get; private set; } = string.Empty;
+    public int InitialPrice { get; private set; }
 
     public override void StartEvent()
     {
@@ -44,9 +40,18 @@ public class AuctionEvent : Event
         this.CallNextEvent();
     }
 
-    private void SetUpAuction()
+    public void SetUpAuction(List<int> participantNumbers, int initialPrice, IPropertyData propertyToAuction, bool firstParticipantIsForcedToBid, IEvent auctionCaller)
     {
-        this.auctionHandler.SetAuctionCondition(this.participantPlayerNumbers, this.InitialPrice, this.PropertyToAuction!);
+        this.participantNumbers = participantNumbers;
+        this.InitialPrice = initialPrice;
+        this.PropertyToAuction = propertyToAuction;
+        this.FirstParticipantIsForcedToBid = firstParticipantIsForcedToBid;
+        this.LastEvent = auctionCaller;
+    }
+
+    private void SetUpAuctionHandler()
+    {
+        this.auctionHandler.SetAuctionCondition(this.participantNumbers, this.InitialPrice, this.PropertyToAuction!, this.FirstParticipantIsForcedToBid);
 
         this.eventFlow.RecommendedString = this.CreateParticipantsString() + " joined in the auction";
 
@@ -55,28 +60,34 @@ public class AuctionEvent : Event
 
     private void DecideInitialPrice()
     {
-        this.eventFlow.RecommendedString = string.Format("The initial price is {0}$", this.InitialPrice);
+
+        if (this.FirstParticipantIsForcedToBid)
+        {
+            this.eventFlow.RecommendedString = string.Format("Player{0} was forced to bid {1}$", this.participantNumbers[0], this.InitialPrice);
+        }
+        else
+        {
+            this.eventFlow.RecommendedString = string.Format("The initial price is {0}$", this.InitialPrice);
+        }
 
         this.CallNextEvent();
     }
 
-    private void SuggestPriceInTurn()
+    private void BidInTurn()
     {
-        int participantNumber = this.dataCenter.AuctionHandler.NextParticipantNumber;
-        int suggestedPrice = this.auctionDecisionMaker.SuggestPrice();
-
-        if (suggestedPrice > this.Balances[participantNumber])
+        int biddedPrice = this.auctionDecisionMaker.Bid();
+        int CurrentParticipantNumber = this.dataCenter.AuctionHandler.NextParticipantNumber;
+        if (biddedPrice > this.Balances[CurrentParticipantNumber])
         {
             throw new Exception();
         }        
 
-        this.auctionHandler.SuggestNewPriceInTurn(suggestedPrice);
+        this.auctionHandler.BidNewPriceInTurn(biddedPrice);
 
-        this.eventFlow.RecommendedString = string.Format("Player{0} suggested {1}$", participantNumber, suggestedPrice);
+        this.eventFlow.RecommendedString = string.Format("Player{0} bidded {1}$", CurrentParticipantNumber, biddedPrice);
 
         this.CallNextEvent();
     }
-
     private void BuyWinnerProperty()
     {
         int winnerNumber = (int)this.dataCenter.AuctionHandler.WinnerNumber!;
@@ -88,7 +99,9 @@ public class AuctionEvent : Event
             int moneyToReceive = finalPrice;
             if (this.PropertyToAuction.IsMortgaged)
             {
-                moneyToReceive -= this.PropertyToAuction.Mortgage;
+                moneyToReceive = (this.PropertyToAuction.Mortgage >= moneyToReceive? 0 : moneyToReceive - this.PropertyToAuction.Mortgage);
+                this.tileManager.PropertyManager.SetIsMortgaged(this.PropertyToAuction, false);
+                
             }
             this.bankHandler.IncreaseBalance(previousOwner, moneyToReceive);
         }
@@ -99,14 +112,26 @@ public class AuctionEvent : Event
         this.CallNextEvent();
     }
 
+    private void EndAuctionWithoutAnyBid()
+    {
+        this.eventFlow.RecommendedString = "No one bidded";
+
+        this.CallNextEvent();
+    }
+
     private string CreateParticipantsString()
     {
         string players = "Player ";
-        
-        foreach (var item in this.participantPlayerNumbers)
+        int count = this.participantNumbers.Count();
+        for (int i = 0; i < count; i++)
         {
-            players += item.ToString() + ", ";
+            players += this.participantNumbers[i];
+            if (i != count -1)
+            {
+                players += ", ";
+            }
         }
+
         return players;
     }
 
@@ -118,55 +143,86 @@ public class AuctionEvent : Event
 
     public override void EndEvent()
     {
-        if (this.LastEvent == this.events!.MainEvent)
-        {
-            this.events!.MainEvent.AddNextAction(this.events!.MainEvent.CheckExtraTurn);
-        }
-        else if (this.LastEvent == this.events.SellItemEvent)
-        {
-            this.events!.SellItemEvent.AddNextAction(this.events!.SellItemEvent.CheckBalanceIsStillNegative);
-        }
+        this.eventFlow.RecommendedString = "This auction event is over";
+
+        this.CallNextEvent();
     }
 
     protected override void CallNextEvent()
     {
         if (this.lastAction == this.StartEvent)
         {
-            this.AddNextAction(this.DecideInitialPrice);
+            this.AddNextAction(this.SetUpAuctionHandler);
 
+            return;
+        }
+
+        if (this.lastAction == this.SetUpAuctionHandler)
+        {
+            this.AddNextAction(this.DecideInitialPrice);
             return;
         }
 
         if (this.lastAction == this.DecideInitialPrice)
         {
-            this.AddNextAction(this.SetUpAuction);
-            return;
-        }
-
-        if (this.lastAction == this.SetUpAuction)
-        {
-            this.AddNextAction(this.SuggestPriceInTurn);
-            return;
-        }
-
-        if (this.lastAction == this.SuggestPriceInTurn)
-        {
-            if (this.dataCenter.AuctionHandler.IsAuctionOn)
+            if(this.auctionHandler.IsAuctionOn)
             {
-                this.AddNextAction(this.SuggestPriceInTurn);
-
-                return;
+                this.AddNextAction(this.BidInTurn);
             }
             else
             {
                 this.AddNextAction(this.BuyWinnerProperty);
-                return;
             }
+
+            return;
+        }
+
+        if (this.lastAction == this.BidInTurn)
+        {
+            if (this.dataCenter.AuctionHandler.IsAuctionOn)
+            {
+                this.AddNextAction(this.BidInTurn);
+            }
+            else
+            {
+                if (this.dataCenter.AuctionHandler.WinnerNumber is null)
+                {
+                    this.AddNextAction(this.EndAuctionWithoutAnyBid);
+                }
+                else
+                {
+                    this.AddNextAction(this.BuyWinnerProperty);
+                }
+            }
+
+            return;
+        }
+
+        if (this.lastAction == this.EndAuctionWithoutAnyBid)
+        {
+            this.AddNextAction(this.EndEvent);
+
+            return;
         }
 
         if (this.lastAction == this.BuyWinnerProperty)
         {
             this.AddNextAction(this.EndEvent);
+
+            return;
+        }
+
+        if (this.lastAction == this.EndEvent)
+        {
+            if (this.LastEvent == this.events!.MainEvent)
+            {
+                this.events!.MainEvent.AddNextAction(this.events!.MainEvent.CheckExtraTurn);
+            }
+            else if (this.LastEvent == this.events.SellItemEvent)
+            {
+                this.events!.SellItemEvent.AddNextAction(this.events!.SellItemEvent.RenewSellItemEventFromAuction);
+            }
+
             return;
         }
     }

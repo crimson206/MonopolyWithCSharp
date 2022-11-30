@@ -13,6 +13,7 @@ public class MainEvent : Event, IMainEvent
     private bool rolledDouble => this.eventFlow.RollDiceResult[0] == this.eventFlow.RollDiceResult[1];
     private Action? previousActionOfLastAction;
     private bool timeToTrade = false;
+    private int idleCount;
 
     public MainEvent
     (StatusHandlers statusHandlers,
@@ -229,7 +230,7 @@ public class MainEvent : Event, IMainEvent
             }
             else
             {
-                this.events!.HouseBuildEvent.AddNextAction(this.events.HouseBuildEvent.StartEvent);
+                this.AddNextAction(this.EndEvent);
             }
 
             return;
@@ -237,7 +238,7 @@ public class MainEvent : Event, IMainEvent
 
         if (this.lastAction == this.StayInJail)
         {
-            this.events!.HouseBuildEvent.AddNextAction(this.events.HouseBuildEvent.StartEvent);
+            this.AddNextAction(this.EndEvent);
 
             return;
         }
@@ -271,7 +272,7 @@ public class MainEvent : Event, IMainEvent
         }
         if (this.lastAction == this.HasJailPenalty)
         {
-            this.events!.HouseBuildEvent.AddNextAction(this.events.HouseBuildEvent.StartEvent);
+            this.AddNextAction(this.EndEvent);
 
             return;
         }
@@ -307,7 +308,7 @@ public class MainEvent : Event, IMainEvent
             }
             else
             {
-                this.AddNextAction(this.StartEvent);
+                this.events!.HouseBuildEvent.AddNextAction(this.events.HouseBuildEvent.StartEvent);
             }
             return;
         }
@@ -321,6 +322,20 @@ public class MainEvent : Event, IMainEvent
         if (this.lastAction == this.PayRent)
         {
             this.AddNextAction(this.CheckExtraTurn);
+            return;
+        }
+
+        if (this.lastAction == this.GameIsOver)
+        {
+            this.AddNextAction(this.Idle);
+
+            return;
+        }
+
+        if (this.lastAction == this.Idle)
+        {
+            this.AddNextAction(this.Idle);
+
             return;
         }
 
@@ -357,23 +372,14 @@ public class MainEvent : Event, IMainEvent
     {
         List<int> participantNumber = this.CreateAuctionParticipantPlayerNumbers();
         IPropertyData propertyToAuction = (IPropertyData)this.GetCurrentTile();
-        int balanceOfCurrentPlayer = this.bankHandler.Balances[this.CurrentPlayerNumber];
         int priceOfPropertyToAuction = propertyToAuction.Price;
         int initialPrice = 0;
 
-        if (balanceOfCurrentPlayer > priceOfPropertyToAuction)
-        {
-            initialPrice = priceOfPropertyToAuction;
-        }
-        else
-        {
-            initialPrice = balanceOfCurrentPlayer;
-        }
+        initialPrice = ComparePriceAndMinBalanceOfPlayerInGameAndReturnSmallerOne(priceOfPropertyToAuction);
+        List<int> balancesOfPlayersInGame = new List<int>();
 
-        this.events!.AuctionEvent.ParticipantNumbers = this.CreateAuctionParticipantPlayerNumbers();
-        this.events!.AuctionEvent.PropertyToAuction = (Property)this.GetCurrentTile();
-        this.events!.AuctionEvent.LastEvent = this;
-        this.events!.AuctionEvent.InitialPrice = initialPrice;
+        this.events!.AuctionEvent.SetUpAuction(this.CreateAuctionParticipantPlayerNumbers(), initialPrice, (Property)this.GetCurrentTile(), true, this);
+
         this.CallNextEvent();
     }
 
@@ -468,13 +474,13 @@ public class MainEvent : Event, IMainEvent
 
     public void HasJailPenalty()
     {
-        if (this.lastAction == this.RollDice)
+        if (this.delegator.LastActionName == "RollDice")
         {
             this.eventFlow.RecommendedString = this.stringPlayer + " rolled double 3 times in a row. It is so suspicious. "
                                             + this.stringPlayer + " is moved to the jail";
         }
 
-        if (this.lastAction == this.LandOnTile)
+        if (this.delegator.LastActionName == "LandOnTile")
         {
             this.eventFlow.RecommendedString = this.stringPlayer + " is moved to the jail";
         }
@@ -520,7 +526,7 @@ public class MainEvent : Event, IMainEvent
     {
         if (this.isDoubleSideEffectOn && this.doubleSideEffectHandler.ExtraTurns[this.CurrentPlayerNumber])
         {
-            this.eventFlow.RecommendedString = this.stringPlayer + " has an extra turn due to rolling double";
+            this.eventFlow.RecommendedString = this.stringPlayer + " has an extra turn";
         }
 
         this.CallNextEvent();
@@ -561,6 +567,14 @@ public class MainEvent : Event, IMainEvent
     public void DontPurchaseProperty()
     {
         this.eventFlow.RecommendedString = this.stringPlayer + " didn't buy the property";
+
+        this.CallNextEvent();
+    }
+
+    public void Idle()
+    {
+        this.idleCount++;
+        this.eventFlow.RecommendedString = string.Format("Game is idle...{0}", this.idleCount);
 
         this.CallNextEvent();
     }
@@ -735,5 +749,27 @@ public class MainEvent : Event, IMainEvent
         this.SetIsMortgagedOfPropertiesFalse(propertiesOfPlayer);
         this.DistructAllHouses(realEstatesOfPlayer);
         this.SetOwnerNumberOfPropertiesNull(propertiesOfPlayer);
+    }
+
+    private int ComparePriceAndMinBalanceOfPlayerInGameAndReturnSmallerOne(int price)
+    {
+        List<int> balances = this.dataCenter.Bank.Balances;
+        List<bool> areInGame = this.dataCenter.InGame.AreInGame;
+        int smallerInt = 0;
+        int count = areInGame.Count();
+
+        List<int> balancesOfPlayersInGame = new List<int>();
+
+        for (int i = 0; i < count; i++)
+        {
+            if (areInGame[i] is true)
+            {
+                balancesOfPlayersInGame.Add(balances[i]);
+            }
+        }
+
+        smallerInt = (price < balancesOfPlayersInGame.Min()? price : balancesOfPlayersInGame.Min());
+
+        return smallerInt;
     }
 }

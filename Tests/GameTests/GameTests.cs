@@ -15,9 +15,6 @@ namespace Tests
                 game.Run();
                 index ++;
             }
-            
-            int breakPoint = 0;
-
         }
     }
 }

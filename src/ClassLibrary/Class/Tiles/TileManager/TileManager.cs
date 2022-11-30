@@ -5,7 +5,6 @@ public class TileManager : ITileManager
     private List<IRealEstate> realEstates;
     private Random random = new Random();
     private MapTilesFactory mapTilesFactory = new MapTilesFactory();
-    public Analyser Analyser;
     private IPropertyManager propertyManager;
     private List<ITileData> tileDatas;
 

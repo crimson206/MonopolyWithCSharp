@@ -8,5 +8,5 @@ public interface IEconomyHandlers
 
     public SellItemHandler SellItemHandler { get; }
 
-    public DemortgageHandler DemortgageHandler { get; }
+    public UnmortgageHandler UnmortgageHandler { get; }
 }

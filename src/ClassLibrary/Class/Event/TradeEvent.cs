@@ -47,8 +47,9 @@ public class TradeEvent : Event
         {
             this.eventFlow
                 .RecommendedString =
-                    CreateParticipantsString() +
-                    " will have trade chances in turn";
+                    string.Format(
+                            "Player{0} can select a trade target",
+                            this.CurrentTradeOwner);
         }
 
         this.CallNextEvent();
@@ -312,9 +313,7 @@ public class TradeEvent : Event
             }
             else
             {
-                this.events!.HouseBuildEvent.AddNextAction(this.events!
-                                .HouseBuildEvent
-                                .StartEvent);
+                this.AddNextAction(this.EndEvent);
             }
             return;
         }
@@ -427,8 +426,8 @@ public class TradeEvent : Event
 
         if (this.lastAction == this.EndEvent)
         {
-            this.events!.MainEvent.AddNextAction(this.events!
-                            .MainEvent
+            this.events!.HouseBuildEvent.AddNextAction(this.events!
+                            .HouseBuildEvent
                             .StartEvent);
 
             return;

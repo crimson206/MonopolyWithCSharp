@@ -9,7 +9,7 @@ public class AuctionDecisionMaker : PropertyDecisionMaker, IAuctionDecisionMaker
     IPropertyData PropertyToAuction => this.dataCenter.AuctionHandler.PropertyToAuction!;
     int MaxPrice => this.dataCenter.AuctionHandler.MaxPrice;
 
-    public int SuggestPrice()
+    public int Bid()
     {
         double originalPrice = (double)this.PropertyToAuction.Price;
         double factor1 = this.propertyValueMeasurer.ConsiderPriceAndMonopolyWhenGettingAProperty(this.Participant, this.PropertyToAuction);

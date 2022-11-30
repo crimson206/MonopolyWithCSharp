@@ -2,64 +2,11 @@ public class PlayerStatusDrawer
 {
     private StringConverter stringConverter = new StringConverter();
 
-    public void DrawPlayerStatus(int cursorLeft, int cursorTop, DataCenter dataCenter)
-    {
-        Console.WindowHeight = 200;
-        Console.CursorLeft = cursorLeft;
-        Console.CursorTop = cursorTop;
-        List<string> strings = this.GenerateStrings(dataCenter);
-
-        for (int i = 0; i < strings.Count(); i++)
-        {
-            this.stringConverter.WriteStringAtCenter(strings[i], 50);
-            Console.CursorLeft = cursorLeft;
-            Console.CursorTop = cursorTop + i;
-        }
-    }
-
-    public void DrawArrangedLines(int cursorLeft, int cursorTop, DataCenter dataCenter)
+    public void DrawPlayerStatusWithArrangedLines(int cursorLeft, int cursorTop, DataCenter dataCenter)
     {
         var stringLines = this.GenerateStringLines(dataCenter);
         List<int> spaces = new List<int> { 15, 9, 9, 9, 9 };
         this.stringConverter.WriteCenterArrangedLines(cursorLeft, cursorTop, stringLines, spaces);
-    }
-
-    private List<string> GenerateStrings(DataCenter dataCenter)
-    {
-        var strings = new List<string>();
-
-        List<int> balancesInts = dataCenter.Bank.Balances;
-        List<bool> areInGame = dataCenter.InGame.AreInGame;
-
-        string balances = string.Empty;
-        for (int i = 0; i < areInGame.Count(); i++)
-        {
-            if (areInGame[i] is true)
-            {
-                balances += balancesInts[i].ToString();
-            }
-            else
-            {
-                balances += "bankrupt";
-            }
-
-            if (i < areInGame.Count()-1)
-            {
-                balances += ", ";
-            }
-        }
-        
-
-        List<int> jailTurnCountsInts = dataCenter.Jail.TurnsInJailCounts;
-        string jailTurnCounts = string.Join(", ", jailTurnCountsInts.ToArray());
-
-        List<int> jailFreeCardCountsInts = dataCenter.Jail.JailFreeCardCounts;
-        string jailFreeCardCounts = string.Join(", ", jailFreeCardCountsInts.ToArray());
-
-        strings.Add("Balances : " + balances);
-        strings.Add("Turns in Jail : " + jailTurnCounts);
-///        strings.Add("FreeJailCards : " + jailTurnCounts);
-        return strings;
     }
 
     private List<List<string>> GenerateStringLines(DataCenter dataCenter)
@@ -67,7 +14,18 @@ public class PlayerStatusDrawer
         List<string> players = new List<string> { string.Empty, "Player0", "Player1", "Player2", "Player3" };
 
         List<int> balanceInts = dataCenter.Bank.Balances;
-        List<string> balanceStrings = (from balance in balanceInts select balance.ToString()).ToList();
+        List<string> balanceStrings = new List<string>();
+        for (int i = 0; i < 4; i++)
+        {
+            if (dataCenter.InGame.AreInGame[i])
+            {
+                balanceStrings.Add(balanceInts[i].ToString());
+            }
+            else
+            {
+                balanceStrings.Add("bankrupt");
+            }
+        }
         balanceStrings.Insert(0, "Balances : ");
 
         List<int> jailTurnCountsInts = dataCenter.Jail.TurnsInJailCounts;

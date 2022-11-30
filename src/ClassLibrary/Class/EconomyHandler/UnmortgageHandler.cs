@@ -1,10 +1,10 @@
-public class DemortgageHandler : IDemortgageHandlerData
+public class UnmortgageHandler : IUnmortgageHandlerData
 {
     private List<int> participantPlayerNumbers = new List<int>();
     private TileFilter tileFilter = new TileFilter();
     private List<IPropertyData>? backupPropertyDatas;
     private List<int>? backupBalances;
-    private Dictionary<int, List<IPropertyData>> demortgagiblePropertiesOfOwners = new Dictionary<int, List<IPropertyData>>();
+    private Dictionary<int, List<IPropertyData>> unmortgagiblePropertiesOfOwners = new Dictionary<int, List<IPropertyData>>();
     private bool? areAnyDemortgagible;
     private int? currentPlayerToDemortgage;
     private int playerChangedCount = 0;
@@ -13,10 +13,10 @@ public class DemortgageHandler : IDemortgageHandlerData
     public bool? AreAnyDemortgagible => this.areAnyDemortgagible;
     public List<int>? ParticipantPlayerNumbers => this.participantPlayerNumbers;
     public bool IsLastPlayer => (this.playerChangedCount == this.participantPlayerNumbers.Count() - 1? true : false);
-    public Dictionary<int, List<IPropertyData>> DeMortgagiblePropertiesOfOwners => this.demortgagiblePropertiesOfOwners;
+    public Dictionary<int, List<IPropertyData>> DeMortgagiblePropertiesOfOwners => this.unmortgagiblePropertiesOfOwners;
     public IPropertyData? PropertyToDeMortgage => this.propertyToDemortgage;
     public int? CurrentPlayerToDemortgage => this.currentPlayerToDemortgage;
-    public List<IPropertyData> DeMortgagiblePropertiesOfCurrentPlayer => this.demortgagiblePropertiesOfOwners[(int)this.currentPlayerToDemortgage!];
+    public List<IPropertyData> DeMortgagiblePropertiesOfCurrentPlayer => this.unmortgagiblePropertiesOfOwners[(int)this.currentPlayerToDemortgage!];
 
     public void SetDeMortgageHandler(List<int> balances, List<IPropertyData> properties)
     {
@@ -53,32 +53,32 @@ public class DemortgageHandler : IDemortgageHandlerData
     private void SetDeMortgagiblePropertiesOfOwners()
     {
         List<IPropertyData> buildableRealEstateDatas = this.CreateReallyDemortgagibleProperties();
-        this.demortgagiblePropertiesOfOwners.Clear();
+        this.unmortgagiblePropertiesOfOwners.Clear();
 
         foreach (var property in buildableRealEstateDatas)
         {
             int ownerNumber = (int)property.OwnerPlayerNumber!;
 
-            if (this.demortgagiblePropertiesOfOwners.Keys.Contains(ownerNumber) is false)
+            if (this.unmortgagiblePropertiesOfOwners.Keys.Contains(ownerNumber) is false)
             {
-                this.demortgagiblePropertiesOfOwners.Add(ownerNumber, new List<IPropertyData>());
+                this.unmortgagiblePropertiesOfOwners.Add(ownerNumber, new List<IPropertyData>());
             }
 
-            this.demortgagiblePropertiesOfOwners[ownerNumber].Add(property);
+            this.unmortgagiblePropertiesOfOwners[ownerNumber].Add(property);
         }
     }
 
     private void SetAreAnyDemortgagible()
     {
-        List<IPropertyData> demortgagibleProperties = this.backupPropertyDatas!
+        List<IPropertyData> unmortgagibleProperties = this.backupPropertyDatas!
                                                         .Where(property => property.IsMortgaged)
                                                         .ToList();
         
-        foreach (var property in demortgagibleProperties)
+        foreach (var property in unmortgagibleProperties)
         {
             int ownerNumber = (int)property.OwnerPlayerNumber!;
 
-            if (this.backupBalances![ownerNumber] >= 1.1 * property.Mortgage)
+            if (this.backupBalances![ownerNumber] >= property.Mortgage)
             {
                 this.areAnyDemortgagible = true;
                 return;
@@ -99,7 +99,7 @@ public class DemortgageHandler : IDemortgageHandlerData
             {
                 int ownerNumber = (int)propertyData.OwnerPlayerNumber!;
 
-                if (this.backupBalances![ownerNumber] >= 1.1 * propertyData.Mortgage)
+                if (this.backupBalances![ownerNumber] >= propertyData.Mortgage)
                 {
                     filteredPropertyDatas.Add(propertyData);
                 }
@@ -111,7 +111,7 @@ public class DemortgageHandler : IDemortgageHandlerData
 
     private void SetParticipantPlayerNumbers()
     {
-        this.participantPlayerNumbers = this.demortgagiblePropertiesOfOwners.Keys.ToList();
+        this.participantPlayerNumbers = this.unmortgagiblePropertiesOfOwners.Keys.ToList();
         this.participantPlayerNumbers.Sort();
     }
 }

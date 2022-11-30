@@ -169,7 +169,7 @@ public class HouseBuildEvent : Event
 
         if (this.lastAction == this.EndEvent)
         {
-            this.events!.DemortgageEvent.AddNextAction(this.events!.DemortgageEvent.StartEvent);
+            this.events!.UnmortgageEvent.AddNextAction(this.events!.UnmortgageEvent.StartEvent);
 
     	    return;
         }

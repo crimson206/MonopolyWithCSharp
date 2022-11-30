@@ -10,7 +10,7 @@ public class ConsoleInteractor
 
     public bool PromptBool()
     {
-        this.visualizer.UpdatePromptMessage("Press Y or N");
+        this.visualizer.SetFixedMessage1("Press Y or N");
         this.visualizer.VisualizeLargeMap();
 
         do
@@ -19,12 +19,12 @@ public class ConsoleInteractor
 
             if (this.readKey.Key == ConsoleKey.Y)
             {
-                this.visualizer.UpdatePromptMessage("Press any key to continue");
+                this.visualizer.SetFixedMessage1("Press any key to continue");
                 return true;
             }
             else if (this.readKey.Key == ConsoleKey.N)
             {
-                this.visualizer.UpdatePromptMessage("Press any key to continue");
+                this.visualizer.SetFixedMessage1("Press any key to continue");
                 return false;
             }
         }

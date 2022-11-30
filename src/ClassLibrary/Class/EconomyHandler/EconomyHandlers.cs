@@ -4,7 +4,7 @@ public class EconomyHandlers : IEconomyHandlers
     private TradeHandler tradeHandler = new TradeHandler();
     private HouseBuildHandler houseBuildHandler = new HouseBuildHandler();
     private SellItemHandler sellItemHandler = new SellItemHandler();
-    private DemortgageHandler demortgageHandler = new DemortgageHandler();
+    private UnmortgageHandler unmortgageHandler = new UnmortgageHandler();
 
     public AuctionHandler AuctionHandler => this.auctionHandler;
 
@@ -14,5 +14,5 @@ public class EconomyHandlers : IEconomyHandlers
 
     public SellItemHandler SellItemHandler => this.sellItemHandler;
 
-    public DemortgageHandler DemortgageHandler => this.demortgageHandler;
+    public UnmortgageHandler UnmortgageHandler => this.unmortgageHandler;
 }
