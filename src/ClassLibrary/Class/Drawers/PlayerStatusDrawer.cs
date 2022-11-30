@@ -29,7 +29,26 @@ public class PlayerStatusDrawer
         var strings = new List<string>();
 
         List<int> balancesInts = dataCenter.Bank.Balances;
-        string balances = string.Join(", ", balancesInts.ToArray());
+        List<bool> areInGame = dataCenter.InGame.AreInGame;
+
+        string balances = string.Empty;
+        for (int i = 0; i < areInGame.Count(); i++)
+        {
+            if (areInGame[i] is true)
+            {
+                balances += balancesInts[i].ToString();
+            }
+            else
+            {
+                balances += "bankrupt";
+            }
+
+            if (i < areInGame.Count()-1)
+            {
+                balances += ", ";
+            }
+        }
+        
 
         List<int> jailTurnCountsInts = dataCenter.Jail.TurnsInJailCounts;
         string jailTurnCounts = string.Join(", ", jailTurnCountsInts.ToArray());

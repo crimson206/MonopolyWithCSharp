@@ -19,7 +19,6 @@ public abstract class Event : IEvent
         this.lastAction = this.StartEvent;
     }
 
-    protected int CurrentPlayerNumber => this.dataCenter.EventFlow.CurrentPlayerNumber;
     public IEvent? LastEvent { get; set; }
 
     public void SetEvents(IEvents events)

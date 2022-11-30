@@ -64,7 +64,7 @@ public class SellItemEvent : Event
         {
             this.eventFlow.RecommendedString = string.Format("Player{0} decided to {1}",
                                                     this.playerToSellItems,
-                                                    decisionString);
+                                                    decisionString.ToLower());
         }
 
         this.CallNextEvent();
@@ -302,11 +302,10 @@ public class SellItemEvent : Event
         }
     }
 
-
     private List<int> CreateAuctionParticipantPlayerNumbers(int initialPrice)
     {
         List<int> participantNumbers = new List<int>();
-        int playerNumber = this.CurrentPlayerNumber;
+        int playerNumber = this.eventFlow.CurrentPlayerNumber;
 
         for (int i = 0; i < this.AreInGame.Count(); i++)
         {

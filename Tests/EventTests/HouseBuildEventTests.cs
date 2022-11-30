@@ -130,10 +130,10 @@ namespace Tests
             HouseBuildEvent houseBuildEvent = testSet.houseBuildEvent;
             testSet.SetTiles(this.CreateFreeRealEstates(3, "Red").Cast<ITile>().ToList());
             testSet.delegator.SetNextAction(houseBuildEvent.StartEvent);
-            testSet.mockedMainEvent.Setup(t => t.AddNextAction(It.IsAny<Action>()));
 
             testSet.delegator.RunAction();
-            testSet.mockedMainEvent.Verify(t => t.AddNextAction(It.IsAny<Action>()), Times.Once());
+            
+            Assert.AreEqual(testSet.delegator.NextActionName, "EndEvent");
         }
         [TestMethod]
         public void StartEvent_With_Two_Builders_And_They_Build_Houses()

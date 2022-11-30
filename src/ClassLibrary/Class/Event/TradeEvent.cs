@@ -77,6 +77,11 @@ public class TradeEvent : Event
                             this.CurrentTradeOwner,
                             this.CurrentTradeTarget);
         }
+        else
+        {
+            this.eventFlow.RecommendedString =
+                string.Format("Player{0} skipped this trade turn", this.CurrentTradeOwner);
+        }
 
         this.CallNextEvent();
     }
@@ -248,7 +253,7 @@ public class TradeEvent : Event
     private void SetParticipantPlayerNumbers()
     {
         this.participantPlayerNumbers!.Clear();
-        int playerNumber = this.CurrentPlayerNumber;
+        int playerNumber = this.eventFlow.CurrentPlayerNumber;
 
         for (int i = 0; i < this.AreInGame.Count(); i++)
         {

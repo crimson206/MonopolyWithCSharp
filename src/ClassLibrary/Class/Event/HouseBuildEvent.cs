@@ -26,7 +26,7 @@ public class HouseBuildEvent : Event
         this.houseBuildDecisionMaker = decisionMakers.HouseBuildDecisionMaker;
     }
 
-    private int CurrentHouseBuilder => (int)this.houseBuildHandler.CurrentHouseBuilder!;
+    private int? CurrentHouseBuilder => this.houseBuildHandler.CurrentHouseBuilder;
     private RealEstate RealEstateToBuildHouse => (RealEstate)this.houseBuildHandler.RealEstateToBuildHouse!;
 
     public override void StartEvent()
@@ -42,7 +42,9 @@ public class HouseBuildEvent : Event
 
         if (this.houseBuildHandlerData.AreAnyBuildable is true)
         {
-            this.eventFlow.RecommendedString = "Players can build houses";
+            this.eventFlow.RecommendedString = string.Format(
+                                                    "Player{0} can build a house",
+                                                    (int)this.houseBuildHandlerData.CurrentHouseBuilder!);
         }
 
         this.CallNextEvent();
@@ -66,7 +68,7 @@ public class HouseBuildEvent : Event
             this.eventFlow.RecommendedString = string.Format(
                 "Player{0} will build a house at {1}",
                 this.CurrentHouseBuilder,
-                this.RealEstateToBuildHouse
+                this.RealEstateToBuildHouse.Name
             );
         }
 
@@ -77,7 +79,7 @@ public class HouseBuildEvent : Event
     {
         this.propertyManager.BuildHouse(this.RealEstateToBuildHouse);
 
-        this.bankHandler.DecreaseBalance(this.CurrentHouseBuilder,
+        this.bankHandler.DecreaseBalance((int)this.CurrentHouseBuilder!,
                                         this.RealEstateToBuildHouse.BuildingCost);
 
         this.eventFlow.RecommendedString = "A house was built";
@@ -90,15 +92,18 @@ public class HouseBuildEvent : Event
         this.houseBuildHandler.ChangeHouseBuilder();
 
         this.eventFlow.RecommendedString = string.Format(
-            "Player{0} can build a house",
-            (int)this.houseBuildHandlerData.CurrentHouseBuilder!);
+                                                "Player{0} can build a house",
+                                                (int)this.houseBuildHandlerData.CurrentHouseBuilder!);
 
         this.CallNextEvent();
     }
 
     public override void EndEvent()
     {
-        this.eventFlow.RecommendedString = "This house build event is over";
+        if (this.CurrentHouseBuilder is not null)
+        {
+            this.eventFlow.RecommendedString = "This house build event is over";
+        }
 
         this.CallNextEvent();
     }
@@ -110,11 +115,11 @@ public class HouseBuildEvent : Event
         {
             if (this.houseBuildHandlerData.AreAnyBuildable is true)
             {
-                this.AddNextAction(this.ChangeBuilder);
+                this.AddNextAction(this.MakeCurrentBuilderDecision);
             }
             else
             {
-                this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndEvent);
+                this.AddNextAction(this.EndEvent);
             }
 
             return;
@@ -164,7 +169,7 @@ public class HouseBuildEvent : Event
 
         if (this.lastAction == this.EndEvent)
         {
-           this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndEvent);
+            this.events!.DemortgageEvent.AddNextAction(this.events!.DemortgageEvent.StartEvent);
 
     	    return;
         }
@@ -177,10 +182,5 @@ public class HouseBuildEvent : Event
             where tileData is IRealEstateData
             select tileData as IRealEstateData).ToList();
         return realEstateDatas;
-    }
-
-    private int GetBalanceOfCurrentPlayer()
-    {
-        return this.dataCenter.Bank.Balances[this.CurrentPlayerNumber];
     }
 }

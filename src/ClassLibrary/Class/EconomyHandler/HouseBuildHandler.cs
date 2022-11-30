@@ -12,7 +12,7 @@ public class HouseBuildHandler : IHouseBuildHandlerData
 
     public bool? AreAnyBuildable => this.areAnyBuildable;
     public List<int>? ParticipantPlayerNumbers => this.participantPlayerNumbers;
-    public bool IsLastBuilder => (this.builderChangedCount == this.participantPlayerNumbers.Count()? true : false);
+    public bool IsLastBuilder => (this.builderChangedCount == this.participantPlayerNumbers.Count() -1? true : false);
     public Dictionary<int, List<IRealEstateData>> HouseBuildableRealEstatesOfOwners => this.houseBuildableRealEstatesOfOwners;
     public IRealEstateData? RealEstateToBuildHouse => this.realEstateToBuildHouse;
     public int? CurrentHouseBuilder => this.currentHouseBuilder;
@@ -29,7 +29,7 @@ public class HouseBuildHandler : IHouseBuildHandlerData
         {
             this.SetHouseBuildableRealEstatesOfOwners();
             this.SetParticipantPlayerNumbers();
-            this.currentHouseBuilder = this.participantPlayerNumbers![0];
+            this.currentHouseBuilder = this.participantPlayerNumbers![this.builderChangedCount];
         }
     }
 
@@ -39,10 +39,10 @@ public class HouseBuildHandler : IHouseBuildHandlerData
         {
             throw new Exception();
         }
-
+        this.builderChangedCount++;
         this.realEstateToBuildHouse = null;
         this.currentHouseBuilder = this.participantPlayerNumbers![(int)this.builderChangedCount!];
-        this.builderChangedCount++;
+        
     }
 
     public void SetRealEstateToBuildHouse(int indexOfRealEstate)

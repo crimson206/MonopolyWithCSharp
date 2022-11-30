@@ -68,7 +68,8 @@ namespace Tests
                                     auctionEvent,
                                     new HouseBuildEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers),
                                     new TradeEvent(statusHandlers, tileManager, dataCenter, economyHandlers, delegator, decisionMakers),
-                                    new SellItemEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers));
+                                    new SellItemEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers),
+                                    new DemortgageEvent(delegator, dataCenter, statusHandlers, tileManager, economyHandlers, decisionMakers));
 
             mainEvent.SetEvents(events);
             auctionEvent.SetEvents(events);

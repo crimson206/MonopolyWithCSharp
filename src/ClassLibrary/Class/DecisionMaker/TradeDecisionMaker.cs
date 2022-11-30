@@ -16,169 +16,143 @@ public class TradeDecisionMaker : PropertyDecisionMaker, ITradeDecisionMaker
     IPropertyData? PropertyTradeOwnerToGive => this.dataCenter.TradeHandler.PropertyTradeOwnerToGive;
     int AdditionalMoney => this.dataCenter.TradeHandler.MoneyOwnerWillingToAddOnTrade;
     int BalanceOfTradeTarget => this.dataCenter.Bank.Balances[this.TradeTarget];
+    int BalanceOfTradeOwner => this.dataCenter.Bank.Balances[this.TradeOwner];
 
     public int? SelectTradeTarget()
     {
-        List<int> players = this.SelectableTargetNumbers;
-        List<double> maxValues = new List<double>();
-        List<int> indecesOfBestProperties = new List<int>();
+        IPropertyData? suitablePropertyToExchange = this.GetPropertyWhoseOnwerHasMoreThanOnePropertyToExchangeForMonopolyWithBestValue(this.TradeOwner, this.TradableProperties);
+        
 
-        foreach (var player in players)
+        if (suitablePropertyToExchange is null)
         {
-            if (this.TradableProperties[player].Count() != 0)
+            IPropertyData bestPropertyToGet = this.GetPropertyWithTheBestValueAmongAllTargetsProperties();
+            double value = this.CalculateValueConsideringAllWhenGettingAProperty(this.TradeOwner, bestPropertyToGet);
+            
+            if (value > 1)
             {
-                List<double> realPrices = (from property in this.TradableProperties[player]
-                                        select (double)property.Price).ToList();
-                List<double> values = this.propertyValueMeasurer
-                                        .GetValuesAfterConsideringPriceAndMonopolyWhenGettingAProperty(this.TradeOwner, this.TradableProperties[player]);
-
-                indecesOfBestProperties.Add(values.IndexOf(values.Max()));
-                maxValues.Add(values.Max());
+                return this.SelectableTargetNumbers.IndexOf((int)bestPropertyToGet.OwnerPlayerNumber!);
             }
-        }
-
-        if (maxValues.Max() > 1.5)
-        {
-            int indexOfTargetPlayer = maxValues.IndexOf(maxValues.Max());
-
-            return indexOfTargetPlayer;
+            else
+            {
+                return null;
+            }
         }
         else
         {
-            return null;
+            return this.SelectableTargetNumbers.IndexOf((int)suitablePropertyToExchange.OwnerPlayerNumber!);
         }
     }
 
     public int? SelectPropertyToGet()
     {
-        List<double> values = this.propertyValueMeasurer
-                                        .GetValuesAfterConsideringPriceAndMonopolyWhenGettingAProperty(this.TradeOwner, this.TradableProperties[this.TradeTarget]);
-        int index = values.IndexOf(values.Max());
+        IPropertyData propertyToGet;
+        IPropertyData? suitablePropertyToExchange = this.GetPropertyWhoseOnwerHasMoreThanOnePropertyToExchangeForMonopolyWithBestValue(this.TradeOwner, this.TradableProperties)!;
+        
+        if (suitablePropertyToExchange is not null)
+        {
+            propertyToGet = suitablePropertyToExchange;
+        }
+        else
+        {
+            IPropertyData bestPropertyToGet = this.GetPropertyWithTheBestValueAmongAllTargetsProperties();
+            propertyToGet = bestPropertyToGet;
+        }
+
+        int index = this.TradablePropertiesOfTarget.IndexOf(propertyToGet);
 
         return index;
     }
 
     public int? SelectPropertyToGive()
     {
-        if (this.TradablePropertiesOfOwner.Count() == 0)
+
+        IPropertyData? suitablePropertyToExchange = this.GetPropertyWhoseOnwerHasMoreThanOnePropertyToExchangeForMonopolyWithBestValue(this.TradeOwner, this.TradableProperties)!;
+        if (suitablePropertyToExchange is null)
         {
             return null;
         }
 
-        double valueOfPropertyToGet = this.propertyValueMeasurer
-                                    .ConsiderPriceAndMonopolyWhenGettingAProperty(this.TradeOwner, this.PropertyTradeOwnerToGet!);
+        List<IPropertyData> properties = this.FilterTradablePropertiesWhoseMembersOwnerIncluding(this.TradeOwner, this.TradeTarget, this.TradablePropertiesOfOwner);
+        List<IPropertyData> propertiesAfterFilteringOutMembersOfPropertyToGet = new List<IPropertyData>();
+        List<double> valuesOfProperties = new List<double>();
+        IPropertyData worstPropertyToKeep;
+        int index1OfWorstPropertyToKeep;
+        int index2OfWorstPropertyToKeep;
 
-        List<double> valuesOfPropertiesOfTradeOwner = new List<double>();
-        List<IPropertyData> propertiesInMind = new List<IPropertyData>();
-        List<double> valuesOfPropertiesInMind = new List<double>();
-
-        foreach (var property in TradablePropertiesOfOwner)
+        foreach (var property in properties)
         {
-            if (property.Group.Contains(this.PropertyTradeOwnerToGet) is false
-            && property.OwnerPlayerNumber == this.TradeTarget)
+            if (property.Group.Contains(this.PropertyTradeOwnerToGet) is false)
             {
-                propertiesInMind.Add(property);
-                valuesOfPropertiesInMind.Add(this.propertyValueMeasurer.ConsiderPriceAndMonopoly(this.TradeOwner, property));
+                propertiesAfterFilteringOutMembersOfPropertyToGet.Add(property);
             }
         }
 
-        if(propertiesInMind.Count() == 0)
-        {
-            return null;
-        }
 
-        if(valuesOfPropertiesInMind.Min() > valueOfPropertyToGet)
-        {
-            return null;
-        }
+        valuesOfProperties = this.propertyValueMeasurer.GetValuesAfterConsideringPriceAndMonopoly(this.TradeOwner, propertiesAfterFilteringOutMembersOfPropertyToGet);
 
+        index1OfWorstPropertyToKeep = valuesOfProperties.IndexOf(valuesOfProperties.Min());
 
-        int index1 = valuesOfPropertiesInMind.IndexOf(valuesOfPropertiesInMind.Min());
-        IPropertyData PropertyToGive = propertiesInMind[index1];
-        int index2 = this.TradablePropertiesOfOwner.IndexOf(PropertyToGive);
+        worstPropertyToKeep =  propertiesAfterFilteringOutMembersOfPropertyToGet[index1OfWorstPropertyToKeep];
 
-        return index2;
+        index2OfWorstPropertyToKeep = this.TradablePropertiesOfOwner.IndexOf(worstPropertyToKeep);
+
+        return index2OfWorstPropertyToKeep;
 
     }
 
     public int DecideAdditionalMoney()
     {
-        int virtualMoneyToAdd = 0;
-        int virtualMoneyToSubstract = 0;
-        double factor1;
-        double factor2;
-        double factor3;
-        int output = 0;
 
-        if (this.PropertyTradeOwnerToGet is not null)
+        if (this.PropertyTradeOwnerToGive is null)
         {
-            factor1 = this.propertyValueMeasurer.ConsiderPriceAndMonopolyWhenGettingAProperty(this.TradeOwner, this.PropertyTradeOwnerToGet);
-            virtualMoneyToAdd = (int)(this.PropertyTradeOwnerToGet.Price * factor1);
-        }
-        
-        if (this.PropertyTradeOwnerToGive is not null)
-        {
-            factor2 = this.propertyValueMeasurer.ConsiderPriceAndMonopoly(this.TradeOwner, this.PropertyTradeOwnerToGive);
-            virtualMoneyToSubstract = (int)(this.PropertyTradeOwnerToGive.Price * factor2);
-        }
-
-
-        if (virtualMoneyToAdd - virtualMoneyToSubstract > 0)
-        {
-            factor3 = this.ConsiderBalanceCostAndEnemiesRents(this.TradeOwner, virtualMoneyToAdd - virtualMoneyToSubstract);
-            output = (int)(factor3 * (virtualMoneyToAdd - virtualMoneyToSubstract));
+            IPropertyData bestPropertyToGet = this.GetPropertyWithTheBestValueAmongAllTargetsProperties();
+            double value = this.CalculateValueConsideringAllWhenGettingAProperty(this.TradeOwner, bestPropertyToGet);
+            int output = (int)(value * bestPropertyToGet.Price);
 
             return output;
         }
-        else if (virtualMoneyToSubstract - virtualMoneyToAdd > this.BalanceOfTradeTarget)
-        {
-            output = this.BalanceOfTradeTarget;
 
-            return output;
+        int priceGap = this.PropertyTradeOwnerToGet!.Price - this.PropertyTradeOwnerToGive!.Price;
+        int balanceOfTradeOwner = this.BalanceOfTradeOwner;
+        int balanceOfTradeTarget = this.BalanceOfTradeTarget;
+
+        if (priceGap > 0)
+        {
+            if (priceGap > balanceOfTradeOwner)
+            {
+                return balanceOfTradeOwner;
+            }
         }
         else
         {
-            return virtualMoneyToAdd - virtualMoneyToSubstract;
+            if (- priceGap > balanceOfTradeTarget)
+            {
+                return balanceOfTradeTarget;
+            }
         }
+
+        return priceGap;
     }
 
     public bool MakeTradeTargetDecisionOnTradeAgreement()
     {
-        double revaluedPriceOfPropertyTradeTargetToGive = 0;
-        double revaluedPriceOfPropertyTradeTargetToGet = 0;
-        double factor1;
-        double factor2;
-
+        double valueOfPropertyTradeTargetToGet = 0;
+        int virtualPriceOfPropertyToGet = 0;
+        double valueOfPropertyTradeTargetToGive = 0;
+        int virtualPriceOfPropertyToGive = 0;
         if (this.PropertyTradeOwnerToGet is not null)
         {
-            factor1 = this.propertyValueMeasurer.ConsiderPriceAndMonopoly(this.TradeTarget, this.PropertyTradeOwnerToGet);
-            revaluedPriceOfPropertyTradeTargetToGive = factor1 * this.PropertyTradeOwnerToGet.Price;
+            valueOfPropertyTradeTargetToGive = this.propertyValueMeasurer.ConsiderPriceAndMonopolyWhenGettingAProperty(this.TradeTarget, this.PropertyTradeOwnerToGive!);
+            virtualPriceOfPropertyToGive = (int)((double)this.PropertyTradeOwnerToGive!.Price * valueOfPropertyTradeTargetToGet);
         }
 
         if (this.PropertyTradeOwnerToGive is not null)
         {
-            factor2 = this.propertyValueMeasurer.ConsiderPriceAndMonopolyWhenGettingAProperty(this.TradeTarget, this.PropertyTradeOwnerToGive);
-            revaluedPriceOfPropertyTradeTargetToGet = factor2 * this.PropertyTradeOwnerToGive.Price;
+            valueOfPropertyTradeTargetToGet = this.propertyValueMeasurer.ConsiderPriceAndMonopoly(this.TradeTarget, this.PropertyTradeOwnerToGet!);
+            virtualPriceOfPropertyToGet = (int)((double)this.PropertyTradeOwnerToGet!.Price * valueOfPropertyTradeTargetToGive);
         }
 
-        int calculatedPropertiesValueGap = (int)(revaluedPriceOfPropertyTradeTargetToGet - revaluedPriceOfPropertyTradeTargetToGive);
-
-        if (calculatedPropertiesValueGap > 0)
-        {
-            double balanceCostAndEnemiesRentsConsidered = this.ConsiderBalanceCostAndEnemiesRents(this.TradeTarget, calculatedPropertiesValueGap);
-            int moneyTradeTargetWillingToPay = (int)(calculatedPropertiesValueGap * balanceCostAndEnemiesRentsConsidered);
-
-            if (moneyTradeTargetWillingToPay >= - this.AdditionalMoney)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        
-        if (calculatedPropertiesValueGap + this.AdditionalMoney > 0)
+        if (virtualPriceOfPropertyToGet + this.AdditionalMoney > virtualPriceOfPropertyToGive)
         {
             return true;
         }
@@ -186,7 +160,6 @@ public class TradeDecisionMaker : PropertyDecisionMaker, ITradeDecisionMaker
         {
             return false;
         }
-
     }
 
     private bool HasPropertyMemberWhoseOwnerIs(IPropertyData propertyData, int playerNumber)
@@ -194,5 +167,107 @@ public class TradeDecisionMaker : PropertyDecisionMaker, ITradeDecisionMaker
         bool ownerOfAnyIsThePlayer = propertyData.Group.Any(property => property.OwnerPlayerNumber == playerNumber);
         
         return ownerOfAnyIsThePlayer;
+    }
+
+    private List<IPropertyData> FilterTradablePropertiesWhoseMembersOwnerIncluding(int playerNumber1, int playerNumber2, List<IPropertyData> properties)
+    {
+        List<IPropertyData> filteredProperties = new List<IPropertyData>();
+
+        foreach (var property in properties)
+        {
+            if (property.Group.Any(property => property.OwnerPlayerNumber == playerNumber1 && property.IsTradable)
+            && property.Group.Any(property => property.OwnerPlayerNumber == playerNumber2 && property.IsTradable))
+            {
+                filteredProperties.Add(property);
+            }
+        }
+
+        return filteredProperties;
+    }
+
+    private IPropertyData ExtractPropertyWithBestValueToGetConsideringPriceAndMonopoly(int playerNumber, List<IPropertyData> properties)
+    {
+        List<double> values = this.propertyValueMeasurer.GetValuesAfterConsideringPriceAndMonopolyWhenGettingAProperty(playerNumber, properties);
+        int index = values.IndexOf(values.Max());
+
+        IPropertyData property = properties[index];
+
+        return property;
+    }
+
+    private IPropertyData? GetPropertyWhoseOnwerHasMoreThanOnePropertyToExchangeForMonopolyWithBestValue(int playerNumber, Dictionary<int, List<IPropertyData>> ownedTradableProperties)
+    {
+        IPropertyData? bestProperty = null;
+        List<IPropertyData> bestProperties = new List<IPropertyData>();
+        List<double> bestValues = new List<double>();
+        int index = 0;
+
+        foreach (var owner in ownedTradableProperties.Keys)
+        {
+            if (owner != playerNumber)
+            {
+                List<IPropertyData> properties = ownedTradableProperties[owner];
+                List<IPropertyData> propertiesSuitableToExchange = this.FilterTradablePropertiesWhoseMembersOwnerIncluding(playerNumber, owner, properties);
+                List<IPropertyData> propertiesFilteredOutCheaperOnesInTheSameGroup = this.FilterOutCheaperOnesIfMemberSizeIsLargerThanOne(propertiesSuitableToExchange);
+
+                if (propertiesFilteredOutCheaperOnesInTheSameGroup.Count() >= 2)
+                {
+                    IPropertyData propertyWithBestValue = this.ExtractPropertyWithBestValueToGetConsideringPriceAndMonopoly(playerNumber, propertiesFilteredOutCheaperOnesInTheSameGroup);
+                    bestProperties.Add(propertyWithBestValue);
+                }
+            }
+        }
+    
+        bestValues = this.propertyValueMeasurer.GetValuesAfterConsideringPriceAndMonopolyWhenGettingAProperty(playerNumber, bestProperties);
+        
+        if (bestValues.Count() != 0)
+        {
+            index = bestValues.IndexOf(bestValues.Max());
+
+            bestProperty = bestProperties[index];
+        }
+
+        return bestProperty;
+    }
+
+    private List<IPropertyData> FilterOutCheaperOnesIfMemberSizeIsLargerThanOne(List<IPropertyData> properties)
+    {
+        List<IPropertyData> copy = new List<IPropertyData>(properties);
+        List<IPropertyData> propertiesToRemove = new List<IPropertyData>();
+
+        int count = properties.Count();
+
+        foreach (var property1 in properties)
+        {
+            foreach (var property2 in properties)
+            {
+                if (property1 != property2 && property1.Group == property2.Group)
+                {
+                    IPropertyData propertyToRemove = (property1.Price < property2.Price? property1 : property2);
+
+                    if (copy.Contains(propertyToRemove))
+                    {
+                        copy.Remove(propertyToRemove);
+                    }
+                }
+
+            }
+        }
+
+        return copy;
+    }
+
+    private IPropertyData GetPropertyWithTheBestValueAmongAllTargetsProperties()
+    {
+        List<IPropertyData> bestProperties = new List<IPropertyData>();
+
+        foreach (var selectableTradeTarget in this.SelectableTargetNumbers)
+        {
+            IPropertyData bestPropertyOfOnePlayer = this.ExtractPropertyWithBestValueToGetConsideringPriceAndMonopoly(this.TradeOwner, this.TradableProperties[selectableTradeTarget]);
+            bestProperties.Add(bestPropertyOfOnePlayer);
+        }
+
+        IPropertyData bestProperty = this.ExtractPropertyWithBestValueToGetConsideringPriceAndMonopoly(this.TradeOwner, bestProperties);
+        return bestProperty;
     }
 }

@@ -55,7 +55,7 @@ public class AuctionEvent : Event
 
     private void DecideInitialPrice()
     {
-        this.eventFlow.RecommendedString = string.Format("The initial price is {0} ", this.InitialPrice);
+        this.eventFlow.RecommendedString = string.Format("The initial price is {0}$", this.InitialPrice);
 
         this.CallNextEvent();
     }
@@ -72,7 +72,7 @@ public class AuctionEvent : Event
 
         this.auctionHandler.SuggestNewPriceInTurn(suggestedPrice);
 
-        this.eventFlow.RecommendedString = string.Format("Player{0} suggested {1}", participantNumber, suggestedPrice);
+        this.eventFlow.RecommendedString = string.Format("Player{0} suggested {1}$", participantNumber, suggestedPrice);
 
         this.CallNextEvent();
     }
@@ -95,7 +95,7 @@ public class AuctionEvent : Event
 
         this.tileManager.PropertyManager.ChangeOwner(this.PropertyToAuction, winnerNumber);
 
-        this.eventFlow.RecommendedString = string.Format("Player {0} bought {1}", winnerNumber, this.PropertyToAuction.Name);
+        this.eventFlow.RecommendedString = string.Format("Player{0} bought {1}", winnerNumber, this.PropertyToAuction.Name);
         this.CallNextEvent();
     }
 
@@ -169,11 +169,5 @@ public class AuctionEvent : Event
             this.AddNextAction(this.EndEvent);
             return;
         }
-    }
-
-    private Property GetCurrentProperty()
-    {
-        int currentPosition = this.dataCenter.Board.PlayerPositions[this.CurrentPlayerNumber];
-        return (Property)this.tileManager.Tiles[currentPosition];
     }
 }

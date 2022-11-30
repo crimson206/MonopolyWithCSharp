@@ -14,15 +14,15 @@ public class JailFinePaymentDecisionMaker : DecisionMaker, IJailFinePaymentDecis
         
         bool decision = this.ConvertProbabilityToResult(probabilityToPay);
 
-        return true;
+        return decision;
     }
 
     private double ConsiderRentOfEnemies()
     {
         int jailFine = 60;
         double balancePerEnemiesTotalRent = this.decisionFactorCalculator.CalculateRestBalancePerEnemiesTotalRents(this.PlayerNumber, jailFine);
-    
-        return balancePerEnemiesTotalRent / 10;
+        double output = balancePerEnemiesTotalRent / 10;
+        return output;
     }
 
     private double ConsiderFreePropertiesCount()

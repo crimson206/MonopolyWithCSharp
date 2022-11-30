@@ -85,9 +85,10 @@ public class MapTilesFactory
 
     private List<List<ITile>> CreateDifferentTileGroups(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests, bool twoTaxes)
     {
+
         List<List<ITile>> differentTileGroups = new List<List<ITile>>();
         differentTileGroups.Add(this.CreateRealEstateGroups(numOfRealRestates, 80, 400, this.random));
-        differentTileGroups.Add(this.CreateRailRoads(numOfRailRoads, 200, 2));
+        differentTileGroups.Add(this.CreateRailRoads(numOfRailRoads, 200, (6 - numOfRailRoads)));
         differentTileGroups.Add(this.CreateUtilities(numOfUtilities, 100, 4, 6));
         differentTileGroups.Add(this.CreateEventTiles(numOfChances, numOfCommunityChests));
         if (twoTaxes)

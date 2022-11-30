@@ -7,6 +7,7 @@ public class DecisionMakers : IDecisionMakers
     private ITradeDecisionMaker tradeDecisionMaker;
     private IHouseBuildDecisionMaker houseBuildDecisionMaker;
     private ISellItemDecisionMaker sellItemDecisionMaker;
+    private IDemortgageDecisionMaker demortgageDecisionMaker;
 
     public DecisionMakers(IDataCenter dataCenter)
     {
@@ -17,6 +18,7 @@ public class DecisionMakers : IDecisionMakers
         this.jailFinePaymentDecisionMaker = new JailFinePaymentDecisionMaker(dataCenter);
         this.propertyPurchaseDecisionMaker = new PropertyPurchaseDecisionMaker(dataCenter);
         this.jailFreeCardUsageDecisionMaker = new JailFreeCardUsageDecisionMaker(dataCenter);
+        this.demortgageDecisionMaker = new DemortgageDecisionMaker(dataCenter);
     }
 
     public IAuctionDecisionMaker AuctionDecisionMaker {get => this.auctionDecisionMaker; set => this.auctionDecisionMaker = value; }
@@ -25,5 +27,6 @@ public class DecisionMakers : IDecisionMakers
     public IJailFinePaymentDecisionMaker JailFinePaymentDecisionMaker { get => this.jailFinePaymentDecisionMaker; set => this.jailFinePaymentDecisionMaker = value; }
     public ITradeDecisionMaker TradeDecisionMaker { get => this.tradeDecisionMaker; set => this.tradeDecisionMaker = value; }
     public IHouseBuildDecisionMaker HouseBuildDecisionMaker { get => this.houseBuildDecisionMaker; set => this.houseBuildDecisionMaker = value; }
-    public ISellItemDecisionMaker SellItemDecisionMaker { get=> this.sellItemDecisionMaker; }
+    public ISellItemDecisionMaker SellItemDecisionMaker { get => this.sellItemDecisionMaker; }
+    public IDemortgageDecisionMaker DemortgageDecisionMaker { get => this.demortgageDecisionMaker; }
 }

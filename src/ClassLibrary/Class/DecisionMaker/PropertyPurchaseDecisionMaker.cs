@@ -11,15 +11,14 @@ public class PropertyPurchaseDecisionMaker : PropertyDecisionMaker, IPropertyPur
     public bool MakeDecisionOnPurchase()
     {
         int price = this.CurrentProperty.Price;
-        double factor1 = this.propertyValueMeasurer.ConsiderPriceAndMonopolyWhenGettingAProperty(this.player, this.CurrentProperty);
-        double factor2 = this.ConsiderBalanceCostAndEnemiesRents(this.player, (int)(factor1 * price));
+        double value = this.CalculateValueConsideringAllWhenGettingAProperty(this.player, this.CurrentProperty);
 
-        double decisionFactor = factor1 * factor2;
-
-        bool output = (decisionFactor >= 1? true : false);
+        bool output = (value >= 1? true : false);
 
         return output;
     }
+
+
 
     private IPropertyData GetCurrentProperty()
     {

@@ -7,4 +7,5 @@ public interface IDecisionMakers
     public ITradeDecisionMaker TradeDecisionMaker{ get; }
     public IHouseBuildDecisionMaker HouseBuildDecisionMaker { get; }
     public ISellItemDecisionMaker SellItemDecisionMaker { get; }
+    public IDemortgageDecisionMaker DemortgageDecisionMaker { get; }
 }

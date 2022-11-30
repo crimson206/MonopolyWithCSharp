@@ -1,95 +1,95 @@
-public class DemortgageHandler : IDemortgageHandlerdata
+public class DemortgageHandler : IDemortgageHandlerData
 {
     private List<int> participantPlayerNumbers = new List<int>();
     private TileFilter tileFilter = new TileFilter();
     private List<IPropertyData>? backupPropertyDatas;
     private List<int>? backupBalances;
-    private Dictionary<int, List<IPropertyData>> deMortgagiblePropertiesOfOwners = new Dictionary<int, List<IPropertyData>>();
-    private bool? areAnyDeMortgagible;
-    private int? currentPlayerToDeMortgage;
-    private int playerChangedCount = -1;
-    private IPropertyData? propertyToDeMortgage;
+    private Dictionary<int, List<IPropertyData>> demortgagiblePropertiesOfOwners = new Dictionary<int, List<IPropertyData>>();
+    private bool? areAnyDemortgagible;
+    private int? currentPlayerToDemortgage;
+    private int playerChangedCount = 0;
+    private IPropertyData? propertyToDemortgage;
 
-    public bool? AreAnyBuildable => this.areAnyDeMortgagible;
+    public bool? AreAnyDemortgagible => this.areAnyDemortgagible;
     public List<int>? ParticipantPlayerNumbers => this.participantPlayerNumbers;
-    public bool IsLastBuilder => (this.playerChangedCount == this.participantPlayerNumbers.Count() - 1? true : false);
-    public Dictionary<int, List<IPropertyData>> DeMortgagiblePropertiesOfOwners => this.deMortgagiblePropertiesOfOwners;
-    public IPropertyData? PropertyToDeMortgage => this.propertyToDeMortgage;
-    public int? CurrentPlayerToDeMortgage => this.currentPlayerToDeMortgage;
-    public List<IPropertyData> DeMortgagiblePropertiesOfCurrentPlayer => this.deMortgagiblePropertiesOfOwners[(int)this.currentPlayerToDeMortgage!];
+    public bool IsLastPlayer => (this.playerChangedCount == this.participantPlayerNumbers.Count() - 1? true : false);
+    public Dictionary<int, List<IPropertyData>> DeMortgagiblePropertiesOfOwners => this.demortgagiblePropertiesOfOwners;
+    public IPropertyData? PropertyToDeMortgage => this.propertyToDemortgage;
+    public int? CurrentPlayerToDemortgage => this.currentPlayerToDemortgage;
+    public List<IPropertyData> DeMortgagiblePropertiesOfCurrentPlayer => this.demortgagiblePropertiesOfOwners[(int)this.currentPlayerToDemortgage!];
 
     public void SetDeMortgageHandler(List<int> balances, List<IPropertyData> properties)
     {
         this.playerChangedCount = 0;
-        this.propertyToDeMortgage = null;
+        this.propertyToDemortgage = null;
         this.backupPropertyDatas = properties;
         this.backupBalances = balances;
-        this.SetAreAnyDeMortgagible();
-        if (this.areAnyDeMortgagible is true)
+        this.SetAreAnyDemortgagible();
+        if (this.areAnyDemortgagible is true)
         {
             this.SetDeMortgagiblePropertiesOfOwners();
             this.SetParticipantPlayerNumbers();
-            this.currentPlayerToDeMortgage = this.participantPlayerNumbers![0];
+            this.currentPlayerToDemortgage = this.participantPlayerNumbers![this.playerChangedCount];
         }
     }
 
     public void ChangePlayerToDeMortgage()
     {
-        if (this.participantPlayerNumbers is null)
+        if (this.IsLastPlayer)
         {
             throw new Exception();
         }
 
-        this.propertyToDeMortgage = null;
+        this.propertyToDemortgage = null;
         this.playerChangedCount++;
-        this.currentPlayerToDeMortgage = this.participantPlayerNumbers![(int)this.playerChangedCount!];
+        this.currentPlayerToDemortgage = this.participantPlayerNumbers![(int)this.playerChangedCount!];
     }
 
     public void SetRealEstateToBuildHouse(int indexOfRealEstate)
     {
-        this.propertyToDeMortgage = DeMortgagiblePropertiesOfCurrentPlayer[indexOfRealEstate];
+        this.propertyToDemortgage = DeMortgagiblePropertiesOfCurrentPlayer[indexOfRealEstate];
     }
 
     private void SetDeMortgagiblePropertiesOfOwners()
     {
-        List<IPropertyData> buildableRealEstateDatas = this.CreateReallyBuildableRealEstateDatas();
-        this.deMortgagiblePropertiesOfOwners.Clear();
+        List<IPropertyData> buildableRealEstateDatas = this.CreateReallyDemortgagibleProperties();
+        this.demortgagiblePropertiesOfOwners.Clear();
 
-        foreach (var propertyData in buildableRealEstateDatas)
+        foreach (var property in buildableRealEstateDatas)
         {
-            int ownerNumber = (int)propertyData.OwnerPlayerNumber!;
+            int ownerNumber = (int)property.OwnerPlayerNumber!;
 
-            if (this.deMortgagiblePropertiesOfOwners.Keys.Contains(ownerNumber) is false)
+            if (this.demortgagiblePropertiesOfOwners.Keys.Contains(ownerNumber) is false)
             {
-                this.deMortgagiblePropertiesOfOwners.Add(ownerNumber, new List<IPropertyData>());
+                this.demortgagiblePropertiesOfOwners.Add(ownerNumber, new List<IPropertyData>());
             }
 
-            this.deMortgagiblePropertiesOfOwners[ownerNumber].Add(propertyData);
+            this.demortgagiblePropertiesOfOwners[ownerNumber].Add(property);
         }
     }
 
-    private void SetAreAnyDeMortgagible()
+    private void SetAreAnyDemortgagible()
     {
-        List<IPropertyData> buildableRealEstateDatas = this.backupPropertyDatas!
-                                                        .Where(realEstate => realEstate.IsMortgaged)
+        List<IPropertyData> demortgagibleProperties = this.backupPropertyDatas!
+                                                        .Where(property => property.IsMortgaged)
                                                         .ToList();
         
-        foreach (var realEstateData in buildableRealEstateDatas)
+        foreach (var property in demortgagibleProperties)
         {
-            int ownerNumber = (int)realEstateData.OwnerPlayerNumber!;
+            int ownerNumber = (int)property.OwnerPlayerNumber!;
 
-            if (this.backupBalances![ownerNumber] >= 1.1 * realEstateData.Mortgage)
+            if (this.backupBalances![ownerNumber] >= 1.1 * property.Mortgage)
             {
-                this.areAnyDeMortgagible = true;
+                this.areAnyDemortgagible = true;
                 return;
             }
         }
 
-        this.areAnyDeMortgagible = false;
+        this.areAnyDemortgagible = false;
         return;
     }
 
-    private List<IPropertyData> CreateReallyBuildableRealEstateDatas()
+    private List<IPropertyData> CreateReallyDemortgagibleProperties()
     {
         List<IPropertyData> filteredPropertyDatas = new List<IPropertyData>();
 
@@ -111,7 +111,7 @@ public class DemortgageHandler : IDemortgageHandlerdata
 
     private void SetParticipantPlayerNumbers()
     {
-        this.participantPlayerNumbers = this.deMortgagiblePropertiesOfOwners.Keys.ToList();
+        this.participantPlayerNumbers = this.demortgagiblePropertiesOfOwners.Keys.ToList();
         this.participantPlayerNumbers.Sort();
     }
 }
