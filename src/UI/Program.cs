@@ -18,7 +18,7 @@ internal class Program
         int termBetweenVisualizazions = 1;
         int termIndex = 0;
 
-        while (true)
+        while (game.Data.EventFlow.GameIsOver is false)
         {
             if (oldRecommendedString != game.Data.EventFlow.RecommendedString)
             {

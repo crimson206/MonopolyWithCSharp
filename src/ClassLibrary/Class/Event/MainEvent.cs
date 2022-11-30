@@ -607,6 +607,7 @@ public class MainEvent : Event, IMainEvent
 
     private void GameIsOver()
     {
+        this.eventFlow.GameIsOver = true;
         this.eventFlow.RecommendedString = "Game Is Over";
 
         this.CallNextEvent();

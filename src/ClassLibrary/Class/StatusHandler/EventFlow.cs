@@ -12,4 +12,6 @@ public class EventFlow : IEventFlowData
     public bool AskedManualBoolDecision { get; set; }
 
     public int Turn { get; set; }
+
+    public bool GameIsOver { get; set; } = false;
 }

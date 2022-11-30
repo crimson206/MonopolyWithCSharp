@@ -11,4 +11,6 @@ public interface IEventFlowData
     public bool AskedManualBoolDecision { get; }
 
     public int Turn { get; }
+
+    public bool GameIsOver { get; }
 }
