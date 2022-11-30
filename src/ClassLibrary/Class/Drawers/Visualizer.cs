@@ -35,8 +35,12 @@ public class Visualizer
             this.loggingDrawer = new LoggingDrawer(9);
             this.Setup(11, 11, 13, 4);
         }
+
+
+
     }
 
+    private List<bool> AreInGame => this.data.InGame.AreInGame;
     private List<int> PlayerPositions => this.data.Board.PlayerPositions;
     private string RecommendedString => this.data.EventFlow.RecommendedString;
 
@@ -61,17 +65,27 @@ public class Visualizer
         this.tileEdgeInfo = this.mapDrawer.CreateTileEdgeCollection(mapWidth, mapHeight, tileWidth, tileHeight);
         this.innerMapEdge = this.mapDrawer.CreateInnerSpaceIndicator(mapWidth, mapHeight, tileWidth, tileHeight);
         this.tileDrawer = new TileDrawer(tileEdgeInfo);
+
+        this.SetFixedMessage1("Press any key to contienue");
+        this.SetFixedMessage2("Press 1~9 to adjust the progress speed");
     }
 
-    public void UpdatePromptMessage(string promptMessage)
+    public void SetFixedMessage1(string fixedMessage)
     {
-        this.loggingDrawer.UpdatePromptMessage(promptMessage);
+        this.loggingDrawer.SetFixedMessage1(fixedMessage);
+    }
+
+    public void SetFixedMessage2(string fixedMessage)
+    {
+        this.loggingDrawer.SetFixedMessage2(fixedMessage);
     }
 
     public void UpdateLogging()
     {
         this.loggingDrawer.UpdateLogging(this.RecommendedString);
     }
+
+
 
     public void VisualizeLargeMap()
     {
@@ -85,13 +99,13 @@ public class Visualizer
         List<IRailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is IRailRoadData select tileData as IRailRoadData).ToList();
         List<IUtilityData> utilityDatas = (from tileData in tileDatas where tileData is IUtilityData select tileData as IUtilityData).ToList();        
 
-        this.tileDrawer!.DrawPlayers(this.PlayerPositions);
+        this.tileDrawer!.DrawPlayers(this.PlayerPositions, this.AreInGame);
         this.tileDrawer.DrawTiles(tileDatas);
 
         this.displayTiles.DisplayRealEstates(this.innerMapEdge[0][0] + 5, this.innerMapEdge[0][1] + 1, realEstateDatas, 2);
         this.displayTiles.DisplayRailRoad(this.innerMapEdge[0][0] + 65, this.innerMapEdge[0][1] + 1, railRoadDatas, 2);
         this.displayTiles.DisplayUtility(this.innerMapEdge[0][0] + 65, this.innerMapEdge[0][1] + 8, utilityDatas, 2);
-        this.playerStatusDrawer.DrawArrangedLines(this.innerMapEdge[0][0] + 65, this.innerMapEdge[0][1] + 13, this.data);
+        this.playerStatusDrawer.DrawPlayerStatusWithArrangedLines(this.innerMapEdge[0][0] + 65, this.innerMapEdge[0][1] + 13, this.data);
 
         this.loggingDrawer.DrawLogging(this.innerMapEdge[0][0] + 5, this.innerMapEdge[0][1] + 27);
 
@@ -114,21 +128,29 @@ public class Visualizer
         List<IRailRoadData> railRoadDatas = (from tileData in tileDatas where tileData is RailRoad select tileData as IRailRoadData).ToList();
         List<IUtilityData> utilityDatas = (from tileData in tileDatas where tileData is Utility select tileData as IUtilityData).ToList();
 
-        this.tileDrawer!.DrawPlayers(this.PlayerPositions);
+        this.tileDrawer!.DrawPlayers(this.PlayerPositions, this.AreInGame);
         this.tileDrawer.DrawTiles(tileDatas);
 
         this.displayTiles.DisplayRealEstates(this.innerMapEdge[0][0] + 3, this.innerMapEdge[0][1], realEstateDatas, 2);
         this.displayTiles.DisplayRailRoad(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1], railRoadDatas, 2);
         this.displayTiles.DisplayUtility(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 4, utilityDatas, 2);
-        this.playerStatusDrawer.DrawArrangedLines(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 8, this.data);
+        this.playerStatusDrawer.DrawPlayerStatusWithArrangedLines(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 8, this.data);
 
-        this.loggingDrawer.DrawLogging(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 14);
+        this.UpdateFixedMessage1();
+        this.loggingDrawer.DrawLogging(this.innerMapEdge[0][0] + 57, this.innerMapEdge[0][1] + 12);
 
         Console.CursorLeft = this.backUpCursorLeft;
         Console.CursorTop = this.backUpCursorTop;
         Console.WindowHeight = this.backupWindowHeight;
         Console.BufferHeight = this.backUpBufferHeight;
         Console.BufferWidth = this.backUpBufferWidth;
+    }
+
+    private void UpdateFixedMessage1()
+    {
+        string message = string.Format("Press any key to continue. Turn : {0}, Player : {1}", this.data.EventFlow.Turn, this.data.EventFlow.CurrentPlayerNumber);
+
+        this.SetFixedMessage1(message);
     }
 
     private List<IRealEstateData> FilterIRealEstateData(List<ITileData> tileDatas)

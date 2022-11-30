@@ -8,7 +8,7 @@ namespace Tests.TileManagersTests
         public void TestMethod1()
         {
             TileManager tileManager = new TileManager(isBoardSmall:false);
-            List<RealEstate> realEstates = tileManager.RealEstates;
+            List<IRealEstate> realEstates = tileManager.RealEstates;
             
             List<ITileData> tileDatas = tileManager.TileDatas;
             List<IRealEstateData> realEstateDatas = new List<IRealEstateData>();

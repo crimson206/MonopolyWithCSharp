@@ -1,62 +1,62 @@
 public class TileFilter
 {
-    public List<Property> FilterProperties(List<Tile> tiles)
+    public List<IProperty> FilterProperties(List<Tile> tiles)
     {
-        var query = from tile in tiles where tile is Property select tile as Property;
+        var query = from tile in tiles where tile is IProperty select tile as IProperty;
         return query.ToList();
     }
 
-    public List<RealEstate> FilterRealEstates(List<Tile> tiles)
+    public List<IRealEstate> FilterRealEstates(List<ITile> tiles)
     {
-        var query = from tile in tiles where tile is RealEstate select tile as RealEstate;
+        var query = from tile in tiles where tile is IRealEstate select tile as IRealEstate;
         return query.ToList();
     }
 
-    public List<RailRoad> FilterRailRoads(List<Tile> tiles)
+    public List<IRailRoad> FilterRailRoads(List<ITile> tiles)
     {
-        var query = from tile in tiles where tile is RailRoad select tile as RailRoad;
+        var query = from tile in tiles where tile is IRailRoad select tile as IRailRoad;
         return query.ToList();
     }
 
-    public List<Utility> FilterUtilities(List<Tile> tiles)
+    public List<IUtility> FilterUtilities(List<ITile> tiles)
     {
-        var query = from tile in tiles where tile is Utility select tile as Utility;
+        var query = from tile in tiles where tile is IUtility select tile as IUtility;
         return query.ToList();
     }
 
-    public Dictionary<string, List<RealEstate>> DivideRealEstatesByColor(List<RealEstate> realEstates)
+    public Dictionary<string, List<IRealEstate>> DivideRealEstatesByColor(List<IRealEstate> realEstates)
     {
-        Dictionary<string, List<RealEstate>> colorGroups = new Dictionary<string, List<RealEstate>>();
+        Dictionary<string, List<IRealEstate>> colorGroups = new Dictionary<string, List<IRealEstate>>();
         List<string> colors = this.ExtractColorsFromRealEstates(realEstates);
 
         foreach (var color in colors)
         {
-            List<RealEstate> colorGroup = this.FilterRealEstateByColor(color, realEstates);
+            List<IRealEstate> colorGroup = this.FilterRealEstateByColor(color, realEstates);
             colorGroups.Add(color, colorGroup);
         }
 
         return colorGroups;
     }
 
-    private List<string> ExtractColorsFromRealEstates(List<RealEstate> realEstates)
+    private List<string> ExtractColorsFromRealEstates(List<IRealEstate> realEstates)
     {
         var query = from realEstate in realEstates select realEstate.Color;
         List<string> colors = query.Distinct().ToList();
         return colors;
     }
 
-    private List<RealEstate> FilterRealEstateByColor(string color, List<RealEstate> realEstates)
+    private List<IRealEstate> FilterRealEstateByColor(string color, List<IRealEstate> realEstates)
     {
-        List<RealEstate> colorGroup = realEstates.Where(realEstate => realEstate.Color == color).ToList();
+        List<IRealEstate> colorGroup = realEstates.Where(realEstate => realEstate.Color == color).ToList();
         return colorGroup;
     }
 
-    private List<Property> UpriseToProperties(List<Property> property)
+    private List<IProperty> UpriseToProperties(List<IProperty> property)
     {
         return property;
     }
 
-    public Dictionary<int, List<IPropertyData>> ConvertPropertiesToOwnedPropertyDatasDictionary(List<int> ownerNumbers, List<Property> properties)
+    public Dictionary<int, List<IPropertyData>> ConvertPropertiesToOwnedPropertyDatasDictionary(List<int> ownerNumbers, List<IProperty> properties)
     {
         Dictionary<int, List<IPropertyData>> ownedProperties = new Dictionary<int, List<IPropertyData>>();
         

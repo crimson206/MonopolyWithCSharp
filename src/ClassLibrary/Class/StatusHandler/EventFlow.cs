@@ -10,4 +10,8 @@ public class EventFlow : IEventFlowData
     public int[] RollDiceResult { get; set; } = new int [2];
 
     public bool AskedManualBoolDecision { get; set; }
+
+    public int Turn { get; set; }
+
+    public bool GameIsOver { get; set; } = false;
 }

@@ -15,4 +15,6 @@ public interface IDataCenter
     public ITradeHandlerData TradeHandler { get; }
     public ITileData CurrentTileData { get; }
     public IHouseBuildHandlerData HouseBuildHandler { get; }
+    public ISellItemHandlerData SellItemHandler { get; }
+    public IUnmortgageHandlerData UnmortgageHandler { get; }
 }

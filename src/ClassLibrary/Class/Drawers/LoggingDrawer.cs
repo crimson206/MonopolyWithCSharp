@@ -1,7 +1,8 @@
 public class LoggingDrawer
 {
     private List<string> loggingMsgs = new List<string>();
-    private string promptMessage = "Press any key to continue";
+    private string fixedMessage1 = string.Empty;
+    private string fixedMessage2 = string.Empty;
     private int numLines;
 
     public LoggingDrawer(int numLines)
@@ -17,11 +18,14 @@ public class LoggingDrawer
     {
         Console.CursorLeft = cursorLeft;
         Console.CursorTop = cursorTop;
-        Console.Write(this.promptMessage);
+        Console.Write(this.fixedMessage1);
+        Console.CursorLeft = cursorLeft;
+        Console.CursorTop = cursorTop + 1;
+        Console.Write(this.fixedMessage2);
         for (int i = 0; i < this.numLines; i++)
         {
             Console.CursorLeft = cursorLeft;
-            Console.CursorTop = cursorTop + 2 + i;
+            Console.CursorTop = cursorTop + 3 + i;
             Console.Write(this.loggingMsgs[i]);
         }
     }
@@ -39,8 +43,12 @@ public class LoggingDrawer
         }
     }
 
-    public void UpdatePromptMessage(string promptMessage)
+    public void SetFixedMessage1(string message)
     {
-        this.promptMessage = promptMessage;
+        this.fixedMessage1 = message;
+    }
+    public void SetFixedMessage2(string message)
+    {
+        this.fixedMessage2 = message;
     }
 }

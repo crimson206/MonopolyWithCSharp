@@ -1,13 +1,13 @@
 public class RealEstateCalculator
 {
-    private RealEstate realEstate;
+    private IRealEstate realEstate;
     private int? ownerPlayerNumber => this.realEstate.OwnerPlayerNumber;
     private bool isMortgaged => this.realEstate.IsMortgaged;
     private int houseCount => this.realEstate.HouseCount;
-    private List<RealEstate> colorGroup => this.GetColorGroup();
-    public List<RealEstate>? ColorGroup;
+    private List<IRealEstate> colorGroup => this.GetColorGroup();
+    public List<IRealEstate>? ColorGroup;
 
-    public RealEstateCalculator(RealEstate realEstate)
+    public RealEstateCalculator(IRealEstate realEstate)
     {
         this.realEstate = realEstate;
     }
@@ -19,7 +19,7 @@ public class RealEstateCalculator
         {    
             if (colorGroup.All(realEstate => realEstate.OwnerPlayerNumber == this.ownerPlayerNumber))
             {
-                if (colorGroup.Any(realEstate => realEstate.HouseCount < this.houseCount) || houseCount > 5)
+                if (colorGroup.Any(realEstate => realEstate.HouseCount < this.houseCount) || houseCount >= 5)
                 {
                     return false;
                 }
@@ -57,7 +57,7 @@ public class RealEstateCalculator
 
     public bool IsMortgagible()
     {
-        if (this.ownerPlayerNumber is not null && this.houseCount != 0)
+        if (this.ownerPlayerNumber is not null && this.houseCount == 0 && this.isMortgaged is false)
         {
             return true;
         }
@@ -72,7 +72,7 @@ public class RealEstateCalculator
         this.realEstate.AcceptCalculator(this);
     }
 
-    private List<RealEstate> GetColorGroup()
+    private List<IRealEstate> GetColorGroup()
     {
         if (this.ColorGroup == null)
         {

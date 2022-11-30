@@ -3,7 +3,7 @@ public class Property : Tile, IPurchasable, IPropertyData
     protected int? ownerPlayerNumber = null;
     protected int price;
     protected List<int> rents = new List<int>();
-    protected List<Property> group = new List<Property>();
+    protected List<IProperty> group = new List<IProperty>();
     protected int mortgage;
     protected bool isMortgaged;
     public Property(string name, int price, List<int> rents, int mortgageValue) : base(name)
@@ -28,8 +28,10 @@ public class Property : Tile, IPurchasable, IPropertyData
     public bool IsMortgagible => this.CheckMortgagible();
 
     public bool IsTradable => this.CheckTradable();
+    public bool IsSoldableWithAuction => this.CheckSoldableWithAuction();
+    public List<IProperty> Group { get => this.group; }
 
-    public void SetOnwerPlayerNumber(int? playerNumber)
+    public void SetOwnerPlayerNumber(int? playerNumber)
     {
 
         this.ownerPlayerNumber = playerNumber;
@@ -41,7 +43,7 @@ public class Property : Tile, IPurchasable, IPropertyData
         this.isMortgaged = isMortgaged;
     }
 
-    public void SetGroup(List<Property> group)
+    public void SetGroup(List<IProperty> group)
     {
         this.group = group;
     }
@@ -87,6 +89,18 @@ public class Property : Tile, IPurchasable, IPropertyData
         else
         {
             return true;
+        }
+    }
+
+    protected virtual bool CheckSoldableWithAuction()
+    {
+        if (this.OwnerPlayerNumber is not null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }

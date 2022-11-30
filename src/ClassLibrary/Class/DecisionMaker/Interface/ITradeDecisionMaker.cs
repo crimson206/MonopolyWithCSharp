@@ -1,6 +1,6 @@
 public interface ITradeDecisionMaker
 {
-    public int SelectTradeTarget();
+    public int? SelectTradeTarget();
 
     public int? SelectPropertyToGet();
 

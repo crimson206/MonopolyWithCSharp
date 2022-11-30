@@ -55,7 +55,7 @@ namespace Tests
             this.mockedDecisionMakers.Setup(t => t.HouseBuildDecisionMaker).Returns(this.mockedHouseBuildDecisionMaker.Object);
         }
 
-        public void SetTiles(List<Tile> tiles)
+        public void SetTiles(List<ITile> tiles)
         {
             this.mockedDataCenter.Setup(t => t.TileDatas).Returns(tiles.Cast<ITileData>().ToList());
             this.mockedTileManager.Setup(t => t.Tiles).Returns(tiles);
@@ -66,9 +66,9 @@ namespace Tests
     [TestClass]
     public class HouseBuildEventTests
     {
-        public List<RealEstate> CreateFreeRealEstates(int realEstateCount, string color)
+        public List<IRealEstate> CreateFreeRealEstates(int realEstateCount, string color)
         {
-            List<RealEstate> realEstates  = new List<RealEstate>();
+            List<IRealEstate> realEstates  = new List<IRealEstate>();
 
             for (int i = 0; i < realEstateCount; i++)
             {
@@ -78,25 +78,25 @@ namespace Tests
 
             foreach (var realEstate in realEstates)
             {
-                realEstate.SetGroup(realEstates.Cast<Property>().ToList());
+                realEstate.SetGroup(realEstates.Cast<IProperty>().ToList());
             }
 
             return realEstates;
         }
 
-        public void SetOwnerNumbers(List<RealEstate> realEstates, int playerNumber)
+        public void SetOwnerNumbers(List<IRealEstate> realEstates, int playerNumber)
         {
             foreach (var realEstate in realEstates)
             {
-                realEstate.SetOnwerPlayerNumber(playerNumber);
+                realEstate.SetOwnerPlayerNumber(playerNumber);
             }
         }
 
-        public List<RealEstate> CreateRealEstatesWithTwoOwners()
+        public List<IRealEstate> CreateRealEstatesWithTwoOwners()
         {
-            List<RealEstate> freeRealEstates = this.CreateFreeRealEstates(realEstateCount:3, "Red");
-            List<RealEstate> freeRealEstates2= this.CreateFreeRealEstates(realEstateCount:3, "Blue");
-            List<RealEstate> realEstatesSum = freeRealEstates.Concat(freeRealEstates2).ToList();
+            List<IRealEstate> freeRealEstates = this.CreateFreeRealEstates(realEstateCount:3, "Red");
+            List<IRealEstate> freeRealEstates2= this.CreateFreeRealEstates(realEstateCount:3, "Blue");
+            List<IRealEstate> realEstatesSum = freeRealEstates.Concat(freeRealEstates2).ToList();
             this.SetOwnerNumbers(freeRealEstates, 1);
             this.SetOwnerNumbers(freeRealEstates2, 2);
 
@@ -114,7 +114,7 @@ namespace Tests
         {
             HouseBuildEventTestSet testSet = new HouseBuildEventTestSet();
             HouseBuildEvent houseBuildEvent = testSet.houseBuildEvent;
-            testSet.SetTiles(this.CreateRealEstatesWithTwoOwners().Cast<Tile>().ToList());
+            testSet.SetTiles(this.CreateRealEstatesWithTwoOwners().Cast<ITile>().ToList());
             testSet.mockedHouseBuildDecisionMaker.Setup(t => t.ChooseRealEstateToBuildHouse()).Returns(0);
             testSet.delegator.SetNextAction(houseBuildEvent.StartEvent);
             testSet.delegator.RunAction();
@@ -128,19 +128,19 @@ namespace Tests
         {
             HouseBuildEventTestSet testSet = new HouseBuildEventTestSet();
             HouseBuildEvent houseBuildEvent = testSet.houseBuildEvent;
-            testSet.SetTiles(this.CreateFreeRealEstates(3, "Red").Cast<Tile>().ToList());
+            testSet.SetTiles(this.CreateFreeRealEstates(3, "Red").Cast<ITile>().ToList());
             testSet.delegator.SetNextAction(houseBuildEvent.StartEvent);
-            testSet.mockedMainEvent.Setup(t => t.AddNextAction(It.IsAny<Action>()));
 
             testSet.delegator.RunAction();
-            testSet.mockedMainEvent.Verify(t => t.AddNextAction(It.IsAny<Action>()), Times.Once());
+            
+            Assert.AreEqual(testSet.delegator.NextActionName, "EndEvent");
         }
         [TestMethod]
         public void StartEvent_With_Two_Builders_And_They_Build_Houses()
         {
             HouseBuildEventTestSet testSet = new HouseBuildEventTestSet();
             HouseBuildEvent houseBuildEvent = testSet.houseBuildEvent;
-            testSet.SetTiles(this.CreateRealEstatesWithTwoOwners().Cast<Tile>().ToList());
+            testSet.SetTiles(this.CreateRealEstatesWithTwoOwners().Cast<ITile>().ToList());
             testSet.mockedHouseBuildDecisionMaker.Setup(t => t.ChooseRealEstateToBuildHouse()).Returns(0);
             testSet.delegator.SetNextAction(houseBuildEvent.StartEvent);
             List<string> expectedNextActionNames = new List<string>{
@@ -163,7 +163,7 @@ namespace Tests
         {
             HouseBuildEventTestSet testSet = new HouseBuildEventTestSet();
             HouseBuildEvent houseBuildEvent = testSet.houseBuildEvent;
-            testSet.SetTiles(this.CreateRealEstatesWithTwoOwners().Cast<Tile>().ToList());
+            testSet.SetTiles(this.CreateRealEstatesWithTwoOwners().Cast<ITile>().ToList());
             testSet.mockedHouseBuildDecisionMaker.Setup(t => t.ChooseRealEstateToBuildHouse()).Returns(value:null);
             testSet.delegator.SetNextAction(houseBuildEvent.StartEvent);
             List<string> expectedNextActionNames = new List<string>{
@@ -185,12 +185,12 @@ namespace Tests
             HouseBuildEventTestSet testSet = this.CreateTestSetWhereNextActionIsBuildHouse();
 
             testSet.mockedBankHandler.Setup(t => t.DecreaseBalance(It.IsAny<int>(), It.IsAny<int>()));
-            testSet.mockedPropertyManager.Setup(t => t.BuildHouse(It.IsAny<RealEstate>()));
+            testSet.mockedPropertyManager.Setup(t => t.BuildHouse(It.IsAny<IRealEstate>()));
 
             testSet.delegator.RunAction();
             Assert.AreEqual(testSet.delegator.LastActionName, "BuildHouse");
             testSet.mockedBankHandler.Verify(t => t.DecreaseBalance(It.IsAny<int>(), It.IsAny<int>()), Times.Once());
-            testSet.mockedPropertyManager.Verify(t => t.BuildHouse(It.IsAny<RealEstate>()), Times.Once());
+            testSet.mockedPropertyManager.Verify(t => t.BuildHouse(It.IsAny<IRealEstate>()), Times.Once());
         }
     }
 }

@@ -12,11 +12,11 @@ namespace Tests
         [TestMethod]
         public void UtilityTestsAll()
         {
-            Utility utility1 = new Utility("utility1", 100, new List<int> {20, 40}, 50);
-            Utility utility2 = new Utility("utility2", 100, new List<int> {20, 40}, 50);
+            IUtility utility1 = new Utility("utility1", 100, new List<int> {20, 40}, 50);
+            IUtility utility2 = new Utility("utility2", 100, new List<int> {20, 40}, 50);
 
             /// Make a group
-            List<Property> utilities = new List<Property> {utility1, utility2};
+            List<IProperty> utilities = new List<IProperty> {utility1, utility2};
             utility1.SetGroup(utilities);
             utility2.SetGroup(utilities);
 
@@ -24,12 +24,12 @@ namespace Tests
             Assert.AreEqual(utility1.CurrentRent, 20);
 
             /// buy a railroad, rent is still the same
-            utility1.SetOnwerPlayerNumber(1);
+            utility1.SetOwnerPlayerNumber(1);
             Assert.AreEqual(utility1.CurrentRent, 20);
             Assert.AreEqual(utility2.CurrentRent, 20);
 
             /// same owner increases the rent
-            utility2.SetOnwerPlayerNumber(1);
+            utility2.SetOwnerPlayerNumber(1);
             Assert.AreEqual(utility1.CurrentRent, 40);
             Assert.AreEqual(utility2.CurrentRent, 40);
         }

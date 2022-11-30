@@ -8,7 +8,6 @@
 /// </summary>
 public class Game
 {
-
     private Delegator delegator;
     private TileManager tileManager;
     private StatusHandlers statusHandlers = new StatusHandlers();
@@ -16,6 +15,8 @@ public class Game
     private MainEvent mainEvent;
     private AuctionEvent auctionEvent;
     private HouseBuildEvent houseBuildEvent;
+    private SellItemEvent sellItemEvent;
+    private UnmortgageEvent unmortgageEvent;
     private TradeEvent tradeEvent;
     private EconomyHandlers economyHandlers;
     private DecisionMakers decisionMakers;
@@ -41,9 +42,11 @@ public class Game
         this.houseBuildEvent = new HouseBuildEvent(this.delegator, this.dataCenter, this.statusHandlers, this.tileManager, this.economyHandlers, this.decisionMakers);
         this.tradeEvent = new TradeEvent(this.statusHandlers, this.tileManager, this.dataCenter, this.economyHandlers, this.delegator, this.decisionMakers);
         this.mainEvent = new MainEvent(this.statusHandlers, this.tileManager, this.decisionMakers, this.dataCenter, this.delegator, new Dice(), new Random());
+        this.sellItemEvent = new SellItemEvent(this.delegator, this.dataCenter, this.statusHandlers, this.tileManager, this.economyHandlers, this.decisionMakers);
+        this.unmortgageEvent = new UnmortgageEvent(this.delegator, this.dataCenter, this.statusHandlers, this.tileManager, this.economyHandlers, this.decisionMakers);
 
         /// set events
-        Events events = new Events(this.mainEvent, this.auctionEvent, this.houseBuildEvent, this.tradeEvent);
+        Events events = new Events(this.mainEvent, this.auctionEvent, this.houseBuildEvent, this.tradeEvent, this.sellItemEvent, this.unmortgageEvent);
     }
 
     public DataCenter Data => this.dataCenter;
@@ -58,4 +61,5 @@ public class Game
     {
         return new DataCenter(this.statusHandlers, this.economyHandlers, this.tileManager);
     }
+
 }

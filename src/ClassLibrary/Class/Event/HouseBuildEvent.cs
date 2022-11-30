@@ -1,6 +1,5 @@
 public class HouseBuildEvent : Event
 {
-    private EventFlow eventFlow;
     private List<int> participantPlayerNumbers = new List<int>();
     private HouseBuildHandler houseBuildHandler;
     private IHouseBuildHandlerData houseBuildHandlerData;
@@ -17,7 +16,8 @@ public class HouseBuildEvent : Event
         :base
         (delegator,
         dataCenter,
-        tileManager)
+        tileManager,
+        statusHandlers)
     {
         this.eventFlow = statusHandlers.EventFlow;
         this.houseBuildHandler = economyHandlers.HouseBuildHandler;
@@ -26,7 +26,7 @@ public class HouseBuildEvent : Event
         this.houseBuildDecisionMaker = decisionMakers.HouseBuildDecisionMaker;
     }
 
-    private int CurrentHouseBuilder => (int)this.houseBuildHandler.CurrentHouseBuilder!;
+    private int? CurrentHouseBuilder => this.houseBuildHandler.CurrentHouseBuilder;
     private RealEstate RealEstateToBuildHouse => (RealEstate)this.houseBuildHandler.RealEstateToBuildHouse!;
 
     public override void StartEvent()
@@ -43,9 +43,8 @@ public class HouseBuildEvent : Event
         if (this.houseBuildHandlerData.AreAnyBuildable is true)
         {
             this.eventFlow.RecommendedString = string.Format(
-                "Player{0} can build houses",
-                (int)this.houseBuildHandlerData.CurrentHouseBuilder!
-            );
+                                                    "Player{0} can build a house",
+                                                    (int)this.houseBuildHandlerData.CurrentHouseBuilder!);
         }
 
         this.CallNextEvent();
@@ -64,13 +63,12 @@ public class HouseBuildEvent : Event
         }
         else
         {
-            IRealEstateData realEstateToBuildHouse = this.houseBuildHandler.HouseBuildableRealEstatesOfCurrentBuilder[(int)decision];
-            this.houseBuildHandler.SetRealEstateToBuildHouse(realEstateToBuildHouse);
+            this.houseBuildHandler.SetRealEstateToBuildHouse((int)decision);
 
             this.eventFlow.RecommendedString = string.Format(
                 "Player{0} will build a house at {1}",
                 this.CurrentHouseBuilder,
-                this.RealEstateToBuildHouse
+                this.RealEstateToBuildHouse.Name
             );
         }
 
@@ -81,7 +79,7 @@ public class HouseBuildEvent : Event
     {
         this.propertyManager.BuildHouse(this.RealEstateToBuildHouse);
 
-        this.bankHandler.DecreaseBalance(this.CurrentHouseBuilder,
+        this.bankHandler.DecreaseBalance((int)this.CurrentHouseBuilder!,
                                         this.RealEstateToBuildHouse.BuildingCost);
 
         this.eventFlow.RecommendedString = "A house was built";
@@ -93,20 +91,19 @@ public class HouseBuildEvent : Event
     {
         this.houseBuildHandler.ChangeHouseBuilder();
 
-        if (this.houseBuildHandlerData.AreAnyBuildable is true)
-        {
-            this.eventFlow.RecommendedString = string.Format(
-                "Player{0} can build houses",
-                (int)this.houseBuildHandlerData.CurrentHouseBuilder!
-            );
-        }
+        this.eventFlow.RecommendedString = string.Format(
+                                                "Player{0} can build a house",
+                                                (int)this.houseBuildHandlerData.CurrentHouseBuilder!);
 
         this.CallNextEvent();
     }
 
-    private void EndEvent()
+    public override void EndEvent()
     {
-        this.eventFlow.RecommendedString = "This house build event is over";
+        if (this.CurrentHouseBuilder is not null)
+        {
+            this.eventFlow.RecommendedString = "This house build event is over";
+        }
 
         this.CallNextEvent();
     }
@@ -114,7 +111,7 @@ public class HouseBuildEvent : Event
 
     protected override void CallNextEvent()
     {
-        if (this.lastEvent == this.StartEvent)
+        if (this.lastAction == this.StartEvent)
         {
             if (this.houseBuildHandlerData.AreAnyBuildable is true)
             {
@@ -122,13 +119,13 @@ public class HouseBuildEvent : Event
             }
             else
             {
-                this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndTurn);
+                this.AddNextAction(this.EndEvent);
             }
 
             return;
         }
 
-        if (this.lastEvent == this.MakeCurrentBuilderDecision)
+        if (this.lastAction == this.MakeCurrentBuilderDecision)
         {
             if (this.houseBuildHandlerData.RealEstateToBuildHouse is not null)
             {
@@ -149,7 +146,7 @@ public class HouseBuildEvent : Event
             return;
         }
 
-        if (this.lastEvent == this.BuildHouse)
+        if (this.lastAction == this.BuildHouse)
         {
             if (this.houseBuildHandlerData.IsLastBuilder is true)
             {
@@ -163,18 +160,18 @@ public class HouseBuildEvent : Event
             return;
         }
 
-        if (this.lastEvent == this.ChangeBuilder)
+        if (this.lastAction == this.ChangeBuilder)
         {
             this.AddNextAction(this.MakeCurrentBuilderDecision);
 
             return;
         }
 
-        if (this.lastEvent == this.EndEvent)
+        if (this.lastAction == this.EndEvent)
         {
-            this.events!.MainEvent.AddNextAction(this.events!.MainEvent.EndTurn);
+            this.events!.UnmortgageEvent.AddNextAction(this.events!.UnmortgageEvent.StartEvent);
 
-            return;
+    	    return;
         }
     }
 

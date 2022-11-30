@@ -15,4 +15,6 @@ public interface IPropertyData : ITileData
     public bool IsMortgagible { get; }
 
     public bool IsTradable { get; }
+    public bool IsSoldableWithAuction { get; }
+    public List<IProperty> Group { get; }
 }

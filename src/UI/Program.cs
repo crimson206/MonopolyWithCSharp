@@ -15,17 +15,34 @@ internal class Program
 
         ConsoleInteractor prompter = new ConsoleInteractor(visualizer);
         string oldRecommendedString = string.Empty;
+        int termBetweenVisualizazions = 1;
+        int termIndex = 0;
 
         while (true)
         {
             if (oldRecommendedString != game.Data.EventFlow.RecommendedString)
             {
+                termIndex++;
                 visualizer.UpdateLogging();
+                visualizer.SetFixedMessage2(string.Format("Press 1~9 to adjust the progress speed : {0}", termBetweenVisualizazions));
                 oldRecommendedString = game.Data.EventFlow.RecommendedString;
-                Console.ReadKey();
-            }
 
-            visualizer.Visualize();
+                if (termIndex % termBetweenVisualizazions == 0)
+                {
+
+                    visualizer.Visualize();
+                    var readKey = Console.ReadKey();
+
+                    if ( char.IsDigit(readKey.KeyChar))
+                    {
+                        int newTerm = int.Parse(readKey.KeyChar.ToString()!);
+                        if (newTerm != 0)
+                        {
+                            termBetweenVisualizazions = newTerm;
+                        }
+                    }
+                }
+            }
 
             game.Run();
         }

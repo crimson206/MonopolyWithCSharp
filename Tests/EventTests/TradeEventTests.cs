@@ -10,9 +10,9 @@ namespace Tests
     public class TradeEventTestSettingWithMockedClasses
     {
         public TradeEvent? tradeEvent;
-        public List<Tile> tiles = new List<Tile>();
+        public List<ITile> tiles = new List<ITile>();
         public List<ITileData> tileDatas = new List<ITileData>();
-        public List<Property> properties = new List<Property>();
+        public List<IProperty> properties = new List<IProperty>();
         public PropertyManager propertyManager = new PropertyManager();
         public BankHandler bankHandler = new BankHandler();
         public EventFlow eventFlow = new EventFlow();
@@ -56,7 +56,7 @@ namespace Tests
                 this.tiles.Add(new Utility(name, 100, new List<int> {4, 10}, 50));
             }
 
-            this.properties = (from tile in this.tiles select tile as Property).ToList();
+            this.properties = (from tile in this.tiles select tile as IProperty).ToList();
             this.tileDatas = (from tile in this.tiles select tile as ITileData).ToList();
         }
 
@@ -109,20 +109,20 @@ namespace Tests
     public class TradeEventTests
     {
 
-        public void MakeAllFourPlayerHaveProperties(List<Property> properties)
+        public void MakeAllFourPlayerHaveProperties(List<IProperty> properties)
         {
             List<int> ownerNumbers = new List<int> {0, 0, 1, 1, 2, 2, 3, 3};
 
             for (int i = 0; i < 8; i++)
             {
-                properties[i].SetOnwerPlayerNumber(ownerNumbers[i]);
+                properties[i].SetOwnerPlayerNumber(ownerNumbers[i]);
             }
         }
 
         [TestMethod]
         public void RoughTestForWholeProcess()
         {
-            List<Tile> tiles = new List<Tile>();
+            List<ITile> tiles = new List<ITile>();
 
             for (int i = 0; i < 4; i++)
             {
@@ -142,9 +142,9 @@ namespace Tests
                 tiles.Add(new Utility(name, 100, new List<int> {4, 10}, 50));
             }
 
-            List<Property> properties = new List<Property>();
+            List<IProperty> properties = new List<IProperty>();
             List<ITileData> tileDatas = new List<ITileData>();
-            properties = (from tile in tiles select tile as Property).ToList();
+            properties = (from tile in tiles select tile as IProperty).ToList();
             tileDatas = (from tile in tiles select tile as ITileData).ToList();
 
             PropertyManager propertyManager = new PropertyManager();
@@ -250,19 +250,23 @@ namespace Tests
             delegator.SetNextAction(tradeEvent.StartEvent);
             Assert.AreEqual(delegator.NextActionName, "StartEvent");
 
-            delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "SelectTradeTarget");
-            delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "SuggestTradeOwnerTradeCondition");
-            delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "MakeTradeTargetDecisionOnTradeAgreement");
-            delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "DoTrade");
-            delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "ChangeTradeOwner");
-            delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "SelectTradeTarget");
-            delegator.RunAction();
+            List<string> expectedNextActionNames = new List<string>{
+                "SelectTradeTarget",
+                "SelectTradeOwnerPropertyToGet",
+                "SelectTradeOwnerPropertyToGive",
+                "SetTradeOwnerAddicionalMoney",
+                "MakeTradeTargetDecisionOnTradeAgreement",
+                "DoTrade",
+                "ChangeTradeOwner",
+                "SelectTradeTarget"
+            };
+
+            for (int i = 0; i < 8; i++)
+            {
+                testSet.delegator.RunAction();
+                Assert.AreEqual(testSet.delegator.NextActionName, expectedNextActionNames[i]);
+            }
+
         }
         [TestMethod]
         public void StartTrade_With_TradableProperties_And_Follow_TradeEventFlow_For_OneCy()
@@ -270,7 +274,7 @@ namespace Tests
             TradeEventTestSettingWithMockedClasses testSet = new TradeEventTestSettingWithMockedClasses();
             Delegator delegator = testSet.delegator;
 
-            testSet.properties[0].SetOnwerPlayerNumber(0);
+            testSet.properties[0].SetOwnerPlayerNumber(0);
 
             testSet.mockedTradeDecisionMaker.Setup(t => t.SelectTradeTarget())
                                             .Returns(0);

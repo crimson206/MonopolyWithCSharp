@@ -1,4 +1,4 @@
-public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
+public class TradeHandler : ITradeHandler
 {
     private List<int> participantNumbers = new List<int>();
     private int tradeCount = 0;
@@ -11,7 +11,7 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
     private Dictionary<int, List<IPropertyData>>? ownedTradablePropertyDatas;
     private bool? isTradeAgreed;
     private bool isLastParticipant = false;
-    private List<Property> backUpProperties = new List<Property>();
+    private List<IProperty> backUpProperties = new List<IProperty>();
 
     public List<IPropertyData> TradablePropertiesOfTradeOwner =>
         this.CreateTradablePropertiesOfTradeOwner();
@@ -37,9 +37,11 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
 
     public bool IsThereTradableProperties => this.CheckIfThereIsAnyTradableProperty();
 
+    public Dictionary<int, List<IPropertyData>>? OwnedTradablePropertyDatas => this.ownedTradablePropertyDatas;
+
     public void SetTrade(
         List<int> participantNumbers,
-        List<Property> properties)
+        List<IProperty> properties)
     {
         this.ResetInitialTradeConditions();
         this.ResetTradeConditionMeanwhile();
@@ -51,25 +53,23 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
     }
 
     public void SetTradeTarget(
-        int tradeTarget)
+        int indexOfTradeTarget)
     {
-        if (this.SelectableTargetNumbers.Contains(tradeTarget))
-        {
-            this.currentTradeTarget = tradeTarget;
-        }
-        else
-        {
-            throw new Exception();
-        }
+        this.currentTradeTarget = this.SelectableTargetNumbers[indexOfTradeTarget];
     }
 
-    public void SuggestTradeConditions(
-        IPropertyData? propertyOwnerWantsFromTarget,
-        IPropertyData? propertyOwnerIsWillingToExchange,
-        int moneyOwnerWillingToAddOnTrade)
+    public void SetPropertyTradeOwnerWantsFromTarget(int indexFromTradablePropertiesOfTradeOwner)
     {
-        this.propertyTradeOwnerToGet = propertyOwnerWantsFromTarget;
-        this.propertyTradeOwnerToGive = propertyOwnerIsWillingToExchange;
+        this.propertyTradeOwnerToGet = this.TradablePropertiesOfTradeTarget[indexFromTradablePropertiesOfTradeOwner];
+    }
+
+    public void SetPropertyTradeOwnerIsWillingToGive(int indexFromTradablePropertiesOfTradeTarget)
+    {
+        this.propertyTradeOwnerToGive = this.TradablePropertiesOfTradeOwner[indexFromTradablePropertiesOfTradeTarget];
+    }
+
+    public void SetAdditionalMoneyTradeOwnerIsWillingToAdd(int moneyOwnerWillingToAddOnTrade)
+    {
         this.moneyOwnerWillingToAddOnTrade = moneyOwnerWillingToAddOnTrade;
     }
 
@@ -148,7 +148,7 @@ public class TradeHandler : ITradeHandlerFunction, ITradeHandlerData
 
     private void SetTradablePropertyDatas()
     {
-        List<Property> tradableProperties =
+        List<IProperty> tradableProperties =
             this.backUpProperties.
             Where(property => property.IsTradable is true).
             ToList();

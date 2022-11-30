@@ -1,18 +1,30 @@
-public class PropertyPurchaseDecisionMaker : IPropertyPurchaseDecisionMaker
+public class PropertyPurchaseDecisionMaker : PropertyDecisionMaker, IPropertyPurchaseDecisionMaker
 {
-    private Random random = new Random();
 
-    public bool MakeDecisionOnPurchase(int playerNumber)
+    public PropertyPurchaseDecisionMaker(IDataCenter dataCenter)
+        :base(dataCenter)
     {
-        int willingness = random.Next(0,10);
-        
-        if (willingness > 3)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+    }
+    int player => this.dataCenter.EventFlow.CurrentPlayerNumber;
+    IPropertyData CurrentProperty => this.GetCurrentProperty();
+
+    public bool MakeDecisionOnPurchase()
+    {
+        int price = this.CurrentProperty.Price;
+        double value = this.CalculateValueConsideringAllWhenGettingAProperty(this.player, this.CurrentProperty);
+
+        bool output = (value >= 1? true : false);
+
+        return output;
+    }
+
+
+
+    private IPropertyData GetCurrentProperty()
+    {
+        int position = this.dataCenter.Board.PlayerPositions[this.player];
+        IPropertyData currentProperty = (IPropertyData)this.dataCenter.TileDatas[position];
+
+        return currentProperty;
     }
 }

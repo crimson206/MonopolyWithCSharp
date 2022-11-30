@@ -6,17 +6,19 @@
 /// <summary>
 /// This class deals with the auction event of Monopoly
 /// </summary>
-public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
+public class AuctionHandler : IAuctionHandlerData, IAuctionHandler
 {
     private Dictionary<int, int> suggestedPrices = new Dictionary<int, int>();
+    private IPropertyData? propertyToAuction;
     private List<int> participantNumbers = new List<int>();
     private int? finalPrice;
     private int? winnerNumber;
+    private int initialPrice;
     private int nextParticipantNumber;
     private bool isAuctionOn;
-    private int maxPrice => this.SuggestedPrices.Values.Max();
+    private int constantMaxPriceCount;
     private int participantCount => this.participantNumbers.Count();
-    private int winningParticipantNumber;
+    private int? winningParticipantNumber;
 
     /// <summary>
     /// Gets the isAuctionOn of an auction handler
@@ -45,14 +47,17 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
 
     public int NextParticipantNumber { get=> this.nextParticipantNumber; }
 
-    private int MaxPrice => this.SuggestedPrices.Values.Max();
+    public int MaxPrice => (this.initialPrice > this.SuggestedPrices.Values.Max()? this.initialPrice : this.SuggestedPrices.Values.Max());
+
+    public IPropertyData? PropertyToAuction => this.propertyToAuction;
+
 
     /// <summary>
     /// It sets conditions to start a new auction
     /// </summary>
     /// <param name="participantNumbers"> a list of playerNumbers participating in the auction in the auction order </param>
     /// <param name="initialPrice"> a positive integer </param>
-    public void SetAuctionCondition(List<int> participantNumbers, int initialPrice)
+    public void SetAuctionCondition(List<int> participantNumbers, int initialPrice, IPropertyData propertyToAuction, bool firstParticipantIsForcedToBid)
     {
         if (initialPrice < 0)
         {
@@ -64,15 +69,34 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
         this.suggestedPrices.Clear();
         this.isAuctionOn = true;
         this.participantNumbers = participantNumbers;
-        this.winningParticipantNumber = participantNumbers[0];
-        this.nextParticipantNumber = participantNumbers[1];
+        this.initialPrice = initialPrice;
+        this.propertyToAuction = propertyToAuction;
 
-        int participantCount = participantNumbers.Count();
         foreach (var participantNumber in participantNumbers)
         {
             this.suggestedPrices.Add(participantNumber, 0);
         }
-        this.suggestedPrices[participantNumbers[0]] = initialPrice;
+
+        if (participantNumbers.Count() == 1)
+        {
+            this.winningParticipantNumber = participantNumbers[0];
+            this.SetAuctionResultAndCloseAuction();
+            return;
+        }
+
+        if (firstParticipantIsForcedToBid)
+        {
+            this.suggestedPrices[participantNumbers[0]] = initialPrice;
+            this.winningParticipantNumber = participantNumbers[0];
+            this.nextParticipantNumber = participantNumbers[1];
+            this.constantMaxPriceCount = 0;
+        }
+        else
+        {
+            this.nextParticipantNumber = participantNumbers[0];
+            this.winningParticipantNumber = null;
+            this.constantMaxPriceCount = -1;
+        }
     }
 
     /// <summary>
@@ -83,33 +107,51 @@ public class AuctionHandler : IAuctionHandlerData, IAuctionHandlerFunction
     /// and this function will be disabled.
     /// </summary>
     /// <param name="newPrice">a positive integer</param>
-    public void SuggestNewPriceInTurn(int newPrice)
+    public void BidNewPriceInTurn(int newPrice)
     {
-        if (newPrice < 0)
+        if (newPrice < 0 || this.isAuctionOn is false)
         {
             throw new Exception();
         }
 
         int currentParticipantNumber = this.nextParticipantNumber;
-
-        if (newPrice > this.maxPrice)
+        
+        if (newPrice > this.MaxPrice)
         {
             this.winningParticipantNumber = currentParticipantNumber;
+            this.constantMaxPriceCount = 0;
+            this.suggestedPrices[currentParticipantNumber] = newPrice;
+            this.GoToNextParticipant();
+
         }
-
-        this.suggestedPrices[currentParticipantNumber] = newPrice;
-        this.GoToNextParticipant();
-
-        if (this.nextParticipantNumber == this.winningParticipantNumber && newPrice <= this.maxPrice)
+        else
         {
-            this.SetAuctionResultAndCloseAuction();
+            this.constantMaxPriceCount++;
+
+            if (this.constantMaxPriceCount == this.participantCount - 1)
+            {
+                this.SetAuctionResultAndCloseAuction();
+            }
+            else if (this.constantMaxPriceCount > this.participantCount -1)
+            {
+                throw new Exception();
+            }
+            else
+            {
+                this.suggestedPrices[currentParticipantNumber] = newPrice;
+                this.GoToNextParticipant();
+            }
+
+            
         }
+
+
     }
 
     private void SetAuctionResultAndCloseAuction()
     {
-        this.winnerNumber = this.nextParticipantNumber;
-        this.finalPrice = this.maxPrice;
+        this.winnerNumber = this.winningParticipantNumber;
+        this.finalPrice = this.MaxPrice;
         this.isAuctionOn = false;
     }
 

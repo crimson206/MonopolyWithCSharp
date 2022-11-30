@@ -1,11 +1,8 @@
 public class AuctionEvent : Event
 {
 
-    private IAuctionHandlerFunction auctionHandler;
-    private EventFlow eventFlow;
-    private List<int> participantPlayerNumbers = new List<int>();
-    private int participantCount => this.AreInGame.Where(isInGame => isInGame == true).Count();
-    private int initialPrice;
+    private IAuctionHandler auctionHandler;
+    private List<int> participantNumbers = new List<int>();
     private IAuctionDecisionMaker auctionDecisionMaker;
     private IBankHandler bankHandler;
 
@@ -13,13 +10,14 @@ public class AuctionEvent : Event
     (StatusHandlers statusHandlers,
     ITileManager tileManager,
     IDataCenter dataCenter,
-    AuctionHandler auctionHandler,
+    IAuctionHandler auctionHandler,
     Delegator delegator,
-    DecisionMakers decisionMakers)
+    IDecisionMakers decisionMakers)
         :base
         (delegator,
         dataCenter,
-        tileManager)
+        tileManager,
+        statusHandlers)
     {
         this.bankHandler = statusHandlers.BankHandler;
         this.tileManager = tileManager;
@@ -28,24 +26,32 @@ public class AuctionEvent : Event
         this.auctionDecisionMaker = decisionMakers.AuctionDecisionMaker;
     }
 
+    public List<int> ParticipantNumbers { get => this.participantNumbers; private set => this.participantNumbers = value; }
     private List<int> Balances => this.dataCenter.Bank.Balances;
+    public bool FirstParticipantIsForcedToBid { get; private set; }
 
-    private List<bool> AreInGame => this.dataCenter.InGame.AreInGame;
-    private IPropertyData? CurrentPropertyData => (IPropertyData)this.dataCenter.CurrentTileData;
-    private Property CurrentProperty => this.GetCurrentProperty();
+    public IPropertyData? PropertyToAuction { get; private set; }
 
-    public string RecommendedString { get; private set; } = string.Empty;
+    public int InitialPrice { get; private set; }
 
     public override void StartEvent()
     {
-        this.eventFlow.RecommendedString = string.Format("An auction for {0} starts", this.CurrentPropertyData!.Name);
+        this.eventFlow.RecommendedString = string.Format("An auction for {0} starts", this.PropertyToAuction!.Name);
         this.CallNextEvent();
     }
 
-    private void SetUpAuction()
+    public void SetUpAuction(List<int> participantNumbers, int initialPrice, IPropertyData propertyToAuction, bool firstParticipantIsForcedToBid, IEvent auctionCaller)
     {
-        this.SetParticipantPlayerNumbers();
-        this.auctionHandler.SetAuctionCondition(this.participantPlayerNumbers, initialPrice);
+        this.participantNumbers = participantNumbers;
+        this.InitialPrice = initialPrice;
+        this.PropertyToAuction = propertyToAuction;
+        this.FirstParticipantIsForcedToBid = firstParticipantIsForcedToBid;
+        this.LastEvent = auctionCaller;
+    }
+
+    private void SetUpAuctionHandler()
+    {
+        this.auctionHandler.SetAuctionCondition(this.participantNumbers, this.InitialPrice, this.PropertyToAuction!, this.FirstParticipantIsForcedToBid);
 
         this.eventFlow.RecommendedString = this.CreateParticipantsString() + " joined in the auction";
 
@@ -54,69 +60,78 @@ public class AuctionEvent : Event
 
     private void DecideInitialPrice()
     {
-        int currentPlayersBalance = this.Balances[CurrentPlayerNumber];
-        int currentPropertysPrice = this.CurrentPropertyData!.Price;
 
-        if (currentPlayersBalance < currentPropertysPrice)
+        if (this.FirstParticipantIsForcedToBid)
         {
-            this.initialPrice = currentPlayersBalance;
-            this.eventFlow.RecommendedString = "The initial price is the balance of the initiator";
+            this.eventFlow.RecommendedString = string.Format("Player{0} was forced to bid {1}$", this.participantNumbers[0], this.InitialPrice);
         }
         else
         {
-            this.initialPrice = currentPropertysPrice;
-            this.eventFlow.RecommendedString = string.Format("The initial price is {0} ", this.CurrentPropertyData.Price);
+            this.eventFlow.RecommendedString = string.Format("The initial price is {0}$", this.InitialPrice);
         }
 
         this.CallNextEvent();
     }
 
-    private void SuggestPriceInTurn()
+    private void BidInTurn()
     {
-        int participantNumber = this.dataCenter.AuctionHandler.NextParticipantNumber;
-        int suggestedPrice = this.auctionDecisionMaker.SuggestPrice(participantNumber);
-        this.auctionHandler.SuggestNewPriceInTurn(suggestedPrice);
+        int biddedPrice = this.auctionDecisionMaker.Bid();
+        int CurrentParticipantNumber = this.dataCenter.AuctionHandler.NextParticipantNumber;
+        if (biddedPrice > this.Balances[CurrentParticipantNumber])
+        {
+            throw new Exception();
+        }        
 
-        this.eventFlow.RecommendedString = string.Format("Player {0} suggested {1}", participantNumber, suggestedPrice);
+        this.auctionHandler.BidNewPriceInTurn(biddedPrice);
+
+        this.eventFlow.RecommendedString = string.Format("Player{0} bidded {1}$", CurrentParticipantNumber, biddedPrice);
 
         this.CallNextEvent();
     }
-
     private void BuyWinnerProperty()
     {
         int winnerNumber = (int)this.dataCenter.AuctionHandler.WinnerNumber!;
         int finalPrice = (int)this.dataCenter.AuctionHandler.FinalPrice!;
         this.bankHandler.DecreaseBalance(winnerNumber, finalPrice);
-        this.tileManager.PropertyManager.ChangeOwner(this.CurrentProperty, winnerNumber);
+        if (this.PropertyToAuction!.OwnerPlayerNumber is not null)
+        {
+            int previousOwner = (int)this.PropertyToAuction.OwnerPlayerNumber;
+            int moneyToReceive = finalPrice;
+            if (this.PropertyToAuction.IsMortgaged)
+            {
+                moneyToReceive = (this.PropertyToAuction.Mortgage >= moneyToReceive? 0 : moneyToReceive - this.PropertyToAuction.Mortgage);
+                this.tileManager.PropertyManager.SetIsMortgaged(this.PropertyToAuction, false);
+                
+            }
+            this.bankHandler.IncreaseBalance(previousOwner, moneyToReceive);
+        }
 
-        this.eventFlow.RecommendedString = string.Format("Player {0} bought {1}", winnerNumber, this.CurrentPropertyData!.Name);
+        this.tileManager.PropertyManager.ChangeOwner(this.PropertyToAuction, winnerNumber);
+
+        this.eventFlow.RecommendedString = string.Format("Player{0} bought {1}", winnerNumber, this.PropertyToAuction.Name);
         this.CallNextEvent();
     }
 
-    private void SetParticipantPlayerNumbers()
+    private void EndAuctionWithoutAnyBid()
     {
-        this.participantPlayerNumbers.Clear();
-        int playerNumber = this.CurrentPlayerNumber;
+        this.eventFlow.RecommendedString = "No one bidded";
 
-        for (int i = 0; i < this.AreInGame.Count(); i++)
-        {
-            if (AreInGame[playerNumber] is true)
-            {
-                this.participantPlayerNumbers.Add(playerNumber);
-            }
-            playerNumber = (playerNumber + 1) % this.AreInGame.Count();
-        }
-
+        this.CallNextEvent();
     }
 
     private string CreateParticipantsString()
     {
         string players = "Player ";
-        
-        foreach (var item in this.participantPlayerNumbers)
+        int count = this.participantNumbers.Count();
+        for (int i = 0; i < count; i++)
         {
-            players += item.ToString() + ", ";
+            players += this.participantNumbers[i];
+            if (i != count -1)
+            {
+                players += ", ";
+            }
         }
+
         return players;
     }
 
@@ -126,52 +141,89 @@ public class AuctionEvent : Event
         return this.ConvertIntListToString(suggestedPrices.Values.ToList());
     }
 
+    public override void EndEvent()
+    {
+        this.eventFlow.RecommendedString = "This auction event is over";
+
+        this.CallNextEvent();
+    }
+
     protected override void CallNextEvent()
     {
-        if (this.lastEvent == this.StartEvent)
+        if (this.lastAction == this.StartEvent)
+        {
+            this.AddNextAction(this.SetUpAuctionHandler);
+
+            return;
+        }
+
+        if (this.lastAction == this.SetUpAuctionHandler)
         {
             this.AddNextAction(this.DecideInitialPrice);
-
             return;
         }
 
-        if (this.lastEvent == this.DecideInitialPrice)
+        if (this.lastAction == this.DecideInitialPrice)
         {
-            this.AddNextAction(this.SetUpAuction);
-            return;
-        }
-
-        if (this.lastEvent == this.SetUpAuction)
-        {
-            this.AddNextAction(this.SuggestPriceInTurn);
-            return;
-        }
-
-        if (this.lastEvent == this.SuggestPriceInTurn)
-        {
-            if (this.dataCenter.AuctionHandler.IsAuctionOn)
+            if(this.auctionHandler.IsAuctionOn)
             {
-                this.AddNextAction(this.SuggestPriceInTurn);
-
-                return;
+                this.AddNextAction(this.BidInTurn);
             }
             else
             {
                 this.AddNextAction(this.BuyWinnerProperty);
-                return;
             }
-        }
 
-        if (this.lastEvent == this.BuyWinnerProperty)
-        {
-            this.events!.MainEvent.AddNextAction(this.events!.MainEvent.CheckExtraTurn);
             return;
         }
-    }
 
-    private Property GetCurrentProperty()
-    {
-        int currentPosition = this.dataCenter.Board.PlayerPositions[this.CurrentPlayerNumber];
-        return (Property)this.tileManager.Tiles[currentPosition];
+        if (this.lastAction == this.BidInTurn)
+        {
+            if (this.dataCenter.AuctionHandler.IsAuctionOn)
+            {
+                this.AddNextAction(this.BidInTurn);
+            }
+            else
+            {
+                if (this.dataCenter.AuctionHandler.WinnerNumber is null)
+                {
+                    this.AddNextAction(this.EndAuctionWithoutAnyBid);
+                }
+                else
+                {
+                    this.AddNextAction(this.BuyWinnerProperty);
+                }
+            }
+
+            return;
+        }
+
+        if (this.lastAction == this.EndAuctionWithoutAnyBid)
+        {
+            this.AddNextAction(this.EndEvent);
+
+            return;
+        }
+
+        if (this.lastAction == this.BuyWinnerProperty)
+        {
+            this.AddNextAction(this.EndEvent);
+
+            return;
+        }
+
+        if (this.lastAction == this.EndEvent)
+        {
+            if (this.LastEvent == this.events!.MainEvent)
+            {
+                this.events!.MainEvent.AddNextAction(this.events!.MainEvent.CheckExtraTurn);
+            }
+            else if (this.LastEvent == this.events.SellItemEvent)
+            {
+                this.events!.SellItemEvent.AddNextAction(this.events!.SellItemEvent.RenewSellItemEventFromAuction);
+            }
+
+            return;
+        }
     }
 }

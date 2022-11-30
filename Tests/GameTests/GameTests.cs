@@ -4,26 +4,16 @@ namespace Tests
     public class GameTests
     {
         [TestMethod]
-        public void RunSmallMapGame500TurnToCatchAnyProblem()
+        public void Empty()
         {
-            Game game = new Game(isBoardSmall:true);
+            Game game = new Game(true);
 
-            for (int i = 0; i < 500; i++)
+            int index = 0;
+
+            while (game.DelegatorData.NextActionName != "GameIsOver")
             {
                 game.Run();
-
-                int breakPoint1 = 0;
-                int breakPoint2 = 0;
-
-                if (i % 100 == 0)
-                {
-                    breakPoint1++;
-                }
-
-                if (game.DelegatorData.NextEventName == "HouseBuildEvent")
-                {
-                    breakPoint2++;
-                }
+                index ++;
             }
         }
     }

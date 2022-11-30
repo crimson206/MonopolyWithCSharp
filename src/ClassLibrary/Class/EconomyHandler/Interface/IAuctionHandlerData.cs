@@ -10,4 +10,8 @@ public interface IAuctionHandlerData
 
     public int NextParticipantNumber { get; }
 
+    public int MaxPrice { get; }
+
+    public IPropertyData? PropertyToAuction { get; }
+
 }

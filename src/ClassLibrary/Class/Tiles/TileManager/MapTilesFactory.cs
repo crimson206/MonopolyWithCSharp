@@ -3,7 +3,7 @@ public class MapTilesFactory
     private Random random = new Random();
     private GroupSetter groupSetter = new GroupSetter();
 
-    public List<Tile> CreateRandomMapTiles(
+    public List<ITile> CreateRandomMapTiles(
         int numOfRealRestates,
         int numOfRailRoads, 
         int numOfUtilities,
@@ -16,9 +16,9 @@ public class MapTilesFactory
         int goToJailPositoin
         )
     {
-        List<List<Tile>> differentTileGroups = this.CreateDifferentTileGroups(numOfRealRestates, numOfRailRoads, numOfUtilities, numOfChances, numOfCommunityChests, twoTaxes);
+        List<List<ITile>> differentTileGroups = this.CreateDifferentTileGroups(numOfRealRestates, numOfRailRoads, numOfUtilities, numOfChances, numOfCommunityChests, twoTaxes);
 
-        List<Tile> randomlyAssembledTiles = differentTileGroups[0];
+        List<ITile> randomlyAssembledTiles = differentTileGroups[0];
 
         for (int i = 1; i < differentTileGroups.Count(); i++)
         {
@@ -37,7 +37,7 @@ public class MapTilesFactory
         return randomlyAssembledTiles;
     }
 
-    public List<ITileData> ExtractTileDataSet(List<Tile> tiles)
+    public List<ITileData> ExtractTileDataSet(List<ITile> tiles)
     {
         List<ITileData> tileDataSet = new List<ITileData>();
 
@@ -83,11 +83,12 @@ public class MapTilesFactory
         return tileDataSet;
     }
 
-    private List<List<Tile>> CreateDifferentTileGroups(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests, bool twoTaxes)
+    private List<List<ITile>> CreateDifferentTileGroups(int numOfRealRestates, int numOfRailRoads, int numOfUtilities, int numOfChances, int numOfCommunityChests, bool twoTaxes)
     {
-        List<List<Tile>> differentTileGroups = new List<List<Tile>>();
+
+        List<List<ITile>> differentTileGroups = new List<List<ITile>>();
         differentTileGroups.Add(this.CreateRealEstateGroups(numOfRealRestates, 80, 400, this.random));
-        differentTileGroups.Add(this.CreateRailRoads(numOfRailRoads, 200, 2));
+        differentTileGroups.Add(this.CreateRailRoads(numOfRailRoads, 200, (6 - numOfRailRoads)));
         differentTileGroups.Add(this.CreateUtilities(numOfUtilities, 100, 4, 6));
         differentTileGroups.Add(this.CreateEventTiles(numOfChances, numOfCommunityChests));
         if (twoTaxes)
@@ -114,11 +115,11 @@ public class MapTilesFactory
         return randomIndeces;
     }
 
-    private List<Tile> AssembleTwoTileGroupsRandomly(List<Tile> tiles1, List<Tile> tiles2, Random random)
+    private List<ITile> AssembleTwoTileGroupsRandomly(List<ITile> tiles1, List<ITile> tiles2, Random random)
     {
         int tiles1Size = tiles1.Count();
         int totalSize = tiles1Size + tiles2.Count();
-        List<Tile> assembledTiles = tiles2;
+        List<ITile> assembledTiles = tiles2;
         List<int> randomIndeces = this.ExtractRandomIndeces(tiles1Size, totalSize, random);
 
         for (int i = 0; i < tiles1Size; i++)
@@ -172,9 +173,9 @@ public class MapTilesFactory
         };
     }
 
-    private List<Tile> CreateRealEstateGroups(int number, int startPrice, int endPrice, Random random)
+    private List<ITile> CreateRealEstateGroups(int number, int startPrice, int endPrice, Random random)
     {
-        List<Tile> realEstates = new List<Tile>();
+        List<ITile> realEstates = new List<ITile>();
 
         List<int> numOfThreeAndTwo = this.DistributeNumToThreeAndTwo(number);
         List<int> threeTwoList = this.ListThreeTwoRandomly(numOfThreeAndTwo, random);
@@ -188,7 +189,7 @@ public class MapTilesFactory
         {
             int groupSize = threeTwoList[i];
             int price = startPrice + (i * priceIncrease);
-            List<Tile> newRealEstateGroup = this.CreateRealEstateColorGroup(threeTwoList[i], colors[i], price);
+            List<ITile> newRealEstateGroup = this.CreateRealEstateColorGroup(threeTwoList[i], colors[i], price);
 
             for (int j = 0; j < groupSize; j++)
             {
@@ -221,25 +222,25 @@ public class MapTilesFactory
         return threeTwoList;
     }
 
-    private List<Tile> CreateRealEstateColorGroup(int groupSize, string color, int refPrice)
+    private List<ITile> CreateRealEstateColorGroup(int groupSize, string color, int refPrice)
     {
-        List<Tile> colorGroup = new List<Tile>();
+        List<ITile> colorGroup = new List<ITile>();
 
         for (int i = 0; i < groupSize; i++)
         {
             double priceRate = 0.8 + 0.2 * i / (groupSize - 1);
-            string name = String.Format("RealEstate {0}{1}", color, i + 1);
+            string name = String.Format("{0}{1}", color, i + 1);
             int price = (int)(priceRate * refPrice);
-            Tile newRealEstate = this.CreateRealEstateWithAutoFinance(name, price, color);
+            ITile newRealEstate = this.CreateRealEstateWithAutoFinance(name, price, color);
             colorGroup.Add(newRealEstate);
         }
 
         return colorGroup;
     }
 
-    private List<Tile> CreateRailRoads(int numOfRailRoads, int price, double rentIncreaseRate)
+    private List<ITile> CreateRailRoads(int numOfRailRoads, int price, double rentIncreaseRate)
     {
-        List<Tile> railRoadGroup = new List<Tile>();
+        List<ITile> railRoadGroup = new List<ITile>();
         List<int> rents = new List<int>();
         int basicRent = price / 8;
         int mortgageValue = price / 2;
@@ -254,16 +255,16 @@ public class MapTilesFactory
         {
             string name = String.Format("RailRoad{0}", i + 1);
 
-            Tile newRailRoad = new RailRoad(name, price, rents, mortgageValue);
+            ITile newRailRoad = new RailRoad(name, price, rents, mortgageValue);
             railRoadGroup.Add(newRailRoad);
         }
 
         return railRoadGroup;
     }
 
-    private List<Tile> CreateUtilities(int numOfUtilities, int price, int basicRent, int addRent)
+    private List<ITile> CreateUtilities(int numOfUtilities, int price, int basicRent, int addRent)
     {
-        List<Tile> utilityGroup = new List<Tile>();
+        List<ITile> utilityGroup = new List<ITile>();
         List<int> rents = new List<int>();
         int mortgageValue = price / 2;
 
@@ -277,16 +278,16 @@ public class MapTilesFactory
         {
             string name = String.Format("Utility{0}", i+1);
 
-            Tile newUtility = new Utility(name, price, rents, mortgageValue);
+            ITile newUtility = new Utility(name, price, rents, mortgageValue);
             utilityGroup.Add(newUtility);
         }
 
         return utilityGroup;
     }
 
-    private List<Tile> CreateEventTiles(int numOfChances, int numOfChests)
+    private List<ITile> CreateEventTiles(int numOfChances, int numOfChests)
     {
-        List<Tile> eventTiles = new List<Tile>();
+        List<ITile> eventTiles = new List<ITile>();
 
         for (int i = 0; i < numOfChances; i++)
         {
@@ -303,18 +304,18 @@ public class MapTilesFactory
         return eventTiles;
     }
 
-    private List<Tile> CreateTaxes()
+    private List<ITile> CreateTaxes()
     {
-        return new List<Tile> { new IncomeTax("Income Tax", 200, 10), new LuxuryTax("Luxury Tax", 200) };
+        return new List<ITile> { new IncomeTax("Income Tax", 200, 10), new LuxuryTax("Luxury Tax", 200) };
     }
 
-    private List<Tile> ShuffleTiles(List<Tile> tiles, Random random)
+    private List<ITile> ShuffleTiles(List<ITile> tiles, Random random)
     {
         int total = tiles.Count();
-        List<Tile> shuffled = new List<Tile>();
+        List<ITile> shuffled = new List<ITile>();
         for (int i = 0; i < total; i++)
         {
-            Tile selected = tiles[random.Next(0,tiles.Count())];
+            ITile selected = tiles[random.Next(0,tiles.Count())];
             shuffled.Add(selected);
             tiles.Remove(selected);
         }

@@ -1,10 +1,10 @@
 
-public class RealEstate : Property, IRealEstateData
+public class RealEstate : Property, IRealEstate
 {
     private string color;
     private int houseCount;
     private int buildingCost;
-    private List<RealEstate> colorGroup => this.group.Cast<RealEstate>().ToList();
+    private List<IRealEstate> colorGroup => this.group.Cast<IRealEstate>().ToList();
     private RealEstateCalculator calculator;
     public RealEstate(string name, int price, int buildingCost, List<int> rents, int mortgageValue, string color) : base(name, price, rents, mortgageValue)
     {
@@ -93,6 +93,18 @@ public class RealEstate : Property, IRealEstateData
     protected override bool CheckTradable()
     {
         if (this.colorGroup.Any(member => member.HouseCount > 0) || this.isMortgaged || this.ownerPlayerNumber is null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    protected override bool CheckSoldableWithAuction()
+    {
+        if (this.colorGroup.Any(member => member.HouseCount > 0) || this.ownerPlayerNumber is null)
         {
             return false;
         }
