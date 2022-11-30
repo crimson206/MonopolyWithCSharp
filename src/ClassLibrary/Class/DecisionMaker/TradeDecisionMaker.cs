@@ -142,14 +142,14 @@ public class TradeDecisionMaker : PropertyDecisionMaker, ITradeDecisionMaker
         int virtualPriceOfPropertyToGive = 0;
         if (this.PropertyTradeOwnerToGet is not null)
         {
-            valueOfPropertyTradeTargetToGive = this.propertyValueMeasurer.ConsiderPriceAndMonopolyWhenGettingAProperty(this.TradeTarget, this.PropertyTradeOwnerToGive!);
-            virtualPriceOfPropertyToGive = (int)((double)this.PropertyTradeOwnerToGive!.Price * valueOfPropertyTradeTargetToGet);
+            valueOfPropertyTradeTargetToGive = this.propertyValueMeasurer.ConsiderPriceAndMonopolyWhenGettingAProperty(this.TradeTarget, this.PropertyTradeOwnerToGet!);
+            virtualPriceOfPropertyToGive = (int)((double)this.PropertyTradeOwnerToGet!.Price * valueOfPropertyTradeTargetToGet);
         }
 
         if (this.PropertyTradeOwnerToGive is not null)
         {
-            valueOfPropertyTradeTargetToGet = this.propertyValueMeasurer.ConsiderPriceAndMonopoly(this.TradeTarget, this.PropertyTradeOwnerToGet!);
-            virtualPriceOfPropertyToGet = (int)((double)this.PropertyTradeOwnerToGet!.Price * valueOfPropertyTradeTargetToGive);
+            valueOfPropertyTradeTargetToGet = this.propertyValueMeasurer.ConsiderPriceAndMonopoly(this.TradeTarget, this.PropertyTradeOwnerToGive!);
+            virtualPriceOfPropertyToGet = (int)((double)this.PropertyTradeOwnerToGive!.Price * valueOfPropertyTradeTargetToGive);
         }
 
         if (virtualPriceOfPropertyToGet + this.AdditionalMoney > virtualPriceOfPropertyToGive)
