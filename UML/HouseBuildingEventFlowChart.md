@@ -1,6 +1,11 @@
+UnmortgageEvent works very similar as HouseBuildEvent does. Refactor them to be derived classes from one 'UpgradePropertyEvent' class
+
 ```mermaid
 flowchart TB
-    A[EndTrade] --> B{are there \n house-buildable \n realEstates?}
+
+
+
+    A(EndTrade \n or \n MainEvent) --> B{are there \n house-buildable \n realEstates?}
 
     B -- Yes --> C[StartHouseBuilding : \n players having house-buildable realEstates \n are participants]
 
@@ -18,7 +23,7 @@ flowchart TB
 
     G -- Yes --> K
 
-    K[EndEvent] --> H(MainEvent:EndTurn)
+    K[EndEvent] --> H(MainEvent \n or \n UnmartgageEvnet)
 
     G -- No --> J
 
