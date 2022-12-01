@@ -1,14 +1,24 @@
 ```mermaid
 flowchart TB
-A["StartSellItemEvent : \n set a player to sell items"]
+A["StartEvent : \n set a player to sell items"]
 B["MakePlayerDecisionOnItemToSell : \n the player choose an item to sell"]
 C["SellItem"]
-a{"the player's \n balance is \n still negative"}
 D["EndSellItemEvent"]
+E("AuctionEvent")
+F("MainEvent")
+G("MainEvent")
 
+a{"is the player's \n balance \n still negative?"}
+b{"is \n the selling option \n 'Auction' ?"}
+
+F --> A
 A --> B
-B --> C
+B --> b
 C --> a
+b -- no --> C
+b -- yes --> E
+E --> a
 a -- yes --> B
 a -- no --> D
+D --> G
 ```
