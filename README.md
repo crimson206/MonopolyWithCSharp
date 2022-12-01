@@ -12,25 +12,22 @@
   - It is checked that some lines are not working in Visual Studio, therefore Visual Studio Code is only checked if it is executable for now.
 
 3. Current features
-  - auto game play
+  - AI game simulation
   - repeating turns
   - purchasing property
   - paying rent
   - auction event
   - trade event
   - house build event
+  - sell items event
+  - unmortgage event
 
 4. Planned features
-  - mortgage event
-  - force a poor's property auction event
-  - user interface
-  - AI
   - Monopoly with WPF
+  - Machine Learning applied AIs
 
-5. Currently two different sized maps are serviced. The bigger map won't work with normal sized monitors.
-   The default size is the smaller map. To change the size,
-  - go to src/UI/Program.cs
-  - change the value "isBoardSmall" to false
+5. Although the game works to the end, there are many designs to refactor and tests to add.
+  The tasks can be pushed back to develop ML first.
 
 
 The class diagram for the current Monopoly Demo version
