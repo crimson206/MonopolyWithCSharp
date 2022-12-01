@@ -7,7 +7,6 @@ public class PropertyValueMeasurer
         this.decisionFactorCalculator = new DecisionFactorCalculator(dataCenter); 
     }
 
-
     public double ConsiderPriceAndMonopolyWhenGettingAProperty(int player, IPropertyData property)
     {
         double factor1 = this.ConsiderMonopolyWhenGettingAProperty(player, property) *
@@ -107,7 +106,7 @@ public class PropertyValueMeasurer
         
         if (factor > 1)
         {
-        considered = 1 + (factor - 1) * this.decisionFactorCalculator.CalculateFreePropertyCountPerTotalCount();
+            considered = 1 + (factor - 1) * (1 - this.decisionFactorCalculator.CalculateFreePropertyCountPerTotalCount());
         }
 
         return considered;

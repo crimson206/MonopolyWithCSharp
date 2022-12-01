@@ -21,7 +21,7 @@ public abstract class PropertyDecisionMaker : DecisionMaker
         return balance / denominator;
     }
 
-    protected double CalculateValueConsideringAllWhenGettingAProperty(int player, IPropertyData property)
+    protected double ConsiderMonopolyPriceBalanceAndEnemiesRentsWhenGettingAProperty(int player, IPropertyData property)
     {
         int price = property.Price;
         double factor1 = this.propertyValueMeasurer.ConsiderPriceAndMonopolyWhenGettingAProperty(player, property);
