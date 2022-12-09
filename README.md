@@ -1,5 +1,11 @@
 # MonopolyWithCSharp
 
+(RIP) I am recently focusing on German language and the knowledge of C#.
+Although I can work on this project parallely with the language,
+I can't write good codes without enough background of C#.
+I recently study here, <a href="https://dotnettutorials.net/course/csharp-dot-net-tutorials/">https://dotnettutorials.net/course/csharp-dot-net-tutorials/</a>.
+I will be back when I can write codes that I, in the future, would want to reuse.
+
 0. There are UML diagrams below
 
 1. For fun, please check the "prototpye.gif" file
