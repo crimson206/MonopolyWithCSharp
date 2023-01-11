@@ -11,7 +11,7 @@ public class PropertyPurchaseDecisionMaker : PropertyDecisionMaker, IPropertyPur
     public bool MakeDecisionOnPurchase()
     {
         int price = this.CurrentProperty.Price;
-        double value = this.CalculateValueConsideringAllWhenGettingAProperty(this.player, this.CurrentProperty);
+        double value = this.ConsiderMonopolyPriceBalanceAndEnemiesRentsWhenGettingAProperty(this.player, this.CurrentProperty);
 
         bool output = (value >= 1? true : false);
 

@@ -26,7 +26,7 @@ public class TradeDecisionMaker : PropertyDecisionMaker, ITradeDecisionMaker
         if (suitablePropertyToExchange is null)
         {
             IPropertyData bestPropertyToGet = this.GetPropertyWithTheBestValueAmongAllTargetsProperties();
-            double value = this.CalculateValueConsideringAllWhenGettingAProperty(this.TradeOwner, bestPropertyToGet);
+            double value = this.ConsiderMonopolyPriceBalanceAndEnemiesRentsWhenGettingAProperty(this.TradeOwner, bestPropertyToGet);
             
             if (value > 1)
             {
@@ -106,7 +106,7 @@ public class TradeDecisionMaker : PropertyDecisionMaker, ITradeDecisionMaker
         if (this.PropertyTradeOwnerToGive is null)
         {
             IPropertyData bestPropertyToGet = this.GetPropertyWithTheBestValueAmongAllTargetsProperties();
-            double value = this.CalculateValueConsideringAllWhenGettingAProperty(this.TradeOwner, bestPropertyToGet);
+            double value = this.ConsiderMonopolyPriceBalanceAndEnemiesRentsWhenGettingAProperty(this.TradeOwner, bestPropertyToGet);
             int output = (int)(value * bestPropertyToGet.Price);
 
             return output;
