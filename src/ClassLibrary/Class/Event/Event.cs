@@ -25,7 +25,7 @@ public abstract class Event : IEvent
     {
         this.events = events;
     }
-    protected abstract void CallNextEvent();
+    protected abstract void CallNextAction();
     public abstract void StartEvent();
 
     public virtual void AddNextAction(Action nextAction)

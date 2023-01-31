@@ -43,7 +43,7 @@ public class SellItemEvent : Event
 
         this.eventFlow.RecommendedString = string.Format("Player{0} needs to sell items", this.playerToSellItems);
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void MakeDecisionOnItemToSell()
@@ -69,7 +69,7 @@ public class SellItemEvent : Event
                                                     decisionString.ToLower());
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void MortgageProperty()
@@ -85,7 +85,7 @@ public class SellItemEvent : Event
                                                 this.playerToSellItems,
                                                 propertyToMortgage.Name);
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void DistructHouse()
@@ -101,12 +101,12 @@ public class SellItemEvent : Event
                                                     this.playerToSellItems,
                                                     realEstateToDistructHouse.Name);
 
-            this.CallNextEvent();
+            this.CallNextAction();
     }
 
     public void RenewSellItemEventFromAuction()
     {
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
 
@@ -124,7 +124,7 @@ public class SellItemEvent : Event
 
         this.eventFlow.RecommendedString = string.Format("Player{0} wants to auction {1}", this.playerToSellItems, propertyToAuction.Name);
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void CallAuctionEvent()
@@ -141,7 +141,7 @@ public class SellItemEvent : Event
             this.eventFlow.RecommendedString = string.Format("Player{0} needs to pay more money back", this.playerToSellItems);
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public override void EndEvent()
@@ -155,11 +155,11 @@ public class SellItemEvent : Event
             this.eventFlow.RecommendedString = string.Format("Player{0} bailed out", this.playerToSellItems);
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
 
-    protected override void CallNextEvent()
+    protected override void CallNextAction()
     {
         if (this.lastAction == this.StartEvent)
         {

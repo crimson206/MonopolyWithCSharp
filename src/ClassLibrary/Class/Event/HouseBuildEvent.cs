@@ -47,7 +47,7 @@ public class HouseBuildEvent : Event
                                                     (int)this.houseBuildHandlerData.CurrentHouseBuilder!);
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void MakeCurrentBuilderDecision()
@@ -72,7 +72,7 @@ public class HouseBuildEvent : Event
             );
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void BuildHouse()
@@ -84,7 +84,7 @@ public class HouseBuildEvent : Event
 
         this.eventFlow.RecommendedString = "A house was built";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void ChangeBuilder()
@@ -95,7 +95,7 @@ public class HouseBuildEvent : Event
                                                 "Player{0} can build a house",
                                                 (int)this.houseBuildHandlerData.CurrentHouseBuilder!);
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public override void EndEvent()
@@ -105,11 +105,11 @@ public class HouseBuildEvent : Event
             this.eventFlow.RecommendedString = "This house build event is over";
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
 
-    protected override void CallNextEvent()
+    protected override void CallNextAction()
     {
         if (this.lastAction == this.StartEvent)
         {

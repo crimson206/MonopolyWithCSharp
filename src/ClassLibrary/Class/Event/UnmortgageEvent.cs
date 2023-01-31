@@ -45,7 +45,7 @@ public class UnmortgageEvent : Event
             this.eventFlow.RecommendedString = "Players can unmortgage a property";
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void MakeCurrentPlayerDecision()
@@ -70,7 +70,7 @@ public class UnmortgageEvent : Event
             );
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void Demortgage()
@@ -83,7 +83,7 @@ public class UnmortgageEvent : Event
 
         this.eventFlow.RecommendedString = "The property is unmortgaged";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void ChangePlayer()
@@ -94,7 +94,7 @@ public class UnmortgageEvent : Event
             "Player{0} can unmortgage a property",
             (int)this.unmortgageHandlerData.CurrentPlayerToDemortgage!);
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public override void EndEvent()
@@ -104,11 +104,11 @@ public class UnmortgageEvent : Event
             this.eventFlow.RecommendedString = "This unmortgage event is over";
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
 
-    protected override void CallNextEvent()
+    protected override void CallNextAction()
     {
         if (this.lastAction == this.StartEvent)
         {

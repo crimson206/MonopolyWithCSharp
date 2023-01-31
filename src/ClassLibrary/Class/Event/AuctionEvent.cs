@@ -37,7 +37,7 @@ public class AuctionEvent : Event
     public override void StartEvent()
     {
         this.eventFlow.RecommendedString = string.Format("An auction for {0} starts", this.PropertyToAuction!.Name);
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void SetUpAuction(List<int> participantNumbers, int initialPrice, IPropertyData propertyToAuction, bool firstParticipantIsForcedToBid, IEvent auctionCaller)
@@ -55,7 +55,7 @@ public class AuctionEvent : Event
 
         this.eventFlow.RecommendedString = this.CreateParticipantsString() + " joined in the auction";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void DecideInitialPrice()
@@ -70,7 +70,7 @@ public class AuctionEvent : Event
             this.eventFlow.RecommendedString = string.Format("The initial price is {0}$", this.InitialPrice);
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void BidInTurn()
@@ -86,7 +86,7 @@ public class AuctionEvent : Event
 
         this.eventFlow.RecommendedString = string.Format("Player{0} bidded {1}$", CurrentParticipantNumber, biddedPrice);
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
     private void BuyWinnerProperty()
     {
@@ -109,14 +109,14 @@ public class AuctionEvent : Event
         this.tileManager.PropertyManager.ChangeOwner(this.PropertyToAuction, winnerNumber);
 
         this.eventFlow.RecommendedString = string.Format("Player{0} bought {1}", winnerNumber, this.PropertyToAuction.Name);
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void EndAuctionWithoutAnyBid()
     {
         this.eventFlow.RecommendedString = "No one bidded";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private string CreateParticipantsString()
@@ -145,10 +145,10 @@ public class AuctionEvent : Event
     {
         this.eventFlow.RecommendedString = "This auction event is over";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
-    protected override void CallNextEvent()
+    protected override void CallNextAction()
     {
         if (this.lastAction == this.StartEvent)
         {
