@@ -52,7 +52,7 @@ public class TradeEvent : Event
                             this.CurrentTradeOwner);
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void HasNoTradeTarget()
@@ -61,7 +61,7 @@ public class TradeEvent : Event
             string.Format("Player{0} has no selectable trade target",
                         this.CurrentTradeOwner);
         
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void SelectTradeTarget()
@@ -84,7 +84,7 @@ public class TradeEvent : Event
                 string.Format("Player{0} skipped this trade turn", this.CurrentTradeOwner);
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void SelectTradeOwnerPropertyToGet()
@@ -99,7 +99,7 @@ public class TradeEvent : Event
 
         }
         
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void SelectTradeOwnerPropertyToGive()
@@ -113,7 +113,7 @@ public class TradeEvent : Event
                 string.Format("Player{0} is willing to give {1}", this.tradeHandler.CurrentTradeOwner, this.tradeHandler.PropertyTradeOwnerToGive!.Name);
         }
         
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void SetTradeOwnerAddicionalMoney()
@@ -144,7 +144,7 @@ public class TradeEvent : Event
                 string.Format("Player{0} is willing to give {1}$", this.tradeHandler.CurrentTradeOwner, decision);
         }
         
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void MakeTradeTargetDecisionOnTradeAgreement()
@@ -171,7 +171,7 @@ public class TradeEvent : Event
                                 this.CurrentTradeTarget);
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void DoTrade()
@@ -222,7 +222,7 @@ public class TradeEvent : Event
             .RecommendedString =
                 "Trade items were exchanged";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void ChangeTradeOwner()
@@ -239,7 +239,7 @@ public class TradeEvent : Event
                             this.CurrentTradeOwner);
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public override void EndEvent()
@@ -248,7 +248,7 @@ public class TradeEvent : Event
             .RecommendedString =
                 "All player used their trade chances";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void SetParticipantPlayerNumbers()
@@ -296,7 +296,7 @@ public class TradeEvent : Event
         return this.ConvertIntListToString(suggestedPrices.Values.ToList());
     }
 
-    protected override void CallNextEvent()
+    protected override void CallNextAction()
     {
         if (this.lastAction == this.StartEvent)
         {

@@ -50,7 +50,7 @@ public class MainEvent : Event, IMainEvent
 
     private string stringPlayer => String.Format("Player{0}", this.CurrentPlayerNumber);
 
-    protected override void CallNextEvent()
+    protected override void CallNextAction()
     {
         if (this.lastAction == this.StartEvent)
         {
@@ -356,7 +356,7 @@ public class MainEvent : Event, IMainEvent
 
         this.eventFlow.RecommendedString = this.stringPlayer + " rolled " + this.ConvertRollDiceResultToString();
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void PayJailFine()
@@ -365,7 +365,7 @@ public class MainEvent : Event, IMainEvent
         this.jailHandler.ResetTurnInJail(this.CurrentPlayerNumber);
         this.eventFlow.RecommendedString = this.stringPlayer + " paid the jail fine";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void PassAuctionCondition()
@@ -380,7 +380,7 @@ public class MainEvent : Event, IMainEvent
 
         this.events!.AuctionEvent.SetUpAuction(this.CreateAuctionParticipantPlayerNumbers(), initialPrice, (Property)this.GetCurrentTile(), true, this);
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void UseJailFreeCard()
@@ -389,21 +389,21 @@ public class MainEvent : Event, IMainEvent
         this.jailHandler.ResetTurnInJail(this.CurrentPlayerNumber);
         this.eventFlow.RecommendedString = this.stringPlayer + " used the jail fine";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void EscapeJail()
     {
         this.jailHandler.ResetTurnInJail(this.CurrentPlayerNumber);
         this.eventFlow.RecommendedString = this.stringPlayer + " escaped the jail";
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public override void StartEvent()
     {
         this.eventFlow.RecommendedString = this.stringPlayer + " start a turn";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void MakeDecisionOnUsageOfJailFreeCard()
@@ -418,7 +418,7 @@ public class MainEvent : Event, IMainEvent
             this.eventFlow.BoolDecision = false;
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void MakeDecisionOnPaymentOfJailFine()
@@ -431,7 +431,7 @@ public class MainEvent : Event, IMainEvent
             MakeDecisionOnPayment(this.CurrentPlayerNumber);
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void BeReleasedIfAlreadyStayed3TurnsInJail()
@@ -452,7 +452,7 @@ public class MainEvent : Event, IMainEvent
         this.jailHandler.CountTurnInJail(this.CurrentPlayerNumber);
         this.eventFlow.RecommendedString = this.stringPlayer + " stays one more turn in jail";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void IsReleasedFromJail()
@@ -469,7 +469,7 @@ public class MainEvent : Event, IMainEvent
             this.eventFlow.RecommendedString = this.stringPlayer + " is released from jail";
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void HasJailPenalty()
@@ -487,13 +487,13 @@ public class MainEvent : Event, IMainEvent
 
         this.boardHandler.Teleport(this.CurrentPlayerNumber, this.GetJailPosition());
         this.jailHandler.CountTurnInJail(this.CurrentPlayerNumber);
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void LandOnTile()
     {
         this.eventFlow.RecommendedString = this.stringPlayer + string.Format(" landed on {0}", this.currentTile.Name);
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void MoveByRollDiceResultTotal()
@@ -502,7 +502,7 @@ public class MainEvent : Event, IMainEvent
         this.eventFlow.RecommendedString = this.stringPlayer + string.Format(" moved {0} steps", rollDiceResultTotal);
 
         this.boardHandler.MovePlayerAroundBoard(this.CurrentPlayerNumber, rollDiceResultTotal);
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void PayRent()
@@ -519,7 +519,7 @@ public class MainEvent : Event, IMainEvent
         this.bankHandler.TransferBalanceFromTo(this.CurrentPlayerNumber, propertyOwner, rentOfProperty);
         this.eventFlow.RecommendedString = this.stringPlayer + string.Format(" paid {0}$ to Player{1}", rentOfProperty, propertyOwner);
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void CheckExtraTurn()
@@ -529,7 +529,7 @@ public class MainEvent : Event, IMainEvent
             this.eventFlow.RecommendedString = this.stringPlayer + " has an extra turn";
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void PayTax()
@@ -540,7 +540,7 @@ public class MainEvent : Event, IMainEvent
         this.bankHandler.DecreaseBalance(this.CurrentPlayerNumber, tax);
         this.eventFlow.RecommendedString = this.stringPlayer + " paid the tax";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void MakeDecisionOnPurchaseOfProperty()
@@ -550,7 +550,7 @@ public class MainEvent : Event, IMainEvent
         this.eventFlow.BoolDecision = this.decisionMakers.
         PropertyPurchaseDecisionMaker.MakeDecisionOnPurchase();
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void PurchaseProperty()
@@ -561,14 +561,14 @@ public class MainEvent : Event, IMainEvent
         this.bankHandler.DecreaseBalance(this.CurrentPlayerNumber, property.Price);
         this.eventFlow.RecommendedString = this.stringPlayer + " bought the property";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void DontPurchaseProperty()
     {
         this.eventFlow.RecommendedString = this.stringPlayer + " didn't buy the property";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public void Idle()
@@ -576,7 +576,7 @@ public class MainEvent : Event, IMainEvent
         this.idleCount++;
         this.eventFlow.RecommendedString = string.Format("Game is idle...{0}", this.idleCount);
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     public override void EndEvent()
@@ -608,7 +608,7 @@ public class MainEvent : Event, IMainEvent
             this.eventFlow.CurrentPlayerNumber = this.CalculateNextPlayer();
         }
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void ReceiveSalary()
@@ -616,7 +616,7 @@ public class MainEvent : Event, IMainEvent
         this.eventFlow.RecommendedString = this.stringPlayer + " passed go and received the salary";
         this.bankHandler.IncreaseBalance(this.CurrentPlayerNumber, 200);
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void GameIsOver()
@@ -624,7 +624,7 @@ public class MainEvent : Event, IMainEvent
         this.eventFlow.GameIsOver = true;
         this.eventFlow.RecommendedString = "Game Is Over";
 
-        this.CallNextEvent();
+        this.CallNextAction();
     }
 
     private void ResetDoubleSideEffect()
