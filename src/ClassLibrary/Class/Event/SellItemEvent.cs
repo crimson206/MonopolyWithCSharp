@@ -5,10 +5,8 @@ public class SellItemEvent : Event
     private ISellItemHandlerData sellItemHandlerData;
     private int playerToSellItems;
     private ISellItemDecisionMaker sellItemDecisionMaker;
-    private IEvent? nextEvent;
     private List<int> auctionParticipants = new List<int>();
     private InGameHandler inGameHandler;
-
     public SellItemEvent
     (Delegator delegator,
     IDataCenter dataCenter,
