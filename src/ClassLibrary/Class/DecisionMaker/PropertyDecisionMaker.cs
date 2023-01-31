@@ -16,9 +16,23 @@ public abstract class PropertyDecisionMaker : DecisionMaker
         }
 
         double balance = (double)this.dataCenter.Bank.Balances[playerNumber];
-        double denominator = balance + cost + this.decisionFactorCalculator.CalculateEnemiesTotalRent(playerNumber);
+        double denominator = balance + cost + 0.3 * this.decisionFactorCalculator.CalculateEnemiesTotalRent(playerNumber);
 
         return balance / denominator;
+    }
+
+    protected double ConsiderPriceAndMonopoly(int player, IPropertyData property)
+    {
+        double value = this.propertyValueMeasurer.ConsiderPriceAndMonopoly(player, property);
+    
+        return value;
+    }
+
+    protected double ConsiderPriceAndMonopolyWhenGettingAProperty(int player, IPropertyData property)
+    {
+        double value = this.propertyValueMeasurer.ConsiderPriceAndMonopolyWhenGettingAProperty(player, property);
+
+        return value;
     }
 
     protected double ConsiderMonopolyPriceBalanceAndEnemiesRentsWhenGettingAProperty(int player, IPropertyData property)
