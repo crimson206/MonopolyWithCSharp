@@ -1,11 +1,14 @@
 ```mermaid
 classDiagram
 class Property{
-    +string Name
     +ChangeOwnerPlayerNumber(int? playerNumber)
+}
+class Tile{
+    +string Name
 }
 class DataCenter{
     +List< ITileData > TileDatas
+    +List< IPropertyData > PropertyDatas
 }
 class IProperty{
     <<interface>>
@@ -33,4 +36,5 @@ IPropertyData --|> ITileData
 Property ..|> IProperty
 
 ITileData <-- DataCenter
+IPropertyData <-- DataCenter
 ```
