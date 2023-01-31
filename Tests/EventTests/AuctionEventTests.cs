@@ -93,9 +93,9 @@ namespace Tests
             delegator.RunAction();
             Assert.AreEqual(delegator.NextActionName, "StartEvent");
             delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "DecideInitialPrice");
-            delegator.RunAction();
             Assert.AreEqual(delegator.NextActionName, "SetUpAuctionHandler");
+            delegator.RunAction();
+            Assert.AreEqual(delegator.NextActionName, "DecideInitialPrice");
             delegator.RunAction();
             Assert.AreEqual(delegator.NextActionName, "BidInTurn");
             delegator.RunAction();

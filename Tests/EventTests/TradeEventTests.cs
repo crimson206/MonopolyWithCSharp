@@ -208,7 +208,7 @@ namespace Tests
             Assert.AreEqual(delegator.NextActionName, "StartEvent");
 
             delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "StartEvent");
+            Assert.AreEqual(delegator.NextActionName, "EndEvent");
         }
 
         [TestMethod]
@@ -223,7 +223,7 @@ namespace Tests
             Assert.AreEqual(delegator.NextActionName, "StartEvent");
 
             delegator.RunAction();
-            Assert.AreEqual(delegator.NextActionName, "StartEvent");
+            Assert.AreEqual(delegator.NextActionName, "EndEvent");
         }
         [TestMethod]
         public void StartTrade_With_TradableProperties_And_Follow_TradeEventFlow_For_OneCycle()
