@@ -55,7 +55,7 @@ public class TileManager : ITileManager
 
     private List<ITile> CreateSmallerTiles()
     {
-        return this.mapTilesFactory.CreateRandomMapTiles(22, 2, 2, 0, 0, true, 0, 9, 16, 27);
+        return this.mapTilesFactory.CreateRandomMapTiles(22, 2, 2, 0, 0, true, 0, 9, 16, 25);
     }
 
     private List<IProperty> FilterProperties(List<ITile> tiles)
