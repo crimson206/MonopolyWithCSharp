@@ -1,4 +1,4 @@
-public class Tile : ITile, ITileData
+public class Tile : ITile
 {
     protected string name = "Tile";
 
