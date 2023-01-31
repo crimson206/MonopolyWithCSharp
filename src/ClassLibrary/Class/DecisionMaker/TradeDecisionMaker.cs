@@ -26,7 +26,7 @@ public class TradeDecisionMaker : PropertyDecisionMaker, ITradeDecisionMaker
         if (suitablePropertyToExchange is null)
         {
             IPropertyData bestPropertyToGet = this.GetPropertyWithTheBestValueAmongAllTargetsProperties();
-            double value = this.CalculateValueConsideringAllWhenGettingAProperty(this.TradeOwner, bestPropertyToGet);
+            double value = this.ConsiderMonopolyPriceBalanceAndEnemiesRentsWhenGettingAProperty(this.TradeOwner, bestPropertyToGet);
             
             if (value > 1)
             {
@@ -103,35 +103,26 @@ public class TradeDecisionMaker : PropertyDecisionMaker, ITradeDecisionMaker
     public int DecideAdditionalMoney()
     {
 
-        if (this.PropertyTradeOwnerToGive is null)
+        double value = this.ConsiderPriceAndMonopolyWhenGettingAProperty(this.TradeOwner, this.PropertyTradeOwnerToGet!);
+        int virtualPrice = (int)(value * this.PropertyTradeOwnerToGet!.Price);
+        int priceOfPropertyToGive = 0;
+        if(this.PropertyTradeOwnerToGive is not null)
         {
-            IPropertyData bestPropertyToGet = this.GetPropertyWithTheBestValueAmongAllTargetsProperties();
-            double value = this.CalculateValueConsideringAllWhenGettingAProperty(this.TradeOwner, bestPropertyToGet);
-            int output = (int)(value * bestPropertyToGet.Price);
-
-            return output;
+            priceOfPropertyToGive = this.PropertyTradeOwnerToGive.Price;
         }
 
-        int priceGap = this.PropertyTradeOwnerToGet!.Price - this.PropertyTradeOwnerToGive!.Price;
-        int balanceOfTradeOwner = this.BalanceOfTradeOwner;
-        int balanceOfTradeTarget = this.BalanceOfTradeTarget;
+        int priceGap = virtualPrice - priceOfPropertyToGive;
+        int decision = 0;
 
-        if (priceGap > 0)
+        if(priceGap >= 0)
         {
-            if (priceGap > balanceOfTradeOwner)
-            {
-                return balanceOfTradeOwner;
-            }
+            decision = (int)(priceGap * this.ConsiderBalanceCostAndEnemiesRents(this.TradeOwner, priceGap));
         }
         else
         {
-            if (- priceGap > balanceOfTradeTarget)
-            {
-                return balanceOfTradeTarget;
-            }
+            decision = priceGap;
         }
-
-        return priceGap;
+        return decision;
     }
 
     public bool MakeTradeTargetDecisionOnTradeAgreement()
@@ -142,13 +133,13 @@ public class TradeDecisionMaker : PropertyDecisionMaker, ITradeDecisionMaker
         int virtualPriceOfPropertyToGive = 0;
         if (this.PropertyTradeOwnerToGet is not null)
         {
-            valueOfPropertyTradeTargetToGive = this.propertyValueMeasurer.ConsiderPriceAndMonopoly(this.TradeTarget, this.PropertyTradeOwnerToGet!);
+            valueOfPropertyTradeTargetToGive = this.ConsiderPriceAndMonopoly(this.TradeTarget, this.PropertyTradeOwnerToGet!);
             virtualPriceOfPropertyToGive = (int)((double)this.PropertyTradeOwnerToGet!.Price * valueOfPropertyTradeTargetToGive);
         }
 
         if (this.PropertyTradeOwnerToGive is not null)
         {
-            valueOfPropertyTradeTargetToGet = this.propertyValueMeasurer.ConsiderPriceAndMonopolyWhenGettingAProperty(this.TradeTarget, this.PropertyTradeOwnerToGive!);
+            valueOfPropertyTradeTargetToGet = this.ConsiderPriceAndMonopolyWhenGettingAProperty(this.TradeTarget, this.PropertyTradeOwnerToGive!);
             virtualPriceOfPropertyToGet = (int)((double)this.PropertyTradeOwnerToGive!.Price * valueOfPropertyTradeTargetToGet);
         }
 

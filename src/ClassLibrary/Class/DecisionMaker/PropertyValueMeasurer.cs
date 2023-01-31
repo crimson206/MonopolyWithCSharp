@@ -7,21 +7,18 @@ public class PropertyValueMeasurer
         this.decisionFactorCalculator = new DecisionFactorCalculator(dataCenter); 
     }
 
-
     public double ConsiderPriceAndMonopolyWhenGettingAProperty(int player, IPropertyData property)
     {
-        double factor1 = this.ConsiderMonopolyWhenGettingAProperty(player, property) *
-                                        this.ConsiderPriceRank(property);
-        double factor2 = this.ConsiderFreePropertyCountPerTotalCount(factor1);
+        double factor1 = this.ConsiderMonopolyWhenGettingAProperty(player, property);
+        double factor2 = factor1 * this.ConsiderPriceRank(property);
 
-        return factor1;
+        return factor2;
     }
 
     public double ConsiderPriceAndMonopoly(int player, IPropertyData property)
     {
-        double factor1 = this.ConsiderMonopoly(player, property) *
-                                        this.ConsiderPriceRank(property);
-        double factor2 = this.ConsiderFreePropertyCountPerTotalCount(factor1);
+        double factor1 = this.ConsiderMonopoly(player, property);                       
+        double factor2 = factor1 * this.ConsiderPriceRank(property);
 
         return factor2;
     }
@@ -101,28 +98,16 @@ public class PropertyValueMeasurer
         return output;
     }
 
-    public double ConsiderFreePropertyCountPerTotalCount(double factor)
-    {
-        double considered = factor;
-        
-        if (factor > 1)
-        {
-        considered = 1 + (factor - 1) * this.decisionFactorCalculator.CalculateFreePropertyCountPerTotalCount();
-        }
-
-        return considered;
-    }
-
     public double ConsiderRealEstateMonopoly(int groupSize, int howCloseToMonopoly)
     {
-        double preferPropertyCloserToMonopoly = (groupSize + 1) / (double)(howCloseToMonopoly + 1);
+        double preferPropertyCloserToMonopoly = (double)(groupSize + 1) / (double)(howCloseToMonopoly + 1);
 
         return preferPropertyCloserToMonopoly;
     }
 
     public double ConsiderNonRealEstateMonopoly(int groupSize, int howCloseToMonopoly)
     {
-        double preferPropertyCloserToMonopoly = (groupSize + 2) / (double)(howCloseToMonopoly + 2);
+        double preferPropertyCloserToMonopoly = (double)(groupSize + 2) / (double)(howCloseToMonopoly + 2);
 
         return preferPropertyCloserToMonopoly;
     }
