@@ -122,10 +122,6 @@ public class TradeEvent : Event
 
         if (decision < 0)
         {
-            if (- decision > this.Balances[this.CurrentTradeTarget])
-            {
-                throw new Exception();
-            }
 
             this.tradeHandler.SetAdditionalMoneyTradeOwnerIsWillingToAdd(decision);
             this.eventFlow.RecommendedString =
