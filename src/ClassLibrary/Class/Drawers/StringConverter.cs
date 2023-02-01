@@ -1,3 +1,6 @@
+using System.Text;
+using System.Collections;
+
 public class StringConverter
 {
     public string ConvertListIntToString(List<int> ints)
@@ -10,6 +13,20 @@ public class StringConverter
 
         str += "]";
         return str;
+    }
+
+    public string ConvertIEnumerableToString(IEnumerable enumerable)
+    {
+        StringBuilder result = new StringBuilder();
+
+        foreach(var item in enumerable)
+        {
+            result.Append(item.ToString() + " ,");
+        }
+
+        result.Remove(result.Length-2, 2);
+
+        return result.ToString();
     }
 
     public void WriteStringWithColorAtCenter(string str, string color, int length)
