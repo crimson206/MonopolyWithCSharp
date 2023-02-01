@@ -62,4 +62,13 @@ public class Game
         return new DataCenter(this.statusHandlers, this.economyHandlers, this.tileManager);
     }
 
+    public void SincRun()
+    {
+        string oldRecommendedString = this.dataCenter.EventFlow.RecommendedString;
+        while(oldRecommendedString == this.dataCenter.EventFlow.RecommendedString)
+        {
+            this.delegator.RunAction();
+        }
+    }
+
 }
