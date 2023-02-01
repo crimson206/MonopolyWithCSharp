@@ -7,6 +7,30 @@ internal class Program
 {
     private static void Main(string[] args)
     {
+        do
+        {
+            Console.WriteLine("Do you want the statistics mode? Press Y, otherwise N");
+            var readKey = Console.ReadKey();
+            
+            if(readKey.KeyChar == 'y'
+            || readKey.KeyChar == 'Y')
+            {
+                Console.WriteLine("/nStatistics is working. Please wait a minite");
+                
+                for (int i = 0; i < 100; i++)
+                {
+                    Statistics.GetInstance().PlayOneGame();
+                }
+
+                Statistics.GetInstance().PrintResult();
+            }
+            else if(readKey.KeyChar == 'n'
+            || readKey.KeyChar == 'N')
+            {
+                break;
+            }
+
+        } while (true);
 
         bool isBoardSmall = true;
 
@@ -33,7 +57,7 @@ internal class Program
                     visualizer.Visualize();
                     var readKey = Console.ReadKey();
 
-                    if ( char.IsDigit(readKey.KeyChar))
+                    if (char.IsDigit(readKey.KeyChar))
                     {
                         int newTerm = int.Parse(readKey.KeyChar.ToString()!);
                         if (newTerm != 0)
