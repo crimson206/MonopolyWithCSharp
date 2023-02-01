@@ -85,13 +85,6 @@ public sealed class Statistics
 
     public void PrintResult()
     {
-        if(this.lastGameEndedNormal)
-        {
-            Console.WriteLine(stringConverter.ConvertIEnumerableToString(this.winningCounts));
-        }
-        else
-        {
-            Console.WriteLine("The last game didn't end in 200 turns");
-        }
+        Console.WriteLine(stringConverter.ConvertIEnumerableToString(this.winningCounts));
     }
 }
